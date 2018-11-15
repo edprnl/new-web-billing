@@ -18,26 +18,26 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
    //List departments
-   Route::get('departments', 'DepartmentController@index');
+   Route::get('departments', 'References/DepartmentsController@index');
    //List single user
-   Route::get('department/{id}', 'DepartmentController@show');
+   Route::get('department/{id}', 'References/DepartmentsController@show');
    //Create new user
-   Route::post('department', 'DepartmentController@create');
+   Route::post('department', 'References/DepartmentsController@create');
    //Update user
-   Route::put('department/{id}', 'DepartmentController@update');
+   Route::put('department/{id}', 'References/DepartmentsController@update');
    //Delete user
-   Route::delete('department/{id}', 'DepartmentController@delete');
+   Route::delete('department/{id}', 'References/DepartmentsController@delete');
    // END USER
 
    //TENANT
     //List tenants
-    Route::get('tenants', 'TenantsController@index');
+    Route::get('tenants', 'References/TenantsController@index');
     //List single tenant
-    Route::get('tenant/{id}', 'TenantsController@show');
+    Route::get('tenant/{id}', 'References/TenantsController@show');
     //Create new tenant
-    Route::post('tenant', 'TenantsController@create');
+    Route::post('tenant', 'References/TenantsController@create');
     //Update tenant
-    Route::put('tenant', 'TenantsController@update');
+    Route::put('tenant', 'References/TenantsController@update');
     //Delete tenant
-    Route::delete('tenant/{id}', 'TenantsController@delete');
+    Route::delete('tenant/{id}', 'References/TenantsController@delete');
     // END TENANT

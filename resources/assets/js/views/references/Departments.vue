@@ -1,6 +1,47 @@
 <template>
+    <!--<b-animated fade-in>  main container -->
    <div class="animated fadeIn">
-        <div class="container-fluid" >
+        <b-row>
+            <b-col sm="12">
+                <b-card >
+                    <h5 slot="header">
+                        <span class="text-primary">
+                            <i class="fa fa-bars"></i> 
+                            Department List
+                            <small class="bfont-italic">List of all registered departments.</small></span>
+                    </h5>
+                    <b-row class="mb-2">
+                        <b-col  sm="4">
+                                <b-button variant="primary">
+                                        <i class="fa fa-plus-circle"></i> Create New Tenant
+                                </b-button>
+                        </b-col>
+
+                        <b-col  sm="4">
+                            <span></span>
+                        </b-col>
+
+                        <b-col  sm="4">
+                            <b-form-input type="text" id="name" placeholder="Search"></b-form-input>
+                        </b-col>
+                    </b-row>
+
+                    <b-row>
+                        <b-table striped hover
+                            :fields="fields"
+                            :items="items"
+                            
+                        >
+                            
+                        </b-table>
+                    </b-row>
+
+                </b-card>
+            </b-col>
+        </b-row>
+
+   </div>
+   <!--
             <div class="row">
                 <div class="col-lg-12">
                     <b-card header="Tenants List"> 
@@ -47,8 +88,8 @@
                     </b-card>
                 </div>
             </div>
-        </div>
    </div>
+   -->
 </template>
 
 <script>
