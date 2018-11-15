@@ -21,13 +21,23 @@ import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router';
+import FormMixin from './mixins/FormMixin'
+import axios from 'axios'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+const axiosConfig = {
+  baseURL: 'http://jdev.webbillingsystem',
+  timeout: 30000
+}
+
 Vue.component('App', require('./App.vue'));
 Vue.use(BootstrapVue);
-
+Vue.prototype.$http = axios.create(axiosConfig)
+Vue.mixin(FormMixin)
+Vue.use(BootstrapVue);
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

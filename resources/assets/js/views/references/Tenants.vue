@@ -63,24 +63,19 @@ export default {
           tenants: {
             fields: [
               {
-                key: 'tenant_name',
-                label: 'Tenant NAme'
+                key: 'tenant_code',
+                label: 'Tenant Code'
               },
               {
-                key: 'tenant_desc',
-                label: 'Description'
+                key: 'trade_name',
+                label: 'Tenant Name'
               },
               {
                 key: 'action',
                 label: ' '
               }
             ],
-            items: [
-              {
-                tenant_name : 'aaa',
-                tenant_desc : 'bbb'
-              }
-            ]
+            items: []
           }
         },
         filters: {
@@ -98,7 +93,7 @@ export default {
       }
     },
     created () {
-      //this.fillTableList('classifications')
+      this.fillTableList('tenants')
     }
   }
 </script>
