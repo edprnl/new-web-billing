@@ -17,6 +17,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+   //List categories
+   Route::get('categories', 'References\CategoriesController@index');
+   //List single category
+   Route::get('category/{id}', 'References\CategoriesController@show');
+   //Create new category
+   Route::post('category', 'References\CategoriesController@create');
+   //Update category
+   Route::put('category/{id}', 'References\CategoriesController@update');
+   //Delete category
+   Route::delete('category/{id}', 'References\CategoriesController@delete');
+   // END categories
+
    //List departments
    Route::get('departments', 'References/DepartmentsController@index');
    //List single user
@@ -31,13 +43,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
    //TENANT
     //List tenants
-    Route::get('tenants', 'References/TenantsController@index');
+    Route::get('tenants', 'References\TenantsController@index');
     //List single tenant
-    Route::get('tenant/{id}', 'References/TenantsController@show');
+    Route::get('tenant/{id}', 'References\TenantsController@show');
     //Create new tenant
-    Route::post('tenant', 'References/TenantsController@create');
+    Route::post('tenant', 'References\TenantsController@create');
     //Update tenant
-    Route::put('tenant', 'References/TenantsController@update');
+    Route::put('tenant', 'References\TenantsController@update');
     //Delete tenant
-    Route::delete('tenant/{id}', 'References/TenantsController@delete');
+    Route::delete('tenant/{id}', 'References\TenantsController@delete');
     // END TENANT

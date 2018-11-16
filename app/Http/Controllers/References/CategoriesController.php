@@ -4,6 +4,10 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\RefCategory;
+use App\Http\Resources\Reference;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class CategoriesController extends Controller
 {
@@ -14,7 +18,8 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
+        $categories = RefCategory::where('is_deleted', 0)->orderBy('category_id', 'desc')->get();
+        return Reference::collection($categories);
     }
 
     /**
@@ -22,9 +27,30 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        Validator::make($request->all(),
+            [
+                'category_code' => 'required'
+            ]
+        )->validate();
+
+
+        //return json based from the resource data
+        return ( new Reference( RefCategory::create( $request->all() ) ) )
+                ->response()
+                ->setStatusCode(201);
+        // $category = new RefCategory;
+        // $category->category_code = $request->input('category_code');
+        // $category->category_desc = $request->input('category_desc');
+        // $category->created_datetime = Carbon::now();
+        // // $category->created_by = Auth::user()->id;
+        
+        // if($category->save()){
+        //     $response['success'] = "Success";
+        //     $response['message'] = "Success";
+        //     return $response;
+        // }
     }
 
     /**

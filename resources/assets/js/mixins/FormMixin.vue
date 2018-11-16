@@ -85,7 +85,6 @@
             .then((response) => {
               const records = response.data
               this.tables[entity].items = records.data
-              console.log(this.tables[entity].items)
               this.paginations[entity].totalRows = records.data.length
             }).catch(error => {
               if (!error.response) return

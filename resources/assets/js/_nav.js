@@ -19,6 +19,11 @@ export default {
           name: 'Departments',
           url: '/references/departments',
           //icon: 'fas fa-code-branch'
+        },
+        {
+          name: 'Categories',
+          url: '/references/categories',
+          //icon: 'fas fa-code-branch'
         }
 
       ]

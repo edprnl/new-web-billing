@@ -31,6 +31,7 @@ import Register from '@/views/pages/Register'
 //Views - References
 import tenants from '@/views/references/Tenants'
 import departments from '@/views/references/Departments'
+import categories from '@/views/references/Categories'
 
 //Views - Transactions
 import contracts from '@/views/transactions/Contracts'
@@ -75,6 +76,11 @@ export default new Router({
               path: 'departments',
               name: 'Departments',
               component: departments
+            },
+            {
+              path: 'categories',
+              name: 'Categories',
+              component: categories
             }
           ]
         },
