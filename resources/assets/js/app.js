@@ -23,21 +23,31 @@ import App from './App.vue';
 import router from './router';
 import FormMixin from './mixins/FormMixin'
 import axios from 'axios'
-
+import Notifications from 'vue-notification'
+import 'vue-awesome/icons/flag'
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 const axiosConfig = {
-  baseURL: 'http://jdev.webbillingsystem',
+  baseURL: 'http://newbilling.test',
   timeout: 30000
 }
 
-Vue.component('App', require('./App.vue'));
+
+Vue.use(Notifications)
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVue);
+
+Vue.component('icon', Icon)
+Vue.component('App', require('./App.vue'));
+
 Vue.prototype.$http = axios.create(axiosConfig)
 Vue.mixin(FormMixin)
-Vue.use(BootstrapVue);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

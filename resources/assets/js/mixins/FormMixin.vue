@@ -85,12 +85,16 @@
             .then((response) => {
               const records = response.data
               this.tables[entity].items = records.data
-              this.paginations[entity].totalRows = records.data.length
+              this.paginations[entity].totalRows = records.meta.total
+              this.paginations[entity].currentPage = records.meta.current_page
+              this.paginations[entity].perPage = records.meta.per_page
             }).catch(error => {
               if (!error.response) return
               console.log(error)
             })
         },
+
+        
 
         fillOptionsList (entity) {
           this.$http.get('api/' + entity)

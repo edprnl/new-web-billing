@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers;
+use App\Http\Controllers\Controller;
 use App\Department;
 use App\Http\Resources\Reference;
 
@@ -16,7 +16,7 @@ class DepartmentsController extends Controller
      */
     public function index()
     {
-        $departments = Department::all();
+        $departments = Department::where('is_deleted', 0)->orderBy('department_id', 'asc')->paginate(5);
         return Reference::collection($departments);
     }
 

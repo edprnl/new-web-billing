@@ -180,8 +180,12 @@ export default {
     },
     methods:{
         onCreateCategory () {
-            this.createEntity('category')
+            this.createEntity('category');
             // this.showModalEntry=false
+
+        },
+        updateCategoryRow(data){
+           
         }
     },
     created () {
