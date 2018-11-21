@@ -43,17 +43,17 @@ Route::middleware('auth:api')->group(function () {
    Route::delete('category/{id}', 'References\CategoriesController@delete');
    // END categories
 
-//    //List departments
-//    Route::get('departments', 'References/DepartmentsController@index');
-//    //List single user
-//    Route::get('department/{id}', 'References/DepartmentsController@show');
-//    //Create new user
-//    Route::post('department', 'References/DepartmentsController@create');
-//    //Update user
-//    Route::put('department/{id}', 'References/DepartmentsController@update');
-//    //Delete user
-//    Route::delete('department/{id}', 'References/DepartmentsController@delete');
-// //    END USER
+   //List departments
+   Route::get('departments', 'References/DepartmentsController@index');
+   //List single user
+   Route::get('department/{id}', 'References/DepartmentsController@show');
+   //Create new user
+   Route::post('department', 'References/DepartmentsController@create');
+   //Update user
+   Route::put('department/{id}', 'References/DepartmentsController@update');
+   //Delete user
+   Route::delete('department/{id}', 'References/DepartmentsController@delete');
+   // END USER
 
    //TENANT
     //List tenants

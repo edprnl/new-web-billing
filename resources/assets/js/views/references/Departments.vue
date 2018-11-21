@@ -1,95 +1,101 @@
 <template>
-    <!--<b-animated fade-in>  main container -->
-   <div class="animated fadeIn">
-        <b-row>
-            <b-col sm="12">
-                <b-card >
-                    <h5 slot="header">
-                        <span class="text-primary">
-                            <i class="fa fa-bars"></i> 
-                            Department List
-                            <small class="bfont-italic">List of all registered departments.</small></span>
-                    </h5>
-                    <b-row class="mb-2">
-                        <b-col  sm="4">
-                                <b-button variant="primary">
-                                        <i class="fa fa-plus-circle"></i> Create New Tenant
-                                </b-button>
-                        </b-col>
+    <div><!-- main container -->
+        <div class="animated fadeIn"> <!-- main div -->
+            <b-row> <!-- main row -->
+                <b-col sm="12">
+                    <b-card > <!-- main card -->
+                        <h5 slot="header">  <!-- table header -->
+                            <span class="text-primary">
+                                <i class="fa fa-bars"></i> 
+                                Department List
+                                <small class="bfont-italic">List of all registered departments.</small></span>
+                        </h5>
+                        
+                        <b-row class="mb-2"> <!-- row button and search input -->
+                            <b-col  sm="4">
+                                    <b-button v-b-modal.add-edit-modal size="sm" variant="primary"  @click="modalShow = !modalShow">
+                                            <i class="fa fa-plus-circle"></i> Create New Department
+                                    </b-button>
+                            </b-col>
 
-                        <b-col  sm="4">
-                            <span></span>
-                        </b-col>
-
-                        <b-col  sm="4">
-                            <b-form-input type="text" id="name" placeholder="Search"></b-form-input>
-                        </b-col>
-                    </b-row>
-
-                    <b-row>
-                        <b-table striped hover
-                            :fields="fields"
-                            :items="items"
-                            
-                        >
-                            
-                        </b-table>
-                    </b-row>
-
-                </b-card>
-            </b-col>
-        </b-row>
-
-   </div>
-   <!--
-            <div class="row">
-                <div class="col-lg-12">
-                    <b-card header="Tenants List"> 
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <b-button variant="primary">
-                                        <i class="fa fa-plus-circle"></i> Create New Tenant
-                                </b-button>
-                            </div>
-
-                            <div class="col-sm-4">
+                            <b-col  sm="4">
                                 <span></span>
-                            </div>
+                            </b-col>
 
-                            <div class="col-sm-4">
-                                <b-form-input type="text" id="name" placeholder="Search"></b-form-input>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-lg-12 mt-2">
-                               <b-table 
-                                         
-                                         :items="items"
-                                         :fields="fields"
-                                        
-                                         fixed hover >
+                            <b-col  sm="4">
+                                <b-form-group horizontal label-text-align="right" label="Filter" class="mb-0">
+                                    <b-input-group>
+                                        <b-form-input  size="sm" v-model="filters.departments.criteria"                    placeholder="Type to Search" />
+                                        <b-input-group-append>
+                                        <b-btn  size="sm" @click="clearFilter" >Clear</b-btn>
+                                        </b-input-group-append>
+                                    </b-input-group>
+                                </b-form-group>
+                            </b-col>
+                        </b-row> <!-- row button and search input -->
 
-                                    <template slot="action" slot-scope="data">
-                                        <b-btn variant="primary" :to="{path: 'categories/' + data.item.id }">
-                                            <i class="fa fa-edit"></i>
-                                        </b-btn>
+                        <b-row> <!-- row table -->
+                            <b-table  
+                                id = "tb1"
+                                :filter="filters.departments.criteria"
+                                :fields="tables.departments.fields"
+                                :items.sync="tables.departments.items"
+                                :current-page="paginations.departments.currentPage"
+                                :per-page="paginations.departments.perPage"
+                                hover 
+                                show-empty
+                                small
+                                bordered
+                                
+                            > <!-- table -->
 
-                                        <b-btn variant="danger" @click="onItemDelete(data)">
-                                            <i class="fa fa-trash"></i>
-                                        </b-btn>
-                                    </template>
-                               </b-table>
-                            </div>
+                            <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
+                                <b-btn variant="primary" @click="modalShow = !modalShow">
+                                    <i class="fa fa-edit"></i>
+                                </b-btn>
 
-                            
-                        </div>
-                        
-                    </b-card>
-                </div>
-            </div>
-   </div>
-   -->
+                                <b-btn variant="danger" @click="onItemDelete(data)">
+                                    <i class="fa fa-trash"></i>
+                                </b-btn>
+                            </template>
+
+                            </b-table> <!-- table -->
+
+                        </b-row> <!-- row table -->
+
+                        <b-row >  <!-- Pagination -->
+                                <b-col sm="12" class="my-1">
+                                    <b-pagination size="sm" align="center" :total-rows="paginations.departments.totalRows" :per-page="paginations.departments.perPage" v-model="paginations.departments.currentPage"
+                                    @change="getResults" class="my-0" />
+                                </b-col>
+                        </b-row> <!-- Pagination -->
+
+                    </b-card><!-- main card -->
+                </b-col>
+            </b-row> <!-- main row -->
+
+            </div><!-- main div -->
+
+            <div> <!-- modal div -->
+                <b-modal id="add-edit-modal" title="Add/Edit Department" v-model="modalShow" >
+                
+
+                <div slot="modal-footer"><!-- modal footer buttons -->
+                    <b-btn size="sm"  variant="secondary" @click="modalShow = false">
+                        Cancel
+                    </b-btn>
+
+                    <b-btn size="sm"  variant="primary" @click="modalShow = false">
+                        Save
+                    </b-btn>
+                </div> <!-- modal footer buttons -->
+
+                </b-modal>
+            </div> <!-- modal div -->
+
+</div> <!-- main container -->
+
+   
 </template>
 
 <script>
@@ -97,34 +103,82 @@ export default {
     name: 'departments',
     data () {
       return {
-          //departments : [{}],
-          fields:[
+        tables: {
+          departments: {
+            fields: [
               {
-                  key:'department_code',
-                  label: 'Code'
+                key: 'department_code',
+                label: 'Code'
               },
               {
-                  key:'department_desc',
-                  label: 'Desc'
-              }
-          ],
-          items: [
+                key: 'department_desc',
+                label: 'Department Name'
+              },
               {
-                department_code : 'aaa',
-                department_desc : 'bbb'
-              }
-            ]
+                 
+                key: 'action',
+                label: '',
+                thStyle: {width: '100px'}
+              },
+            ],
+            items: []
+          }
+        },
+        filters: {
+          departments: {
+            criteria: null
+          }
+        },
+        paginations: {
+          departments: {
+            totalRows: 0,
+            currentPage: 1,
+            perPage: 10
+          }
+        },
+        modalShow: false
       }
-      
     },
     methods:{
-        // loadDepartments(){
-        //    axios.get("api/departments").then(({ data }) => (this.departments = data));
-        // }
+        clearFilter(){
+            this.filters.departments.criteria = null;
+            //alert("aa");
+        },
+        // Our method to GET results from a Laravel endpoint
+		getResults(page) {
+			if (typeof page === 'undefined') {
+				page = 1;
+			}
+
+			// Using vue-resource as an example
+			// this.$http.get('api/departments?page=' + page)
+			// 	.then(response => {
+            //         this.tables.departments.items = response.data.data
+            //         this.paginations.departments.currentPage = response.data.meta.current_page
+            // 	});
+            
+
+            // ali ya ma rerender keng current page
+            this.$http.get('api/departments?page=' + page)
+            .then(response => {
+                    const records = response.data
+                    this.paginations.departments.currentPage = records.meta.current_page
+                    this.tables.departments.items = records.data
+                    
+            	}).catch(error => {
+                    console.log(error.response.data);
+                });
+
+                //this.$emit("tb1").reload();
+
+		}
+    },
+    computed: {
 
     },
     created () {
-      //this.loadDepartments();
+      this.fillTableList('departments')
+      console.log(this.tables.departments.items);
     }
   }
 </script>

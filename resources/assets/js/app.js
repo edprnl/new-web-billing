@@ -33,14 +33,21 @@ Vue.component('icon', Icon)
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 const axiosConfig = {
-  baseURL: 'http://jdev.webbillingsystem',
+  baseURL: 'http://newbilling.test',
   timeout: 30000
 }
 
+
+Vue.use(Notifications)
+Vue.use(BootstrapVue);
+Vue.use(BootstrapVue);
+
+Vue.component('icon', Icon)
 Vue.component('App', require('./App.vue'));
+Vue.use(BootstrapVue);
 Vue.prototype.$http = axios.create(axiosConfig)
 Vue.mixin(FormMixin)
-Vue.use(BootstrapVue);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
