@@ -44,15 +44,15 @@ Route::middleware('auth:api')->group(function () {
    // END categories
 
    //List departments
-   Route::get('departments', 'References/DepartmentsController@index');
+   Route::get('departments', 'References\DepartmentsController@index');
    //List single user
-   Route::get('department/{id}', 'References/DepartmentsController@show');
+   Route::get('department/{id}', 'References\DepartmentsController@show');
    //Create new user
-   Route::post('department', 'References/DepartmentsController@create');
+   Route::post('department', 'References\DepartmentsController@create');
    //Update user
-   Route::put('department/{id}', 'References/DepartmentsController@update');
+   Route::put('department/{id}', 'References\DepartmentsController@update');
    //Delete user
-   Route::delete('department/{id}', 'References/DepartmentsController@delete');
+   Route::delete('department/{id}', 'References\DepartmentsController@delete');
    // END USER
 
    //TENANT

@@ -5,7 +5,12 @@
         createEntity (entity, cbFnObject) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
-          this.$http.post('api/' + entity, this.forms[entity].fields).then((response) => {
+          this.$http.post('api/' + entity, this.forms[entity].fields,{
+             headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+          })
+          .then((response) => {  
             this.forms[entity].isSaving = false
             this.clearFields(entity)
             this.$notify({
@@ -35,7 +40,11 @@
           this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
 
-          this.$http.put('api/' + entity + '/' + this.forms[entity].fields.id, this.forms[entity].fields)
+          this.$http.put('api/' + entity + '/' + this.forms[entity].fields.id, this.forms[entity].fields ,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
             .then((response) => {
               this.forms[entity].isSaving = false
               this.$notify({
@@ -81,7 +90,11 @@
         },
 
         fillTableList (entity) {
-          this.$http.get('/api/' + entity)
+          this.$http.get('/api/' + entity ,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
             .then((response) => {
               const records = response.data
               this.tables[entity].items = records.data
@@ -97,7 +110,11 @@
         
 
         fillOptionsList (entity) {
-          this.$http.get('api/' + entity)
+          this.$http.get('api/' + entity,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
             .then((response) => {
               const items = response.data.data
               this.options[entity].items = items
@@ -108,7 +125,11 @@
         },
 
         fillEntityForm (entity, id) {
-          this.$http.get('api/' + entity + '/' + id)
+          this.$http.get('api/' + entity + '/' + id,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
             .then((response) => {
               const items = response.data.data
               this.forms[entity].fields = items
