@@ -72,7 +72,11 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = RefCategory::findOrFail($id);
+
+        return ( new Reference( $category ) )
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -95,7 +99,20 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $category = RefCategory::findOrFail($id);
+
+        Validator::make($request->all(),
+            [
+                'category_code' => 'required'
+            ]
+        )->validate();
+
+        //update classification based on the http json body that is sent
+        $category->update( $request->all() );
+
+        return ( new Reference( $category ) )
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**

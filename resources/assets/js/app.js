@@ -23,9 +23,13 @@ import App from './App.vue';
 import router from './router';
 import FormMixin from './mixins/FormMixin'
 import axios from 'axios'
-
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import Notifications from 'vue-notification'
+import 'vue-awesome/icons/flag'
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
+import store from './store'
+Vue.use(Notifications)
+Vue.component('icon', Icon)
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 const axiosConfig = {
@@ -34,7 +38,6 @@ const axiosConfig = {
 }
 
 Vue.component('App', require('./App.vue'));
-Vue.use(BootstrapVue);
 Vue.prototype.$http = axios.create(axiosConfig)
 Vue.mixin(FormMixin)
 Vue.use(BootstrapVue);
@@ -42,6 +45,7 @@ Vue.use(BootstrapVue);
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: {
     App

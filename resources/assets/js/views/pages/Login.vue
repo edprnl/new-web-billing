@@ -1,49 +1,83 @@
 <template>
   <div class="app flex-row align-items-center">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card-group mb-0">
-            <div class="card p-4">
-              <div class="card-body">
+    <b-container>
+      <b-row class="justify-content-center">
+        <b-col md=6>
+          <b-card-group>
+            <b-card p=4>
+              <b-card-body>
                 <h1>Login</h1>
                 <p class="text-muted">Sign In to your account</p>
-                <div class="input-group mb-3">
-                  <span class="input-group-addon"><i class="icon-user"></i></span>
-                  <input type="text" class="form-control" placeholder="Username">
-                </div>
-                <div class="input-group mb-4">
-                  <span class="input-group-addon"><i class="icon-lock"></i></span>
-                  <input type="password" class="form-control" placeholder="Password">
-                </div>
-                <div class="row">
-                  <div class="col-6">
-                    <button type="button" class="btn btn-primary px-4">Login</button>
-                  </div>
-                  <div class="col-6 text-right">
-                    <button type="button" class="btn btn-link px-0">Forgot password?</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
-              <div class="card-body text-center">
-                <div>
-                  <h2>Sign up</h2>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                  <button type="button" class="btn btn-primary active mt-3">Register Now!</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                <b-form @submit.prevent="authLogin()" @input="login.success = null">
+                  <b-form-group>
+                    <b-input-group>
+                      <span class="input-group-addon"><i class="icon-user"></i></span>
+                      <b-form-input
+                            v-model="login.name"
+                            :state="login.success"
+                            type="text"
+                            placeholder="Username">
+                      </b-form-input>
+                      <b-form-invalid-feedback>
+                          <i class="fa fa-exclamation-triangle text-danger"></i>
+                          <span v-if="login.success==false">
+                              Incorrect username or password.
+                          </span>
+                      </b-form-invalid-feedback>
+                    </b-input-group>
+                  </b-form-group>
+                  <b-form-group>
+                    <b-input-group>
+                      <span class="input-group-addon"><i class="icon-lock"></i></span>
+                      <b-form-input
+                            v-model="login.password"
+                            :state="login.success"
+                            type="password"
+                            placeholder="Password">
+                      </b-form-input>
+                    </b-input-group>
+                  </b-form-group>
+                  <b-row>
+                    <b-col>
+                      <b-btn type="submit" variant="primary" px-4>Login</b-btn>
+                    </b-col>
+                  </b-row>
+                </b-form>
+              </b-card-body>
+            </b-card>
+          </b-card-group>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Login'
+  name: 'Login',
+  data(){
+    return{
+      login: {
+        name: null,
+        password: null,
+        success: null,
+      }
+    }
+  },
+  methods: {
+    authLogin(){
+       this.$http.post('api/auth/login', { 
+                    name: this.login.name,
+                    password: this.login.password
+                }).then(response => {
+                    this.$store.commit('loginUser')
+                    this.$store.commit('user', response.data.user.original)
+                    localStorage.setItem('token', response.data.access_token)
+                    this.$router.push({ name: 'Dashboard' })
+       }).catch(err => {
+            this.login.success = false
+       });
+    }
+  }
 }
 </script>

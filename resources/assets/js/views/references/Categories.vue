@@ -14,7 +14,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true">
+                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add'">
                                             <i class="fa fa-plus-circle"></i> Create New Category
                                     </b-button>
                             </b-col>
@@ -43,7 +43,7 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" :to="{path: 'category/' + data.item.id }">
+                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
@@ -75,41 +75,43 @@
                 Category Entry - {{entryMode}}
             </div>
             <b-col lg=12>
-                <b-form-group>
-                    <label for="category_code">* Category Code</label>
-                    <b-input-group>
+                <b-form @keydown="resetFieldStates('category')">
+                    <b-form-group>
+                        <label for="category_code">* Category Code</label>
+                        <b-input-group>
+                            <b-form-input
+                                v-model="forms.category.fields.category_code"
+                                :state="forms.category.states.category_code"
+                                type="text"
+                                placeholder="Category Code">
+                            </b-form-input>
+                            <b-form-invalid-feedback>
+                                <i class="fa fa-exclamation-triangle text-danger"></i>
+                                <span v-for="itemError in forms.category.errors.category_code">
+                                    {{itemError}}
+                                </span>
+                            </b-form-invalid-feedback>
+                        </b-input-group>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Category Desc</label>
                         <b-form-input
-                            v-model="forms.category.fields.category_code"
-                            :state="forms.category.states.category_code"
+                            v-model="forms.category.fields.category_desc"
+                            id="category_desc"
                             type="text"
-                            placeholder="Category Code">
+                            placeholder="Category Desc">
                         </b-form-input>
                         <b-form-invalid-feedback>
                             <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.category.errors.category_code">
+                            <span v-for="itemError in forms.category.errors.category_desc">
                                 {{itemError}}
                             </span>
                         </b-form-invalid-feedback>
-                    </b-input-group>
-                </b-form-group>
-                <b-form-group>
-                    <label>* Category Desc</label>
-                    <b-form-input
-                        v-model="forms.category.fields.category_desc"
-                        id="category_desc"
-                        type="text"
-                        placeholder="Category Desc">
-                    </b-form-input>
-                    <b-form-invalid-feedback>
-                        <i class="fa fa-exclamation-triangle text-danger"></i>
-                        <span v-for="itemError in forms.category.errors.category_desc">
-                            {{itemError}}
-                        </span>
-                    </b-form-invalid-feedback>
-                </b-form-group>
+                    </b-form-group>
+                </b-form>
             </b-col>
             <div slot="modal-footer">
-                <b-button :disabled="forms.category.isSaving" variant="primary" @click="onCreateCategory">
+                <b-button :disabled="forms.category.isSaving" variant="primary" @click="onCategoryEntry">
                     <icon v-if="forms.category.isSaving" name="sync" spin></icon>
                     <i class="fa fa-check"></i>
                     Save
@@ -122,7 +124,7 @@
 
 <script>
 export default {
-    name: 'departments',
+    name: 'categories',
     data () {
         return {
             entryMode: 'Add',
@@ -132,6 +134,7 @@ export default {
                 category: {
                     isSaving: false,
                     fields: {
+                        category_id: null,
                         category_code: null,
                         category_desc: null
                     },
@@ -148,6 +151,9 @@ export default {
             tables: {
                 categories: {
                     fields:[
+                        {
+                            key: 'category_id',
+                        },
                         {
                             key:'category_code',
                             label: 'Category Code'
@@ -175,18 +181,35 @@ export default {
                     currentPage: 1,
                     perPage: 10
                 }
-            }
+            },
+            datarow: []
         }
     },
     methods:{
-        onCreateCategory () {
-            this.createEntity('category')
-            // this.showModalEntry=false
+        onCategoryEntry () {
+            if(this.entryMode == 'Add'){
+                this.createEntity('category', true, 'categories')
+            }
+            else{
+                this.updateEntity('category', true, this.datarow)
+            }
+        
+            //this.showModalEntry=false
+        },
+        setUpdate(data){
+            this.fillEntityForm('category', data.item.category_id)
+            this.showModalEntry=true
+            this.entryMode='Edit'
+            this.datarow=data.item.category_id
+            // this.tables.categories.items.filter(function(elem){
+            //     if(elem.category_id == 42) return elem
+            // })
+            // console.log(data.index)
         }
     },
     created () {
-      this.fillTableList('categories');
-    }
+        this.fillTableList('categories');
+    },
   }
 </script>
 
