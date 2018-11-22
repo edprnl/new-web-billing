@@ -28,6 +28,9 @@ import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
 import store from './store'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 Vue.use(Notifications)
 Vue.component('icon', Icon)
 
@@ -37,14 +40,10 @@ const axiosConfig = {
   timeout: 30000
 }
 
-
-Vue.use(Notifications)
-Vue.use(BootstrapVue);
-Vue.use(BootstrapVue);
-
 Vue.component('icon', Icon)
-Vue.component('App', require('./App.vue'));
-Vue.use(BootstrapVue);
+Vue.component('App', require('./App.vue'))
+Vue.use(BootstrapVue)
+
 Vue.prototype.$http = axios.create(axiosConfig)
 Vue.mixin(FormMixin)
 

@@ -29,14 +29,11 @@ export default {
 }
 </script>
 
-<style lang="sass">
-  
+<style>
   $fa-font-path: "~font-awesome/fonts/";
   @import "~font-awesome/css/font-awesome.min.css";
-  @import '~bootstrap/scss/bootstrap.scss';
   $simple-line-font-path: "~simple-line-icons/fonts/";
   @import "~simple-line-icons/css/simple-line-icons.css";
-  
 </style>
 <style lang="scss">
   // Import Main styles for this application

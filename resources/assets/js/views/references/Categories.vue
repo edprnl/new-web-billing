@@ -78,7 +78,6 @@
                 <b-form @keydown="resetFieldStates('category')">
                     <b-form-group>
                         <label for="category_code">* Category Code</label>
-                        <b-input-group>
                             <b-form-input
                                 v-model="forms.category.fields.category_code"
                                 :state="forms.category.states.category_code"
@@ -91,7 +90,6 @@
                                     {{itemError}}
                                 </span>
                             </b-form-invalid-feedback>
-                        </b-input-group>
                     </b-form-group>
                     <b-form-group>
                         <label>* Category Desc</label>
@@ -128,7 +126,7 @@ export default {
     data () {
         return {
             entryMode: 'Add',
-            showModalEntry: false,
+            showModalEntry: false, //if true show modal
             showModalDelete: false,
             forms: {
                 category: {
@@ -182,7 +180,7 @@ export default {
                     perPage: 10
                 }
             },
-            datarow: []
+            contract_id: null
         }
     },
     methods:{
@@ -191,7 +189,7 @@ export default {
                 this.createEntity('category', true, 'categories')
             }
             else{
-                this.updateEntity('category', true, this.datarow)
+                this.updateEntity('category', 'category_id', true, 'categories')
             }
         
             //this.showModalEntry=false
@@ -200,7 +198,6 @@ export default {
             this.fillEntityForm('category', data.item.category_id)
             this.showModalEntry=true
             this.entryMode='Edit'
-            this.datarow=data.item.category_id
             // this.tables.categories.items.filter(function(elem){
             //     if(elem.category_id == 42) return elem
             // })

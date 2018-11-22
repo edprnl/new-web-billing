@@ -67,4 +67,21 @@ Route::middleware('auth:api')->group(function () {
     //Delete tenant
     Route::delete('tenant/{id}', 'References\TenantsController@delete');
     // END TENANT
+
+    //CONTRACT INFO
+    //List contracts
+    Route::get('contracts', 'Transactions\ContractsController@index');
+    //List Schedules and Charges
+    Route::get('contracts/{id}', 'Transactions\ContractsController@scheduleAndCharges');
+    //List Schedules and Charges for Billing
+    Route::get('contracts/{id}/{app_year}/{month_id}', 'Transactions\ContractsController@scheduleAndChargesBilling');
+    //List single contract
+    Route::get('contract/{id}', 'Transactions\ContractsController@show');
+    //Create new contract
+    Route::post('contract', 'Transactions\ContractsController@create');
+    //Update contract
+    Route::put('contract', 'Transactions\ContractsController@update');
+    //Delete contract
+    Route::delete('contract/{id}', 'Transactions\ContractsController@delete');
+    // END CONTRACT
 });

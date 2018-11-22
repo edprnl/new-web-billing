@@ -2,7 +2,7 @@
     export default {
       methods: {
         // 2nd parameter are callback functions pass as object
-        createEntity (entity, cbFnObject) {
+        createEntity (entity, isModal, entity_table) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
           this.$http.post('api/' + entity, this.forms[entity].fields,{
@@ -19,9 +19,14 @@
               title: 'Success!',
               text: 'Successfully created entity.'
             })
+            this.fillTableList(entity_table)
+            if(isModal){
+              this.showModalEntry = false
+            }
+            else{
+              this.showEntry = false
+            }
 
-            // if there is call function pass as success key, execute it and pass the response
-            if (cbFnObject.success) cbFnObject.success(response)
           }).catch(error => {
             this.forms[entity].isSaving = false
             if (!error.response) return
@@ -30,17 +35,14 @@
               this.forms[entity].states[key] = false
               this.forms[entity].errors[key] = errors[key]
             }
-
-            // if there is call function pass as success key, execute it and pass the response
-            if (cbFnObject.error) cbFnObject.error(error)
           })
         },
 
-        updateEntity (entity) {
+        updateEntity (entity, entity_id, isModal, entity_table) {
           this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
 
-          this.$http.put('api/' + entity + '/' + this.forms[entity].fields.id, this.forms[entity].fields ,{
+          this.$http.put('api/' + entity + '/' + this.forms[entity].fields[entity_id], this.forms[entity].fields ,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
@@ -53,6 +55,14 @@
                 title: 'Success!',
                 text: 'You have successfully updated the user.'
               })
+              this.fillTableList(entity_table)
+              if(isModal){
+                this.showModalEntry = false
+              }
+              else{
+                this.showEntry = false
+              }
+              
             }).catch(error => {
               this.forms[entity].isSaving = false
               if (!error.response) return

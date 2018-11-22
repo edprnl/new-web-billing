@@ -2,7 +2,7 @@
     <!--<b-animated fade-in>  main container -->
     <div>
         <notifications group="notification" />
-        <div class="animated fadeIn">
+        <div v-show="showEntry === false" class="animated fadeIn">
             <b-row>
                 <b-col sm="12">
                     <b-card >
@@ -14,8 +14,8 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add'">
-                                            <i class="fa fa-plus-circle"></i> Create New Category
+                                    <b-button variant="primary" @click="showEntry = true, entryMode='Add'">
+                                            <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
                             </b-col>
 
@@ -25,7 +25,7 @@
 
                             <b-col  sm="4">
                                 <b-form-input 
-                                            v-model="filters.categories.criteria"
+                                            v-model="filters.contracts.criteria"
                                             type="text" 
                                             placeholder="Search">
                                 </b-form-input>
@@ -35,11 +35,11 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
-                                    :filter="filters.categories.criteria"
-                                    :fields="tables.categories.fields"
-                                    :items.sync="tables.categories.items"
-                                    :current-page="paginations.categories.currentPage"
-                                    :per-page="paginations.categories.perPage"
+                                    :filter="filters.contracts.criteria"
+                                    :fields="tables.contracts.fields"
+                                    :items.sync="tables.contracts.items"
+                                    :current-page="paginations.contracts.currentPage"
+                                    :per-page="paginations.contracts.perPage"
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
@@ -56,9 +56,9 @@
 
                                 <b-pagination
                                             :align="'right'"
-                                            :total-rows="paginations.categories.totalRows"
-                                            :per-page="paginations.categories.perPage"
-                                            v-model="paginations.categories.currentPage" />
+                                            :total-rows="paginations.contracts.totalRows"
+                                            :per-page="paginations.contracts.perPage"
+                                            v-model="paginations.contracts.currentPage" />
                             </b-col>
                         </b-row>
 
@@ -66,59 +66,37 @@
                 </b-col>
             </b-row>
         </div>
-        <b-modal 
-            v-model="showModalEntry"
-            :noCloseOnEsc="true"
-            :noCloseOnBackdrop="true"
-        >
-            <div slot="modal-title">
-                Category Entry - {{entryMode}}
-            </div>
-            <b-col lg=12>
-                <b-form @keydown="resetFieldStates('category')">
-                    <b-form-group>
-                        <label for="category_code">* Category Code</label>
-                        <b-input-group>
-                            <b-form-input
-                                v-model="forms.category.fields.category_code"
-                                :state="forms.category.states.category_code"
-                                type="text"
-                                placeholder="Category Code">
-                            </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.category.errors.category_code">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
-                        </b-input-group>
-                    </b-form-group>
-                    <b-form-group>
-                        <label>* Category Desc</label>
-                        <b-form-input
-                            v-model="forms.category.fields.category_desc"
-                            id="category_desc"
-                            type="text"
-                            placeholder="Category Desc">
-                        </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.category.errors.category_desc">
-                                {{itemError}}
+        <div v-show="showEntry" class="animated fadeIn">
+            <b-row>
+                <b-col sm="12">
+                    <b-card >
+                        <h5 slot="header">
+                            <span class="text-primary">
+                                <i class="fa fa-bars"></i> 
+                                Contract Entry - {{entryMode}}
                             </span>
-                        </b-form-invalid-feedback>
-                    </b-form-group>
-                </b-form>
-            </b-col>
-            <div slot="modal-footer">
-                <b-button :disabled="forms.category.isSaving" variant="primary" @click="onCategoryEntry">
-                    <icon v-if="forms.category.isSaving" name="sync" spin></icon>
-                    <i class="fa fa-check"></i>
-                    Save
-                </b-button>
-                <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>            
-            </div>
-        </b-modal>
+                        </h5>
+                        <b-row>
+                            <b-col sm="12">
+                                <b-card no-body>
+  <b-tabs card v-model="tabIndex">
+      <b-tab title="Tab 1" >
+        Tab Contents 1
+      </b-tab>
+      <b-tab title="Tab 2" >
+        Tab Contents 2
+      </b-tab>
+      <b-tab title="Tab 3">
+        Tab Contents 3
+      </b-tab>
+    </b-tabs>
+    </b-card>
+                            </b-col>
+                        </b-row>
+                    </b-card>
+                </b-col>
+            </b-row>
+        </div>
     </div>
 </template>
 
@@ -127,40 +105,116 @@ export default {
     name: 'categories',
     data () {
         return {
+            tabIndex: 0,
             entryMode: 'Add',
-            showModalEntry: false,
+            showEntry: false, //if true show entry
             showModalDelete: false,
             forms: {
-                category: {
+                contract: {
                     isSaving: false,
                     fields: {
+                        contract_id: null,
+                        contract_no: null,
+                        tenant_code: null,
+                        tenant_id: null,
+                        contract_signatory: null,
+                        contract_billing_address: null,
+                        department_id: null,
+                        nature_of_business_id: null,
+                        contract_approved_merch: null,
+                        location_id: null,
+                        contract_type_id: null,
                         category_id: null,
-                        category_code: null,
-                        category_desc: null
+                        contract_terms: 1,
+                        commencement_date: new Date(),
+                        termination_date: new Date(),
+                        start_billing_date: new Date(),
+                        contract_floor_area: 0,
+                        contract_fixed_rent: 0,
+                        contract_discounted_rent: 0,
+                        contract_escalation_percent: 0,
+                        security_deposit: 0,
+                        power_meter_deposit: 0,
                     },
                     states: {
-                        category_code: null,
-                        category_desc: null
+                        contract_id: null,
+                        contract_no: null,
+                        tenant_code: null,
+                        tenant_id: null,
+                        contract_signatory: null,
+                        contract_billing_address: null,
+                        department_id: null,
+                        nature_of_business_id: null,
+                        contract_approved_merch: null,
+                        location_id: null,
+                        contract_type_id: null,
+                        category_id: null,
+                        contract_terms: null,
+                        commencement_date: null,
+                        termination_date: null,
+                        start_billing_date: null,
+                        contract_floor_area: null,
+                        contract_fixed_rent: null,
+                        contract_discounted_rent: null,
+                        contract_escalation_percent: null,
+                        security_deposit: null,
+                        power_meter_deposit: null,
                     },
                     errors: {
-                        category_code: null,
-                        category_desc: null
+                        contract_id: null,
+                        contract_no: null,
+                        tenant_code: null,
+                        tenant_id: null,
+                        contract_signatory: null,
+                        contract_billing_address: null,
+                        department_id: null,
+                        nature_of_business_id: null,
+                        contract_approved_merch: null,
+                        location_id: null,
+                        contract_type_id: null,
+                        category_id: null,
+                        contract_terms: null,
+                        commencement_date: null,
+                        termination_date: null,
+                        start_billing_date: null,
+                        contract_floor_area: null,
+                        contract_fixed_rent: null,
+                        contract_discounted_rent: null,
+                        contract_escalation_percent: null,
+                        security_deposit: null,
+                        power_meter_deposit: null,
                     }
                 }
             },
             tables: {
-                categories: {
+                contracts: {
                     fields:[
                         {
-                            key: 'category_id',
+                            key: 'contract_id',
                         },
                         {
-                            key:'category_code',
-                            label: 'Category Code'
+                            key:'contract_no',
+                            label: 'Contract No'
+                        },
+                        {
+                            key:'trade_name',
+                            label: 'Trade Name'
+                        },
+                        {
+                            key:'department_desc',
+                            label:'Department'
+                        },
+                        {
+                            key:'location_desc',
+                            label:'Location'
+                        },
+                        {
+                            key:'contract_type_desc',
+                            label:'Contract Type'
                         },
                         {
                             key:'category_desc',
-                            label: 'Description'
+                            label:'Category'
                         },
                         {
                             key:'action',
@@ -171,12 +225,12 @@ export default {
                 }
             },
             filters: {
-                categories: {
+                contracts: {
                     criteria: null
                 }
             },
             paginations: {
-                categories: {
+                contracts: {
                     totalRows: 0,
                     currentPage: 1,
                     perPage: 10
@@ -208,7 +262,7 @@ export default {
         }
     },
     created () {
-        this.fillTableList('categories');
+        this.fillTableList('contracts');
     },
   }
 </script>
