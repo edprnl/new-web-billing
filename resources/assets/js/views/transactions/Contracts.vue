@@ -79,7 +79,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-card no-body>
-  <b-tabs card v-model="tabIndex">
+  <b-tabs v-model="tabIndex">
       <b-tab title="Tab 1" >
         Tab Contents 1
       </b-tab>

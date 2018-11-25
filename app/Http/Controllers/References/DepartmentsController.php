@@ -16,7 +16,8 @@ class DepartmentsController extends Controller
      */
     public function index()
     {
-        $departments = Department::where('is_deleted', 0)->orderBy('department_id', 'asc')->paginate(5);
+        //$departments = Department::where('is_deleted', 0)->orderBy('department_id', 'asc')->paginate(5);
+        $departments = Department::where('is_deleted', 0)->orderBy('department_id', 'desc')->get();
         return Reference::collection($departments);
     }
 

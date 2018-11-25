@@ -8,12 +8,12 @@
                             <span class="text-primary">
                                 <i class="fa fa-bars"></i> 
                                 Department List
-                                <small class="bfont-italic">List of all registered departments.</small></span>
+                                <small class="bfont-italic">List of all registered departments.</small></span>s
                         </h5>
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
-                            <b-col  sm="4">
-                                    <b-button v-b-modal.add-edit-modal size="sm" variant="primary"  @click="modalShow = !modalShow">
+                            <b-col sm="4">
+                                    <b-button variant="primary">
                                             <i class="fa fa-plus-circle"></i> Create New Department
                                     </b-button>
                             </b-col>
@@ -23,53 +23,47 @@
                             </b-col>
 
                             <b-col  sm="4">
-                                <b-form-group horizontal label-text-align="right" label="Filter" class="mb-0">
-                                    <b-input-group>
-                                        <b-form-input  size="sm" v-model="filters.departments.criteria"                    placeholder="Type to Search" />
-                                        <b-input-group-append>
-                                        <b-btn  size="sm" @click="clearFilter" >Clear</b-btn>
-                                        </b-input-group-append>
-                                    </b-input-group>
-                                </b-form-group>
+                                <b-form-input 
+                                            v-model="filters.departments.criteria"
+                                            type="text" 
+                                            placeholder="Search">
+                                </b-form-input>
                             </b-col>
                         </b-row> <!-- row button and search input -->
-
+                    
                         <b-row> <!-- row table -->
-                            <b-table  
-                                id = "tb1"
-                                :filter="filters.departments.criteria"
-                                :fields="tables.departments.fields"
-                                :items.sync="tables.departments.items"
-                                :current-page="paginations.departments.currentPage"
-                                :per-page="paginations.departments.perPage"
-                                hover 
-                                show-empty
-                                small
-                                bordered
-                                
-                            > <!-- table -->
+                            <b-col sm="12">
+                                <b-table  
+                                    :filter="filters.departments.criteria"
+                                    :fields="tables.departments.fields"
+                                    :items.sync="tables.departments.items"
+                                    :current-page="paginations.departments.currentPage"
+                                    :per-page="paginations.departments.perPage"
+                                    striped hover small bordered show-empty
+                                    
+                                > <!-- table -->
 
-                            <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
-                                <b-btn variant="primary" @click="modalShow = !modalShow">
-                                    <i class="fa fa-edit"></i>
-                                </b-btn>
+                                <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
+                                    <b-btn variant="primary" @click="modalShow = !modalShow">
+                                        <i class="fa fa-edit"></i>
+                                    </b-btn>
 
-                                <b-btn variant="danger" @click="onItemDelete(data)">
-                                    <i class="fa fa-trash"></i>
-                                </b-btn>
-                            </template>
+                                    <b-btn variant="danger" @click="onItemDelete(data)">
+                                        <i class="fa fa-trash"></i>
+                                    </b-btn>
+                                </template>
 
-                            </b-table> <!-- table -->
-
+                                </b-table> <!-- table -->
+                            </b-col>
                         </b-row> <!-- row table -->
 
                         <b-row >  <!-- Pagination -->
                                 <b-col sm="12" class="my-1">
-                                    <b-pagination size="sm" align="center" :total-rows="paginations.departments.totalRows" :per-page="paginations.departments.perPage" v-model="paginations.departments.currentPage"
+                                    <b-pagination size="sm" align="right" :total-rows="paginations.departments.totalRows" :per-page="paginations.departments.perPage" v-model="paginations.departments.currentPage"
                                     @change="getResults" class="my-0" />
                                 </b-col>
                         </b-row> <!-- Pagination -->
-
+                        
                     </b-card><!-- main card -->
                 </b-col>
             </b-row> <!-- main row -->

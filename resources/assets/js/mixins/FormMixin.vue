@@ -17,7 +17,7 @@
               type: 'success',
               group: 'notification',
               title: 'Success!',
-              text: 'Successfully created entity.'
+              text: 'The record has been successfully created.'
             })
             this.fillTableList(entity_table)
             if(isModal){
@@ -33,7 +33,7 @@
             const errors = error.response.data.errors
             for (var key in errors) {
               this.forms[entity].states[key] = false
-              this.forms[entity].errors[key] = errors[key]
+              this.forms[entity].errors[key] =  errors[key]
             }
           })
         },
@@ -53,7 +53,41 @@
                 type: 'success',
                 group: 'notification',
                 title: 'Success!',
-                text: 'You have successfully updated the user.'
+                text: 'The record has been successfully updated.'
+              })
+              this.fillTableList(entity_table)
+              if(isModal){
+                this.showModalEntry = false
+              }
+              else{
+                this.showEntry = false
+              }
+              
+            }).catch(error => {
+              this.forms[entity].isSaving = false
+              if (!error.response) return
+              const errors = error.response.data.errors
+              console.log(errors)
+            })
+        },
+
+        // params[ entity = table_name, entity_id = primary_key, entity_field = specific field to update]
+        deleteEntity (entity, entity_id, isModal, entity_table) {
+          this.resetFieldStates(entity)
+          this.forms[entity].isSaving = true
+
+          this.$http.delete('api/' + entity + '/' + entity_id, this.forms[entity].fields  ,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+              this.forms[entity].isSaving = false
+              this.$notify({
+                type: 'success',
+                group: 'notification',
+                title: 'Success!',
+                text: 'The record has been deleted.'
               })
               this.fillTableList(entity_table)
               if(isModal){
@@ -108,9 +142,11 @@
             .then((response) => {
               const records = response.data
               this.tables[entity].items = records.data
-              this.paginations[entity].totalRows = records.meta.total
-              this.paginations[entity].currentPage = records.meta.current_page
-              this.paginations[entity].perPage = records.meta.per_page
+              this.paginations[entity].totalRows = records.data.length
+              // ### commented for future server side pagination
+              // this.paginations[entity].totalRows = records.meta.total
+              // this.paginations[entity].currentPage = records.meta.current_page
+              // this.paginations[entity].perPage = records.meta.per_page
             }).catch(error => {
               if (!error.response) return
               console.log(error)
