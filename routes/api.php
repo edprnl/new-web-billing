@@ -31,6 +31,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 }); 
 Route::middleware('auth:api')->group(function () {
+
+   //---------------------------------- REFERENCES -----------------------------------------------
    //List categories
    Route::get('categories', 'References\CategoriesController@index');
    //List single category
@@ -45,15 +47,29 @@ Route::middleware('auth:api')->group(function () {
 
    //List departments
    Route::get('departments', 'References\DepartmentsController@index');
-   //List single user
+   //List single departments
    Route::get('department/{id}', 'References\DepartmentsController@show');
-   //Create new user
+   //Create new departments
    Route::post('department', 'References\DepartmentsController@create');
-   //Update user
+   //Update departments
    Route::put('department/{id}', 'References\DepartmentsController@update');
-   //Delete user
+   //Delete departments
    Route::delete('department/{id}', 'References\DepartmentsController@delete');
-   // END USER
+   // END departments
+
+
+    //List location
+    Route::get('locations', 'References\LocationsController@index');
+    //List single location
+    Route::get('location/{id}', 'References\LocationsController@show');
+    //Create new location
+    Route::post('location', 'References\LocationsController@create');
+    //Update location
+    Route::put('location/{id}', 'References\LocationsController@update');
+    //Delete location
+    Route::delete('location/{id}', 'References\LocationsController@delete');
+    // END location
+ 
 
    //TENANT
     //List tenants
@@ -67,6 +83,9 @@ Route::middleware('auth:api')->group(function () {
     //Delete tenant
     Route::delete('tenant/{id}', 'References\TenantsController@delete');
     // END TENANT
+
+
+     //---------------------------------- REFERENCES -----------------------------------------------
 
     //CONTRACT INFO
     //List contracts

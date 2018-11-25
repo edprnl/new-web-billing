@@ -1,5 +1,6 @@
 <template>
     <div><!-- main container -->
+        <notifications group="notification" />
         <div class="animated fadeIn"> <!-- main div -->
             <b-row> <!-- main row -->
                 <b-col sm="12">
@@ -13,7 +14,7 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="4">
-                                    <b-button variant="primary">
+                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('department')">
                                             <i class="fa fa-plus-circle"></i> Create New Department
                                     </b-button>
                             </b-col>
@@ -44,11 +45,11 @@
                                 > <!-- table -->
 
                                 <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
-                                    <b-btn variant="primary" @click="modalShow = !modalShow">
+                                    <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn variant="danger" @click="onItemDelete(data)">
+                                    <b-btn :size="'sm'" variant="danger" @click="onDepartmentDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -60,7 +61,7 @@
                         <b-row >  <!-- Pagination -->
                                 <b-col sm="12" class="my-1">
                                     <b-pagination size="sm" align="right" :total-rows="paginations.departments.totalRows" :per-page="paginations.departments.perPage" v-model="paginations.departments.currentPage"
-                                    @change="getResults" class="my-0" />
+                                     class="my-0" />
                                 </b-col>
                         </b-row> <!-- Pagination -->
                         
@@ -71,17 +72,60 @@
             </div><!-- main div -->
 
             <div> <!-- modal div -->
-                <b-modal id="add-edit-modal" title="Add/Edit Department" v-model="modalShow" >
+                <b-modal 
+                    v-model="showModalEntry"
+                    :noCloseOnEsc="true"
+                    :noCloseOnBackdrop="true"
+                >
                 
+                <div slot="modal-title"> <!-- modal title -->
+                    Department Entry - {{entryMode}}
+                </div> <!-- modal title -->
+
+                <b-col lg=12> <!-- modal body -->
+                    <b-form @keydown="resetFieldStates('department')">
+                        <b-form-group>
+                            <label for="department_code">* Department Code</label>
+                            <b-form-input
+                                id="department_code"
+                                v-model="forms.department.fields.department_code"
+                                :state="forms.department.states.department_code"
+                                type="text"
+                                placeholder="Department Code">
+                            </b-form-input>
+                            <b-form-invalid-feedback>
+                                <i class="fa fa-exclamation-triangle text-danger"></i>
+                                <span v-for="itemError in forms.department.errors.department_code">
+                                    {{itemError}}
+                                </span>
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                        <b-form-group>
+                            <label>* Department Desc</label>
+                            <b-form-input
+                                id="department_desc"
+                                v-model="forms.department.fields.department_desc"
+                                :state="forms.department.states.department_desc"
+                                type="text"
+                                placeholder="Department Description">
+                            </b-form-input>
+                            <b-form-invalid-feedback>
+                                <i class="fa fa-exclamation-triangle text-danger"></i>
+                                <span v-for="itemError in forms.department.errors.department_desc">
+                                    {{itemError}}
+                                </span>
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-form>
+                </b-col> <!-- modal body -->
 
                 <div slot="modal-footer"><!-- modal footer buttons -->
-                    <b-btn size="sm"  variant="secondary" @click="modalShow = false">
-                        Cancel
-                    </b-btn>
-
-                    <b-btn size="sm"  variant="primary" @click="modalShow = false">
+                    <b-button :disabled="forms.department.isSaving" variant="primary" @click="onDepartmentEntry">
+                        <icon v-if="forms.department.isSaving" name="sync" spin></icon>
+                        <i class="fa fa-check"></i>
                         Save
-                    </b-btn>
+                    </b-button>
+                    <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
                 </div> <!-- modal footer buttons -->
 
                 </b-modal>
@@ -97,26 +141,48 @@ export default {
     name: 'departments',
     data () {
       return {
+        entryMode: 'Add',
+        showModalEntry: false, //if true show modal
+        showModalDelete: false,
+        forms:{
+            department : {
+                isSaving: false,
+                fields: {
+                    department_id: null,
+                    department_code: null,
+                    department_desc: null
+                },
+                states: {
+                    department_code: null,
+                    department_desc: null
+                },
+                errors: {
+                    department_code: null,
+                    department_desc: null
+                }
+            }
+        },
         tables: {
           departments: {
-            fields: [
-              {
-                key: 'department_code',
-                label: 'Code'
-              },
-              {
-                key: 'department_desc',
-                label: 'Department Name'
-              },
-              {
-                 
-                key: 'action',
-                label: '',
-                thStyle: {width: '100px'}
-              },
-            ],
-            items: []
-          }
+                fields: [
+                {
+                    key: 'department_code',
+                    label: 'Code',
+                    thStyle: {width: '150px'}
+                },
+                {
+                    key: 'department_desc',
+                    label: 'Department Name'
+                },
+                {
+                    
+                    key: 'action',
+                    label: '',
+                    thStyle: {width: '75px'}
+                },
+                ],
+                items: []
+            }
         },
         filters: {
           departments: {
@@ -138,34 +204,27 @@ export default {
             this.filters.departments.criteria = null;
             //alert("aa");
         },
-        // Our method to GET results from a Laravel endpoint
-		getResults(page) {
-			if (typeof page === 'undefined') {
-				page = 1;
-			}
+        onDepartmentEntry () {
+            if(this.entryMode == 'Add'){
+                
+                this.createEntity('department', true, 'departments')
+            }
+            else{
+                this.updateEntity('department', 'department_id', true, 'departments')
+            }
+        
+            //this.showModalEntry=false
+            //this.fillTableList('categories');
+        },
+        onDepartmentDelete(data){
+            this.deleteEntity('department', data.item.department_id, false, 'departments')
+        },
+        setUpdate(data){
+            this.fillEntityForm('department', data.item.department_id)
+            this.showModalEntry=true
+            this.entryMode='Edit'
 
-			// Using vue-resource as an example
-			// this.$http.get('api/departments?page=' + page)
-			// 	.then(response => {
-            //         this.tables.departments.items = response.data.data
-            //         this.paginations.departments.currentPage = response.data.meta.current_page
-            // 	});
-            
-
-            // ali ya ma rerender keng current page
-            this.$http.get('api/departments?page=' + page)
-            .then(response => {
-                    const records = response.data
-                    this.paginations.departments.currentPage = records.meta.current_page
-                    this.tables.departments.items = records.data
-                    
-            	}).catch(error => {
-                    console.log(error.response.data);
-                });
-
-                //this.$emit("tb1").reload();
-
-		}
+        }
     },
     computed: {
 

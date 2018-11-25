@@ -24,6 +24,11 @@ export default {
           name: 'Categories',
           url: '/references/categories',
           //icon: 'fas fa-code-branch'
+        },
+        {
+          name: 'Locations',
+          url: '/references/locations',
+          //icon: 'fas fa-code-branch'
         }
 
       ]

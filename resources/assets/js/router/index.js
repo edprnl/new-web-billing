@@ -33,6 +33,7 @@ import Register from '@/views/pages/Register'
 import tenants from '@/views/references/Tenants'
 import departments from '@/views/references/Departments'
 import categories from '@/views/references/Categories'
+import locations from '@/views/references/Locations'
 
 //Views - Transactions
 import contracts from '@/views/transactions/Contracts'
@@ -88,7 +89,14 @@ const router = new Router({
               name: 'Categories',
               component: categories,
               meta: {requiresAuth: true}
-            }
+            },
+            {
+              path: 'locations',
+              name: 'Locations',
+              component: locations,
+              meta: {requiresAuth: true}
+            },
+
           ]
         },
         {
