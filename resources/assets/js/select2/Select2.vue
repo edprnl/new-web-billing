@@ -20,6 +20,8 @@
         props: ['options', 'value', 'placeholder', 'allowClear'],
         mounted(){
             var vm = this
+            $('.modal-content').removeAttr('tabindex')
+
             $(this.$el)
             .select2({ 
                 // data: this.options,

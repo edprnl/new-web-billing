@@ -4,7 +4,7 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Tenants;
+use App\Models\References\Tenants;
 use App\Http\Resources\Reference;
 
 class TenantsController extends Controller

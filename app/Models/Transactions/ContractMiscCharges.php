@@ -1,12 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models\Transactions;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ContractUtilCharges extends Model
+class ContractMiscCharges extends Model
 {
-    protected $table = 'b_contract_util_charges';
+    protected $table = 'b_contract_misc_charges';
     protected $primaryKey = 'contract_misc_id';
     public $timestamps = false;
 }

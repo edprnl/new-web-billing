@@ -4,7 +4,7 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Location;
+use App\Models\References\Location;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;

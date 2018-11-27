@@ -60,6 +60,46 @@ Route::middleware('auth:api')->group(function () {
    Route::delete('department/{id}', 'References\DepartmentsController@delete');
    // END departments
 
+   //List locations
+   Route::get('locations', 'References\LocationsController@index');
+   //List single location
+   Route::get('location/{id}', 'References\LocationsController@show');
+   //Create new location
+   Route::post('location', 'References\LocationsController@create');
+   //Update location
+   Route::put('location/{id}', 'References\LocationsController@update');
+   //Delete location
+   Route::delete('location/{id}', 'References\LocationsController@delete');
+   // END locations
+
+   //List natures
+   Route::get('natureofbusinesses', 'References\NatureOfBusinessController@index');
+   //List single nature
+   Route::get('natureofbusiness/{id}', 'References\NatureOfBusinessController@show');
+   //Create new nature
+   Route::post('natureofbusiness', 'References\NatureOfBusinessController@create');
+   //Update nature
+   Route::put('natureofbusiness/{id}', 'References\NatureOfBusinessController@update');
+   //Delete nature
+   Route::delete('natureofbusiness/{id}', 'References\NatureOfBusinessController@delete');
+   // END natures
+
+   //List contract types
+   Route::get('contracttypes', 'References\ContractTypesController@index');
+   //List single contract type
+   Route::get('contracttype/{id}', 'References\ContractTypesController@show');
+   //Create new nature
+   Route::post('contracttype', 'References\ContractTypesController@create');
+   //Update nature
+   Route::put('contracttype/{id}', 'References\ContractTypesController@update');
+   //Delete nature
+   Route::delete('contracttype/{id}', 'References\ContractTypesController@delete');
+   // END natures
+
+   //MONTHS
+   Route::get('months', 'References\MonthsController@index');
+   //END MONTHS
+
    //TENANT
     //List tenants
     Route::get('tenants', 'References\TenantsController@index');

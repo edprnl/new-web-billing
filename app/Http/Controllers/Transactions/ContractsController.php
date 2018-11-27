@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Transactions;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\ContractInfo;
-use App\ContractSchedule;
-use App\ContractUtilCharges;
-use App\ContractMiscCharges;
-use App\ContractOthrCharges;
+use App\Models\Transactions\ContractInfo;
+use App\Models\Transactions\ContractSchedule;
+use App\Models\Transactions\ContractUtilCharges;
+use App\Models\Transactions\ContractMiscCharges;
+use App\Models\Transactions\ContractOthrCharges;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;

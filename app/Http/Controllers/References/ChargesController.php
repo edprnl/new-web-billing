@@ -4,7 +4,7 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\RefCharges;
+use App\Models\References\Charges;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +18,7 @@ class ChargesController extends Controller
      */
     public function index()
     {
-        $charges = RefCharges::where('is_deleted', 0)->orderBy('charge_id', 'desc')->get();
+        $charges = Charges::where('is_deleted', 0)->orderBy('charge_id', 'desc')->get();
         return Reference::collection($charges);
     }
 

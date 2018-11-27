@@ -4,7 +4,7 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\RefMonths;
+use App\Models\References\Months;
 use App\Http\Resources\Reference;
 
 class MonthsController extends Controller
@@ -16,7 +16,7 @@ class MonthsController extends Controller
      */
     public function index()
     {
-        $months = RefMonths::orderBy('month_id', 'desc')->get();
+        $months = Months::orderBy('month_id', 'desc')->get();
         return Reference::collection($months);
     }
 

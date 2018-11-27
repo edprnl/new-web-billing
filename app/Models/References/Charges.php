@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models\References;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RefCharges extends Model
+class Charges extends Model
 {
     protected $table = 'b_refcharges';
     protected $primaryKey = 'charge_id';

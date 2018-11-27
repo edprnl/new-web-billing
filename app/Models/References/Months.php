@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Models\References;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RefMonths extends Model
+class Months extends Model
 {
     protected $table = 'b_refmonths';
     protected $primaryKey = 'month_id';

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\RefBillingPeriod;
+use App\Models\References\BillingPeriod;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +20,7 @@ class BillingPeriodController extends Controller
      */
     public function index()
     {
-        $periods = RefBillingPeriod::select('*', 'app_year AS view_year')
+        $periods = BillingPeriod::select('*', 'app_year AS view_year')
                     ->join('b_refmonths', 'b_refmonths.month_id', '=', 'b_refbillingperiod.month_id')
                     ->where('is_deleted', 0)->orderBy('period_id', 'desc')->get();
         return Reference::collection($periods);

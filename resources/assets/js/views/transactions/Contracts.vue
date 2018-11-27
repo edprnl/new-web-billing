@@ -154,11 +154,11 @@
                                                     <label>* Nature of Business </label>
                                                     <select2
                                                         :allowClear="false"
-                                                        :options="options.natures.items"
+                                                        :options="options.natureofbusinesses.items"
                                                         :placeholder="'Select Nature of Business'"
                                                         v-model="forms.contract.fields.nature_of_business_id"
                                                     >
-                                                        <option v-for="nature in options.natures.items" :key="nature.nature_of_business_id" :value="nature.nature_of_business_id">{{nature.nature_of_business_desc}}</option>
+                                                        <option v-for="nature in options.natureofbusinesses.items" :key="nature.nature_of_business_id" :value="nature.nature_of_business_id">{{nature.nature_of_business_desc}}</option>
                                                     </select2>
                                                 </b-form-group>
                                                 <b-form-group>
@@ -186,11 +186,11 @@
                                                     <label>* Contract Types </label>
                                                     <select2
                                                         :allowClear="false"
-                                                        :options="options.contract_types.items"
+                                                        :options="options.contracttypes.items"
                                                         :placeholder="'Select Contract Type'"
                                                         v-model="forms.contract.fields.contract_type_id"
                                                     >
-                                                        <option v-for="contract_type in options.contract_types.items" :key="contract_type.contract_type_id" :value="contract_type.contract_type_id">{{contract_type.contract_type_desc}}</option>
+                                                        <option v-for="contract_type in options.contracttypes.items" :key="contract_type.contract_type_id" :value="contract_type.contract_type_id">{{contract_type.contract_type_desc}}</option>
                                                     </select2>
                                                 </b-form-group>
                                                 <b-form-group>
@@ -589,13 +589,13 @@ export default {
                 departments: {
                     items: []
                 },
-                natures: {
+                natureofbusinesses: {
                     items: []
                 },
                 locations: {
                     items: []
                 },
-                contract_types: {
+                contracttypes: {
                     items: []
                 },
                 categories: {
@@ -1094,9 +1094,9 @@ export default {
         this.fillTableList('charges')
         this.fillOptionsList('tenants')
         this.fillOptionsList('departments')
-        this.fillOptionsList('natures')
+        this.fillOptionsList('natureofbusinesses')
         this.fillOptionsList('locations')
-        this.fillOptionsList('contract_types')
+        this.fillOptionsList('contracttypes')
         this.fillOptionsList('categories')
         this.fillOptionsList('months')
     },

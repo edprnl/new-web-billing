@@ -4,7 +4,7 @@ namespace App\Http\Controllers\References;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\RefCategory;
+use App\Models\References\Category;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -19,7 +19,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = RefCategory::where('is_deleted', 0)->orderBy('category_id', 'desc')->get();
+        $categories = Category::where('is_deleted', 0)->orderBy('category_id', 'desc')->get();
         return Reference::collection($categories);
     }
 
@@ -38,7 +38,7 @@ class CategoriesController extends Controller
             ]
         )->validate();
 
-        $category = new RefCategory();
+        $category = new Category();
         $category->category_code = $request->input('category_code');
         $category->category_desc = $request->input('category_desc');
         $category->created_datetime = Carbon::now();
@@ -71,7 +71,7 @@ class CategoriesController extends Controller
      */
     public function show($id)
     {
-        $category = RefCategory::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         return ( new Reference( $category ) )
             ->response()
@@ -98,7 +98,7 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category = RefCategory::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         Validator::make($request->all(),
             [
@@ -133,7 +133,7 @@ class CategoriesController extends Controller
      */
     public function delete($id)
     {
-        $category = RefCategory::findOrFail($id);
+        $category = Category::findOrFail($id);
         $category->is_deleted = 1;
         $category->deleted_datetime = Carbon::now();
         $category->deleted_by = Auth::user()->id;
