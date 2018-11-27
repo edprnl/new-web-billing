@@ -34,6 +34,8 @@ import tenants from '@/views/references/Tenants'
 import departments from '@/views/references/Departments'
 import categories from '@/views/references/Categories'
 import locations from '@/views/references/Locations'
+import contracttypes from '@/views/references/ContractTypes'
+import natureofbusiness from '@/views/references/NatureOfBusiness'
 
 //Views - Transactions
 import contracts from '@/views/transactions/Contracts'
@@ -94,6 +96,18 @@ const router = new Router({
               path: 'locations',
               name: 'Locations',
               component: locations,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'contracttypes',
+              name: 'Contract Types',
+              component: contracttypes,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'natureofbusiness',
+              name: 'Nature Of Business',
+              component: natureofbusiness,
               meta: {requiresAuth: true}
             },
 

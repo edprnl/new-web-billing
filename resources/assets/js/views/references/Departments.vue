@@ -9,7 +9,7 @@
                             <span class="text-primary">
                                 <i class="fa fa-bars"></i> 
                                 Department List
-                                <small class="bfont-italic">List of all registered departments.</small></span>s
+                                <small class="font-italic">List of all registered departments.</small></span>
                         </h5>
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
@@ -231,7 +231,7 @@ export default {
     },
     created () {
       this.fillTableList('departments')
-      console.log(this.tables.departments.items);
+      //console.log(this.tables.departments.items);
     }
   }
 </script>

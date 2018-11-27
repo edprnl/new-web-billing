@@ -9,7 +9,7 @@
                             <span class="text-primary">
                                 <i class="fa fa-bars"></i> 
                                 Location List
-                                <small class="bfont-italic">List of all registered locations.</small></span>s
+                                <small class="font-italic">List of all registered locations.</small></span>
                         </h5>
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
@@ -31,7 +31,6 @@
                                 </b-form-input>
                             </b-col>
                         </b-row> <!-- row button and search input -->
-                    locations
                         <b-row> <!-- row table -->
                             <b-col sm="12">
                                 <b-table  
@@ -231,7 +230,7 @@ export default {
     },
     created () {
       this.fillTableList('locations')
-      console.log(this.tables.locations.items);
+      //console.log(this.tables.locations.items);
     }
   }
 </script>

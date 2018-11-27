@@ -69,6 +69,30 @@ Route::middleware('auth:api')->group(function () {
     //Delete location
     Route::delete('location/{id}', 'References\LocationsController@delete');
     // END location
+
+    //List contracttype
+    Route::get('contracttypes', 'References\ContractTypesController@index');
+    //List single contracttypes
+    Route::get('contracttype/{id}', 'References\ContractTypesController@show');
+    //Create new contracttypes
+    Route::post('contracttype', 'References\ContractTypesController@create');
+    //Update contracttypes
+    Route::put('contracttype/{id}', 'References\ContractTypesController@update');
+    //Delete contracttypes
+    Route::delete('contracttype/{id}', 'References\ContractTypesController@delete');
+    // END contracttypes
+
+    //List natureofbusiness
+    Route::get('natureofbusinesses', 'References\NatureOfBusinessController@index');
+    //List single natureofbusiness
+    Route::get('natureofbusiness/{id}', 'References\NatureOfBusinessController@show');
+    //Create new natureofbusiness
+    Route::post('natureofbusiness', 'References\NatureOfBusinessController@create');
+    //Update natureofbusiness
+    Route::put('natureofbusiness/{id}', 'References\NatureOfBusinessController@update');
+    //Delete natureofbusiness
+    Route::delete('natureofbusiness/{id}', 'References\NatureOfBusinessController@delete');
+    // END natureofbusiness
  
 
    //TENANT

@@ -29,6 +29,17 @@ export default {
           name: 'Locations',
           url: '/references/locations',
           //icon: 'fas fa-code-branch'
+        },
+        {
+          name: 'Contract Types',
+          url: '/references/contracttypes',
+          //icon: 'fas fa-code-branch'
+        }
+        ,
+        {
+          name: 'Nature Of Business',
+          url: '/references/natureofbusiness',
+          //icon: 'fas fa-code-branch'
         }
 
       ]
