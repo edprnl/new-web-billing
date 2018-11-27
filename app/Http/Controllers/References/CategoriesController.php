@@ -8,6 +8,7 @@ use App\RefCategory;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Auth;
 
 class CategoriesController extends Controller
 {
@@ -29,28 +30,26 @@ class CategoriesController extends Controller
      */
     public function create(Request $request)
     {
+
         Validator::make($request->all(),
             [
-                'category_code' => 'required'
+                'category_code' => 'required',
+                'category_desc' => 'required'
             ]
         )->validate();
 
+        $category = new RefCategory();
+        $category->category_code = $request->input('category_code');
+        $category->category_desc = $request->input('category_desc');
+        $category->created_datetime = Carbon::now();
+        $category->created_by = Auth::user()->id;
+    
+        $category->save();
 
         //return json based from the resource data
-        return ( new Reference( RefCategory::create( $request->all() ) ) )
+        return ( new Reference( $category ))
                 ->response()
                 ->setStatusCode(201);
-        // $category = new RefCategory;
-        // $category->category_code = $request->input('category_code');
-        // $category->category_desc = $request->input('category_desc');
-        // $category->created_datetime = Carbon::now();
-        // // $category->created_by = Auth::user()->id;
-        
-        // if($category->save()){
-        //     $response['success'] = "Success";
-        //     $response['message'] = "Success";
-        //     return $response;
-        // }
     }
 
     /**
@@ -103,17 +102,50 @@ class CategoriesController extends Controller
 
         Validator::make($request->all(),
             [
-                'category_code' => 'required'
+                'category_code' => 'required',
+                'category_desc' => 'required'
             ]
         )->validate();
 
-        //update classification based on the http json body that is sent
-        $category->update( $request->all() );
+        
+        $category->category_code = $request->input('category_code');
+        $category->category_desc = $request->input('category_desc');
+        $category->modified_datetime = Carbon::now();
+        $category->modified_by = Auth::user()->id;
+
+
+        //update  based on the http json body that is sent
+        $category->update();
 
         return ( new Reference( $category ) )
             ->response()
             ->setStatusCode(200);
     }
+
+    
+    /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $category = RefCategory::findOrFail($id);
+        $category->is_deleted = 1;
+        $category->deleted_datetime = Carbon::now();
+        $category->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $category->update();
+
+        return ( new Reference( $category ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
 
     /**
      * Remove the specified resource from storage.
