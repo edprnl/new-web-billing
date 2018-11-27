@@ -10,32 +10,28 @@
                 <p class="text-muted">Sign In to your account</p>
                 <b-form @submit.prevent="authLogin()" @input="login.success = null">
                   <b-form-group>
-                    <b-input-group>
-                      <span class="input-group-addon"><i class="icon-user"></i></span>
-                      <b-form-input
-                            v-model="login.name"
-                            :state="login.success"
-                            type="text"
-                            placeholder="Username">
-                      </b-form-input>
-                      <b-form-invalid-feedback>
-                          <i class="fa fa-exclamation-triangle text-danger"></i>
-                          <span v-if="login.success==false">
-                              Incorrect username or password.
-                          </span>
-                      </b-form-invalid-feedback>
-                    </b-input-group>
+                    <label>Username</label>
+                    <b-form-input
+                          v-model="login.name"
+                          :state="login.success"
+                          type="text"
+                          placeholder="Username">
+                    </b-form-input>
+                    <b-form-invalid-feedback>
+                        <i class="fa fa-exclamation-triangle text-danger"></i>
+                        <span v-if="login.success==false">
+                            Incorrect username or password.
+                        </span>
+                    </b-form-invalid-feedback>
                   </b-form-group>
                   <b-form-group>
-                    <b-input-group>
-                      <span class="input-group-addon"><i class="icon-lock"></i></span>
-                      <b-form-input
-                            v-model="login.password"
-                            :state="login.success"
-                            type="password"
-                            placeholder="Password">
-                      </b-form-input>
-                    </b-input-group>
+                    <label>Password</label>
+                    <b-form-input
+                          v-model="login.password"
+                          :state="login.success"
+                          type="password"
+                          placeholder="Password">
+                    </b-form-input>
                   </b-form-group>
                   <b-row>
                     <b-col>

@@ -14,7 +14,8 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showEntry = true, entryMode='Add'">
+                                    <b-button variant="primary" 
+                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1 ">
                                             <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
                             </b-col>
@@ -43,7 +44,7 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data), tabIndex=0">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
@@ -78,37 +79,532 @@
                         </h5>
                         <b-row>
                             <b-col sm="12">
-                                <b-card no-body>
-  <b-tabs card v-model="tabIndex">
-      <b-tab title="Tab 1" >
-        Tab Contents 1
-      </b-tab>
-      <b-tab title="Tab 2" >
-        Tab Contents 2
-      </b-tab>
-      <b-tab title="Tab 3">
-        Tab Contents 3
-      </b-tab>
-    </b-tabs>
-    </b-card>
+                                <b-tabs v-model="tabIndex">
+                                    <b-tab title="Contract Info" >
+                                        <b-row class="mb-2">
+                                            <b-col sm="4">
+                                                <h5>Contract Info</h5>
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col lg="4">
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg="6">
+                                                            <label>Contract No.</label>
+                                                            <b-form-input
+                                                                v-model="forms.contract.fields.contract_no"
+                                                                type="text"
+                                                                readonly
+                                                                placeholder="Auto">
+                                                            </b-form-input>
+                                                        </b-col>
+                                                        <b-col lg="6">
+                                                            <label>Tenant Code</label>
+                                                            <b-form-input
+                                                                v-model="forms.contract.fields.tenant_code"
+                                                                type="text"
+                                                                readonly
+                                                                placeholder="Tenant Code">
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Lessee/Tenant </label>
+                                                    <select2
+                                                        @input="getTenantInfo"
+                                                        :allowClear="false"
+                                                        :placeholder="'Select Tenants'"
+                                                        v-model="forms.contract.fields.tenant_id"
+                                                    >
+                                                        <option v-for="tenant in options.tenants.items" :key="tenant.tenant_id" :value="tenant.tenant_id">{{tenant.trade_name}}</option>
+                                                    </select2>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Signatory </label>
+                                                    <b-form-input
+                                                        v-model="forms.contract.fields.contract_signatory"
+                                                        type="text"
+                                                        readonly
+                                                        placeholder="Signatory">
+                                                    </b-form-input>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Billing Address </label>
+                                                    <b-form-textarea
+                                                        v-model="forms.contract.fields.contract_billing_address"
+                                                        type="text"
+                                                        readonly
+                                                        placeholder="Billing Address">
+                                                    </b-form-textarea>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Department </label>
+                                                    <select2
+                                                        :allowClear="false"
+                                                        :options="options.departments.items"
+                                                        :placeholder="'Select Department'"
+                                                        v-model="forms.contract.fields.department_id"
+                                                    >
+                                                        <option v-for="department in options.departments.items" :key="department.department_id" :value="department.department_id">{{department.department_desc}}</option>
+                                                    </select2>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Nature of Business </label>
+                                                    <select2
+                                                        :allowClear="false"
+                                                        :options="options.natures.items"
+                                                        :placeholder="'Select Nature of Business'"
+                                                        v-model="forms.contract.fields.nature_of_business_id"
+                                                    >
+                                                        <option v-for="nature in options.natures.items" :key="nature.nature_of_business_id" :value="nature.nature_of_business_id">{{nature.nature_of_business_desc}}</option>
+                                                    </select2>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Approved Merchandise </label>
+                                                    <b-form-input
+                                                        v-model="forms.contract.fields.contract_approved_merch"
+                                                        type="text"
+                                                        placeholder="Approved Merchandise">
+                                                    </b-form-input>
+                                                </b-form-group>
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <b-form-group>
+                                                    <label>* Location </label>
+                                                    <select2
+                                                        :allowClear="false"
+                                                        :options="options.locations.items"
+                                                        :placeholder="'Select Location'"
+                                                        v-model="forms.contract.fields.location_id"
+                                                    >
+                                                        <option v-for="location in options.locations.items" :key="location.location_id" :value="location.location_id">{{location.location_desc}}</option>
+                                                    </select2>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Contract Types </label>
+                                                    <select2
+                                                        :allowClear="false"
+                                                        :options="options.contract_types.items"
+                                                        :placeholder="'Select Contract Type'"
+                                                        v-model="forms.contract.fields.contract_type_id"
+                                                    >
+                                                        <option v-for="contract_type in options.contract_types.items" :key="contract_type.contract_type_id" :value="contract_type.contract_type_id">{{contract_type.contract_type_desc}}</option>
+                                                    </select2>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Category </label>
+                                                    <select2
+                                                        :allowClear="false"
+                                                        :options="options.categories.items"
+                                                        :placeholder="'Select Category'"
+                                                        v-model="forms.contract.fields.category_id"
+                                                    >
+                                                        <option v-for="category in options.categories.items" :key="category.category_id" :value="category.category_id">{{category.category_desc}}</option>
+                                                    </select2>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Terms </label>
+                                                    <vue-autonumeric 
+                                                        v-model="forms.contract.fields.contract_terms"
+                                                        :class="'form-control text-right'" 
+                                                        :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 1, decimalPlaces: 0}">
+                                                    </vue-autonumeric>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg="6">
+                                                            <label>* Commencement Date</label>
+                                                            <date-picker 
+                                                                v-model="forms.contract.fields.commencement_date" 
+                                                                lang="en" 
+                                                                input-class="form-control mx-input"
+                                                                format="MMMM DD, YYYY"
+                                                                :clearable="false">
+                                                            </date-picker>
+                                                        </b-col>
+                                                        <b-col lg="6">
+                                                            <label>* Termination Date</label>
+                                                            <date-picker 
+                                                                v-model="forms.contract.fields.termination_date" 
+                                                                lang="en" 
+                                                                input-class="form-control mx-input"
+                                                                format="MMMM DD, YYYY"
+                                                                :clearable="false">
+                                                            </date-picker>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* Start Billing Date </label>
+                                                    <date-picker 
+                                                        v-model="forms.contract.fields.start_billing_date" 
+                                                        lang="en" 
+                                                        input-class="form-control mx-input"
+                                                        format="MMMM DD, YYYY"
+                                                        :clearable="false">
+                                                    </date-picker>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>* App Floor Area </label>
+                                                    <b-row>
+                                                        <b-col lg="6">
+                                                            <vue-autonumeric 
+                                                                :class="'form-control text-right'" 
+                                                                v-model="forms.contract.fields.contract_floor_area" 
+                                                                :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            </vue-autonumeric> 
+                                                        </b-col>
+                                                        <span class="align-self-center">Sq. Meter</span>
+                                                    </b-row>
+                                                </b-form-group>
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <b-form-group>
+                                                    <label>* Fixed Rental </label>
+                                                    <vue-autonumeric 
+                                                        id="fixed_rent"
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.contract_fixed_rent" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Discounted Rental </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.contract_discounted_rent" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Security Deposit </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.security_deposit" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Power Meter Deposit </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.power_meter_deposit" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Escalation % </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.contract_escalation_percent" 
+                                                        :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric>
+                                                </b-form-group>
+                                            </b-col>
+                                        </b-row>
+                                    </b-tab>
+                                    <b-tab title="Schedule" >
+                                        <b-row class="mb-2">
+                                            <b-col sm="4">
+                                                <h5>Schedule of Payments</h5>
+                                            </b-col>
+                                            <b-col  sm="4">
+                                                <span></span>
+                                            </b-col>
+                                            <b-col  sm="4">
+                                                <b-button class="float-right" variant="primary" v-if="this.tables.schedules.items.length == 0" @click="addSchedule()">
+                                                        <i class="fa fa-plus-circle"></i> Add Schedule
+                                                </b-button>
+                                            </b-col>
+                                        </b-row>
+                                        <b-table 
+                                            small bordered
+                                            :fields="tables.schedules.fields"
+                                            :items.sync="tables.schedules.items">
+                                            <template slot="escalation_percent" slot-scope="data">
+                                                <vue-autonumeric 
+                                                    :class="'form-control text-right'"
+                                                    v-model="data.item.escalation_percent" 
+                                                    :options="{minimumValue: 0, maximumValue: 100,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </template>
+                                            <template slot="is_vatted" slot-scope="data">
+                                                <b-form-checkbox
+                                                    v-model="data.item.is_vatted"
+                                                    true-value="1"
+                                                    false-value="0">
+                                                </b-form-checkbox>
+                                            </template>
+                                            <template slot="contract_schedule_notes" slot-scope="data">
+                                                <b-form-input 
+                                                    id="contract_schedule_notes"
+                                                    placeholder="Notes"
+                                                    v-model="data.item.contract_schedule_notes">
+                                                </b-form-input>
+                                            </template>
+                                            <template slot="action" slot-scope="data">
+                                                <b-btn :size="'sm'" variant="primary" @click="addSchedule()">
+                                                    <i class="fa fa-plus-circle"></i>
+                                                </b-btn>
+
+                                                <b-btn :size="'sm'" variant="danger" @click="removeSchedule()">
+                                                    <i class="fa fa-times-circle"></i>
+                                                </b-btn>
+                                            </template>
+                                        </b-table>
+                                    </b-tab>
+                                    <b-tab title="Charges">
+                                        <b-row class="mb-2">
+                                            <b-col>
+                                                <h5>Charges</h5>
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <b-col sm="12">
+                                                <b-tabs>
+                                                    <b-tab title="Utility" >
+                                                        <b-row class="mb-2">
+                                                            <b-col sm="4">
+                                                                <h5>Utility</h5>
+                                                            </b-col>
+                                                            <b-col  sm="4">
+                                                                <span></span>
+                                                            </b-col>
+                                                            <b-col  sm="4">
+                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='utilities'">
+                                                                    <i class="fa fa-plus-circle"></i> Add Charges
+                                                                </b-button>
+                                                            </b-col>
+                                                        </b-row>
+                                                        <b-table 
+                                                            small bordered
+                                                            :fields="tables.utilities.fields"
+                                                            :items.sync="tables.utilities.items">
+                                                            <template slot="contract_rate" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'"
+                                                                    v-model="data.item.contract_rate" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
+                                                            <template slot="contract_default_reading" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'"
+                                                                    v-model="data.item.contract_default_reading" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
+                                                            <template slot="contract_is_vatted" slot-scope="data">
+                                                                <b-form-checkbox
+                                                                    v-model="data.item.contract_is_vatted"
+                                                                    true-value="1"
+                                                                    false-value="0">
+                                                                </b-form-checkbox>
+                                                            </template>
+                                                            <template slot="contract_notes" slot-scope="data">
+                                                                <b-form-input 
+                                                                    placeholder="Notes"
+                                                                    v-model="data.item.contract_notes">
+                                                                </b-form-input>
+                                                            </template>
+                                                            <template slot="action" slot-scope="data">
+                                                                <b-btn :size="'sm'" variant="danger" @click="removeCharge('utilities', data.index)">
+                                                                    <i class="fa fa-times-circle"></i>
+                                                                </b-btn>
+                                                            </template>
+                                                        </b-table>
+                                                    </b-tab>
+                                                    <b-tab title="Miscellaneous" >
+                                                        <b-row class="mb-2">
+                                                            <b-col sm="4">
+                                                                <h5>Miscellaneous</h5>
+                                                            </b-col>
+                                                        <b-col  sm="4">
+                                                                <span></span>
+                                                            </b-col>
+                                                            <b-col  sm="4">
+                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='miscellaneous'">
+                                                                    <i class="fa fa-plus-circle"></i> Add Charges
+                                                                </b-button>
+                                                            </b-col>
+                                                        </b-row>
+                                                        <b-table 
+                                                            small bordered
+                                                            :fields="tables.miscellaneous.fields"
+                                                            :items.sync="tables.miscellaneous.items">
+                                                            <template slot="contract_rate" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'"
+                                                                    v-model="data.item.contract_rate" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
+                                                            <template slot="contract_default_reading" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'"
+                                                                    v-model="data.item.contract_default_reading" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
+                                                            <template slot="contract_is_vatted" slot-scope="data">
+                                                                <b-form-checkbox
+                                                                    v-model="data.item.contract_is_vatted"
+                                                                    true-value="1"
+                                                                    false-value="0">
+                                                                </b-form-checkbox>
+                                                            </template>
+                                                            <template slot="contract_notes" slot-scope="data">
+                                                                <b-form-input 
+                                                                    placeholder="Notes"
+                                                                    v-model="data.item.contract_notes">
+                                                                </b-form-input>
+                                                            </template>
+                                                            <template slot="action" slot-scope="data">
+                                                                <b-btn :size="'sm'" variant="danger" @click="removeCharge('miscellaneous', data.index)">
+                                                                    <i class="fa fa-times-circle"></i>
+                                                                </b-btn>
+                                                            </template>
+                                                        </b-table>
+                                                    </b-tab>
+                                                    <b-tab title="Other" >
+                                                        <b-row class="mb-2">
+                                                            <b-col sm="4">
+                                                                <h5>Other</h5>
+                                                            </b-col>
+                                                            <b-col sm="4">
+                                                                <span></span>
+                                                            </b-col>
+                                                            <b-col  sm="4">
+                                                                <b-button class="float-right" variant="primary" v-if="this.tables.other.items.length == 0" @click="showModalCharges = true, charge_type='other'">
+                                                                    <i class="fa fa-plus-circle"></i> Add Charges
+                                                                </b-button>
+                                                            </b-col>
+                                                        </b-row>
+                                                        <b-table 
+                                                            small bordered
+                                                            :fields="tables.other.fields"
+                                                            :items.sync="tables.other.items">
+                                                            <template slot="contract_rate" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'"
+                                                                    v-model="data.item.contract_rate" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
+                                                            <template slot="contract_default_reading" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'"
+                                                                    v-model="data.item.contract_default_reading" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
+                                                            <template slot="contract_is_vatted" slot-scope="data">
+                                                                <b-form-checkbox
+                                                                    v-model="data.item.contract_is_vatted"
+                                                                    true-value="1"
+                                                                    false-value="0">
+                                                                </b-form-checkbox>
+                                                            </template>
+                                                            <template slot="contract_notes" slot-scope="data">
+                                                                <b-form-input 
+                                                                    placeholder="Notes"
+                                                                    v-model="data.item.contract_notes">
+                                                                </b-form-input>
+                                                            </template>
+                                                            <template slot="action" slot-scope="data">
+                                                                <b-btn :size="'sm'" variant="danger" @click="removeCharge('other', data.index)">
+                                                                    <i class="fa fa-times-circle"></i>
+                                                                </b-btn>
+                                                            </template>
+                                                        </b-table>
+                                                    </b-tab>
+                                                </b-tabs>
+                                            </b-col>
+                                        </b-row>
+                                    </b-tab>
+                                </b-tabs>
+                            </b-col>
+                        </b-row>
+                        <b-row class="pull-right mt-2">
+                            <b-col sm="12">
+                                <b-button 
+                                    :disabled="forms.contract.isSaving" 
+                                    variant="primary" 
+                                    @click="onContractEntry">
+                                    <icon v-if="forms.contract.isSaving" name="sync" spin></icon>
+                                    <i class="fa fa-check"></i>
+                                    Save
+                                </b-button>
+                                <b-button variant="secondary" @click="showEntry=false">Close</b-button>
                             </b-col>
                         </b-row>
                     </b-card>
                 </b-col>
             </b-row>
         </div>
+        <b-modal 
+            v-model="showModalCharges"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Charges
+            </div>
+            <b-col lg=12>
+                <b-table 
+                    small bordered
+                    :fields="tables.charges.fields"
+                    :items.sync="tables.charges.items">
+                    <template slot="is_selected" slot-scope="data">
+                        <input type="checkbox" v-model="data.item.is_selected">
+                    </template>
+                </b-table>
+            </b-col>
+            <div slot="modal-footer">
+                <b-button variant="primary" @click="addCharges(charge_type)">
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalCharges=false">Close</b-button>            
+            </div>
+        </b-modal>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'categories',
+    name: 'contracts',
     data () {
         return {
-            tabIndex: 0,
             entryMode: 'Add',
             showEntry: false, //if true show entry
             showModalDelete: false,
+            showModalCharges: false,
+            options: {
+                tenants: {
+                    items: []
+                },
+                departments: {
+                    items: []
+                },
+                natures: {
+                    items: []
+                },
+                locations: {
+                    items: []
+                },
+                contract_types: {
+                    items: []
+                },
+                categories: {
+                    items: []
+                },
+                months: {
+                    items: []
+                }
+            },
             forms: {
                 contract: {
                     isSaving: false,
@@ -135,6 +631,10 @@ export default {
                         contract_escalation_percent: 0,
                         security_deposit: 0,
                         power_meter_deposit: 0,
+                        schedules: [],
+                        utilities: [],
+                        miscellaneous: [],
+                        other: [],
                     },
                     states: {
                         contract_id: null,
@@ -218,7 +718,231 @@ export default {
                         },
                         {
                             key:'action',
-                            label:'Action'
+                            label:'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                        }
+                    ],
+                    items: []
+                },
+                charges: {
+                    fields: [
+                        {
+                            key: 'charge_id',
+                            thClass: 'd-none',
+                            tdClass: 'd-none'
+                        },
+                        {
+                            key: 'is_selected',
+                            label: '',
+                            tdClass: 'text-center'
+                        },
+                        {
+                            key:'charge_code',
+                            label: 'Charge Code'
+                        },
+                        {
+                            key:'charge_desc',
+                            label: 'Description'
+                        },
+                    ],
+                    items:[]
+                },
+                schedules: {
+                    fields: [
+                        {
+                            key: 'count',
+                            label: '',
+                            tdClass: 'align-middle'
+                        },
+                        {
+                            key: 'month_name',
+                            label: 'App Month',
+                            thStyle: {width: '8%'},
+                            tdClass: 'align-middle'
+                        },
+                        {
+                            key: 'app_year',
+                            label: 'Year',
+                            tdClass: 'align-middle',
+                            thStyle: {width: '5%'},
+                        },
+                        {
+                            key: 'fixed_rent',
+                            label: 'Fixed Rent',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'},
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
+                        },
+                        {
+                            key: 'escalation_percent',
+                            label: 'Escalation %',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'}
+                        },
+                        {
+                            key: 'amount_due',
+                            label: 'Amount Due',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'},
+                            formatter: (value, key, item) => {
+                                item.amount_due = Number(item.fixed_rent) + (Number(item.fixed_rent) * (Number(item.escalation_percent)/100))
+                                return this.formatNumber(item.amount_due)
+                                
+                            }
+                        },
+                        {
+                            key: 'is_vatted',
+                            label: 'Is Vatted?',
+                            thClass: 'text-center',
+                            tdClass: 'text-center align-middle'
+                        },
+                        {
+                            key: 'contract_schedule_notes',
+                            label: 'Notes'
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                        }
+                    ],
+                    items: []
+                },
+                utilities: {
+                    fields: [
+                        {
+                            key: 'charge_id',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none'
+                        },
+                        {
+                            key: 'charge_desc',
+                            label: 'Description',
+                            tdClass: 'align-middle'
+                        },
+                        {
+                            key: 'contract_rate',
+                            label: 'Rate',
+                            tdClass: 'align-middle text-right'
+                        },
+                        {
+                            key: 'contract_default_reading',
+                            label: 'Default Reading',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle'
+                        },
+                        {
+                            key: 'contract_is_vatted',
+                            label: 'Is Vatted?',
+                            thClass: 'text-center',
+                            tdClass: 'text-center align-middle'
+                        },
+                        {
+                            key: 'contract_notes',
+                            label: 'Notes'
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                            tdClass: 'text-center'
+                        }
+                    ],
+                    items: []
+                },
+                miscellaneous: {
+                    fields: [
+                        {
+                            key: 'charge_id',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none'
+                        },
+                        {
+                            key: 'charge_desc',
+                            label: 'Description',
+                            tdClass: 'align-middle'
+                        },
+                        {
+                            key: 'contract_rate',
+                            label: 'Rate',
+                            tdClass: 'align-middle text-right'
+                        },
+                        {
+                            key: 'contract_default_reading',
+                            label: 'Default Reading',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle'
+                        },
+                        {
+                            key: 'contract_is_vatted',
+                            label: 'Is Vatted?',
+                            thClass: 'text-center',
+                            tdClass: 'text-center align-middle'
+                        },
+                        {
+                            key: 'contract_notes',
+                            label: 'Notes'
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                            tdClass: 'text-center'
+                        }
+                    ],
+                    items: []
+                },
+                other: {
+                    fields: [
+                        {
+                            key: 'charge_id',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none'
+                        },
+                        {
+                            key: 'charge_desc',
+                            label: 'Description',
+                            tdClass: 'align-middle'
+                        },
+                        {
+                            key: 'contract_rate',
+                            label: 'Rate',
+                            tdClass: 'align-middle text-right'
+                        },
+                        {
+                            key: 'contract_default_reading',
+                            label: 'Default Reading',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle'
+                        },
+                        {
+                            key: 'contract_is_vatted',
+                            label: 'Is Vatted?',
+                            thClass: 'text-center',
+                            tdClass: 'text-center align-middle'
+                        },
+                        {
+                            key: 'contract_notes',
+                            label: 'Notes'
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                            tdClass: 'text-center'
                         }
                     ],
                     items: []
@@ -236,36 +960,145 @@ export default {
                     perPage: 10
                 }
             },
-            datarow: []
+            counter: 0,
+            app_year: null,
+            charge_type: null,
+            tabIndex: 0
         }
     },
     methods:{
-        onCategoryEntry () {
+        onContractEntry () {
+            this.forms.contract.fields.schedules = this.tables.schedules.items
+            this.forms.contract.fields.utilities = this.tables.utilities.items
+            this.forms.contract.fields.miscellaneous = this.tables.miscellaneous.items
+            this.forms.contract.fields.other = this.tables.other.items
+
             if(this.entryMode == 'Add'){
-                this.createEntity('category', true, 'categories')
+                this.createEntity('contract', false, 'contracts')
             }
             else{
-                this.updateEntity('category', true, this.datarow)
+                this.updateEntity('contract', 'contract_id', false, 'contracts')
             }
         
             //this.showModalEntry=false
         },
         setUpdate(data){
-            this.fillEntityForm('category', data.item.category_id)
-            this.showModalEntry=true
-            this.entryMode='Edit'
-            this.datarow=data.item.category_id
-            // this.tables.categories.items.filter(function(elem){
-            //     if(elem.category_id == 42) return elem
-            // })
-            // console.log(data.index)
-        }
+            this.fillEntityForm('contract', data.item.contract_id)
+            this.$http.get('/api/contracts/'+ data.item.contract_id,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+                const res = response.data
+                this.tables.schedules.items = res.schedules
+                this.tables.utilities.items = res.util_charges
+                this.tables.miscellaneous.items = res.misc_charges
+                this.tables.other.items = res.othr_charges
+                this.showEntry=true
+                this.entryMode='Edit'
+                this.counter = this.tables.schedules.items.length
+            }).catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
+        },
+        addSchedule(){
+            try {
+                if(this.forms.contract.fields.contract_terms >= this.counter){
+                    var fixed_rent = 0
+                    var start = new Date(this.forms.contract.fields.start_billing_date)
+                    if(this.counter == 0){
+                        this.app_year = start.getFullYear()
+                        fixed_rent = this.forms.contract.fields.contract_fixed_rent
+                    }
+                    else{
+                        var prev_schedule = this.tables.schedules.items.find(s => s.count == this.counter)
+                        fixed_rent = prev_schedule.amount_due
+                    }
+                    var month;
+                    var month_value = start.getMonth() + 1
+                    var add_year = false
+                    var escalation_percent = 0
+                    var month_id = (month_value + this.counter) % 12
+                    var amount_due = fixed_rent
+
+                    if(month_id == 0){
+                        month = this.options.months.items.find(d => d.month_id === 12)
+                        add_year = true
+                    }
+                    else{
+                        month = this.options.months.items.find(d => d.month_id === month_id)
+                    }
+
+                    this.counter++;
+                    if(this.counter % 12 == 1){
+                        if(this.counter != 1){
+                            escalation_percent = this.forms.contract.fields.contract_escalation_percent
+                        }
+                    }
+
+                    this.tables.schedules.items.push({count: this.counter, month_name:month.month_name, month_id:month.month_id, app_year:this.app_year, fixed_rent:fixed_rent, escalation_percent:escalation_percent, amount_due:amount_due, is_vatted:0, contract_schedule_notes:''})
+
+                    if(add_year){
+                        this.app_year++
+                    }   
+                }
+                else{
+                    return
+                }
+            } catch(e)
+            {
+                console.log(e)
+            }
+        },
+        removeSchedule(){
+            this.tables.schedules.items.splice(this.tables.schedules.items.length - 1, 1)
+            this.counter--
+        },
+        addCharges(charge_type){
+            try {
+                this.tables.charges.items.forEach(charge => {
+                    if(charge.is_selected){
+                        this.tables[charge_type].items.push({charge_id: charge.charge_id, charge_desc: charge.charge_desc, contract_rate:0, contract_default_reading:0, contract_is_vatted:0, contract_notes:''})
+                        charge.is_selected = false
+                    }
+                });
+                this.showModalCharges = false
+            }
+            catch(e){
+                console.log(e)
+            }
+        },
+        removeCharge(charge_type, index){
+            this.tables[charge_type].items.splice(index, 1)
+        },
+        getTenantInfo: function (value, data) {
+            if(data.length > 0){
+                var tenant = this.options.tenants.items[data[0].element.index]
+                this.forms.contract.fields.tenant_code = tenant.tenant_code;
+                this.forms.contract.fields.contract_signatory = tenant.contact_person;
+                this.forms.contract.fields.contract_billing_address = tenant.billing_address;
+            }
+            else{
+                //this.contract.tenant_code = '';
+            }
+        },
+        formatNumber(value) {
+            let val = (value/1).toFixed(2)
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
     },
     created () {
-        this.fillTableList('contracts');
+        this.fillTableList('contracts')
+        this.fillTableList('charges')
+        this.fillOptionsList('tenants')
+        this.fillOptionsList('departments')
+        this.fillOptionsList('natures')
+        this.fillOptionsList('locations')
+        this.fillOptionsList('contract_types')
+        this.fillOptionsList('categories')
+        this.fillOptionsList('months')
     },
   }
-</script>
-
-
 </script>

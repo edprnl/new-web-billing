@@ -74,8 +74,13 @@
         clearFields (entity) {
           var fields = this.forms[entity].fields
           for (var keyField in fields) {
-            if (typeof fields[keyField] !== 'object') {
-              fields[keyField] = null
+            if (typeof fields[keyField] !== 'object') { 
+              if(typeof fields[keyField] == 'number'){
+                fields[keyField] = 0
+              }
+              else{
+                fields[keyField] = null
+              }
             } else {
               var innerFields = fields[keyField]
               for (var innerKey in innerFields) {
@@ -142,6 +147,7 @@
             })
             .then((response) => {
               const items = response.data.data
+              console.log(items);
               this.forms[entity].fields = items
             }).catch(error => {
               if (!error.response) return
