@@ -15,7 +15,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
-                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1 ">
+                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, counter = 0 ">
                                             <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
                             </b-col>
@@ -143,7 +143,6 @@
                                                     <label>* Department </label>
                                                     <select2
                                                         :allowClear="false"
-                                                        :options="options.departments.items"
                                                         :placeholder="'Select Department'"
                                                         v-model="forms.contract.fields.department_id"
                                                     >
@@ -153,8 +152,7 @@
                                                 <b-form-group>
                                                     <label>* Nature of Business </label>
                                                     <select2
-                                                        :allowClear="false"
-                                                        :options="options.natureofbusinesses.items"
+                                                        :allowClear="false" 
                                                         :placeholder="'Select Nature of Business'"
                                                         v-model="forms.contract.fields.nature_of_business_id"
                                                     >
@@ -175,7 +173,6 @@
                                                     <label>* Location </label>
                                                     <select2
                                                         :allowClear="false"
-                                                        :options="options.locations.items"
                                                         :placeholder="'Select Location'"
                                                         v-model="forms.contract.fields.location_id"
                                                     >
@@ -186,7 +183,6 @@
                                                     <label>* Contract Types </label>
                                                     <select2
                                                         :allowClear="false"
-                                                        :options="options.contracttypes.items"
                                                         :placeholder="'Select Contract Type'"
                                                         v-model="forms.contract.fields.contract_type_id"
                                                     >
@@ -197,7 +193,6 @@
                                                     <label>* Category </label>
                                                     <select2
                                                         :allowClear="false"
-                                                        :options="options.categories.items"
                                                         :placeholder="'Select Category'"
                                                         v-model="forms.contract.fields.category_id"
                                                     >
@@ -322,7 +317,8 @@
                                         <b-table 
                                             small bordered
                                             :fields="tables.schedules.fields"
-                                            :items.sync="tables.schedules.items">
+                                            :items.sync="tables.schedules.items"
+                                            show-empty>
                                             <template slot="escalation_percent" slot-scope="data">
                                                 <vue-autonumeric 
                                                     :class="'form-control text-right'"
@@ -333,8 +329,8 @@
                                             <template slot="is_vatted" slot-scope="data">
                                                 <b-form-checkbox
                                                     v-model="data.item.is_vatted"
-                                                    true-value="1"
-                                                    false-value="0">
+                                                    value=1
+                                                    unchecked-value=0>
                                                 </b-form-checkbox>
                                             </template>
                                             <template slot="contract_schedule_notes" slot-scope="data">
@@ -381,7 +377,8 @@
                                                         <b-table 
                                                             small bordered
                                                             :fields="tables.utilities.fields"
-                                                            :items.sync="tables.utilities.items">
+                                                            :items.sync="tables.utilities.items"
+                                                            show-empty>
                                                             <template slot="contract_rate" slot-scope="data">
                                                                 <vue-autonumeric 
                                                                     :class="'form-control text-right'"
@@ -399,8 +396,8 @@
                                                             <template slot="contract_is_vatted" slot-scope="data">
                                                                 <b-form-checkbox
                                                                     v-model="data.item.contract_is_vatted"
-                                                                    true-value="1"
-                                                                    false-value="0">
+                                                                    value=1
+                                                                    unchecked-value=0>
                                                                 </b-form-checkbox>
                                                             </template>
                                                             <template slot="contract_notes" slot-scope="data">
@@ -433,7 +430,8 @@
                                                         <b-table 
                                                             small bordered
                                                             :fields="tables.miscellaneous.fields"
-                                                            :items.sync="tables.miscellaneous.items">
+                                                            :items.sync="tables.miscellaneous.items"
+                                                            show-empty>
                                                             <template slot="contract_rate" slot-scope="data">
                                                                 <vue-autonumeric 
                                                                     :class="'form-control text-right'"
@@ -451,8 +449,8 @@
                                                             <template slot="contract_is_vatted" slot-scope="data">
                                                                 <b-form-checkbox
                                                                     v-model="data.item.contract_is_vatted"
-                                                                    true-value="1"
-                                                                    false-value="0">
+                                                                    value=1
+                                                                    unchecked-value=0>
                                                                 </b-form-checkbox>
                                                             </template>
                                                             <template slot="contract_notes" slot-scope="data">
@@ -477,7 +475,7 @@
                                                                 <span></span>
                                                             </b-col>
                                                             <b-col  sm="4">
-                                                                <b-button class="float-right" variant="primary" v-if="this.tables.other.items.length == 0" @click="showModalCharges = true, charge_type='other'">
+                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='other'">
                                                                     <i class="fa fa-plus-circle"></i> Add Charges
                                                                 </b-button>
                                                             </b-col>
@@ -485,7 +483,8 @@
                                                         <b-table 
                                                             small bordered
                                                             :fields="tables.other.fields"
-                                                            :items.sync="tables.other.items">
+                                                            :items.sync="tables.other.items"
+                                                            show-empty>
                                                             <template slot="contract_rate" slot-scope="data">
                                                                 <vue-autonumeric 
                                                                     :class="'form-control text-right'"
@@ -503,8 +502,8 @@
                                                             <template slot="contract_is_vatted" slot-scope="data">
                                                                 <b-form-checkbox
                                                                     v-model="data.item.contract_is_vatted"
-                                                                    true-value="1"
-                                                                    false-value="0">
+                                                                    value=1
+                                                                    unchecked-value=0>
                                                                 </b-form-checkbox>
                                                             </template>
                                                             <template slot="contract_notes" slot-scope="data">
@@ -556,7 +555,8 @@
                 <b-table 
                     small bordered
                     :fields="tables.charges.fields"
-                    :items.sync="tables.charges.items">
+                    :items.sync="tables.charges.items"
+                    show-empty>
                     <template slot="is_selected" slot-scope="data">
                         <input type="checkbox" v-model="data.item.is_selected">
                     </template>
@@ -691,6 +691,8 @@ export default {
                     fields:[
                         {
                             key: 'contract_id',
+                            thClass: 'd-none',
+                            tdClass: 'd-none'
                         },
                         {
                             key:'contract_no',
@@ -831,6 +833,7 @@ export default {
                         {
                             key: 'contract_rate',
                             label: 'Rate',
+                            thClass: 'text-right',
                             tdClass: 'align-middle text-right'
                         },
                         {
@@ -875,6 +878,7 @@ export default {
                         {
                             key: 'contract_rate',
                             label: 'Rate',
+                            thClass: 'text-right',
                             tdClass: 'align-middle text-right'
                         },
                         {
@@ -919,6 +923,7 @@ export default {
                         {
                             key: 'contract_rate',
                             label: 'Rate',
+                            thClass: 'text-right',
                             tdClass: 'align-middle text-right'
                         },
                         {
@@ -979,12 +984,10 @@ export default {
             else{
                 this.updateEntity('contract', 'contract_id', false, 'contracts')
             }
-        
-            //this.showModalEntry=false
         },
         setUpdate(data){
             this.fillEntityForm('contract', data.item.contract_id)
-            this.$http.get('/api/contracts/'+ data.item.contract_id,{
+            this.$http.get('/api/contracts/sc/'+ data.item.contract_id,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
@@ -1038,7 +1041,17 @@ export default {
                         }
                     }
 
-                    this.tables.schedules.items.push({count: this.counter, month_name:month.month_name, month_id:month.month_id, app_year:this.app_year, fixed_rent:fixed_rent, escalation_percent:escalation_percent, amount_due:amount_due, is_vatted:0, contract_schedule_notes:''})
+                    this.tables.schedules.items.push({
+                        count: this.counter,
+                        month_name:month.month_name,
+                        month_id:month.month_id,
+                        app_year:this.app_year,
+                        fixed_rent:fixed_rent,
+                        escalation_percent:escalation_percent,
+                        amount_due:amount_due,
+                        is_vatted:0,
+                        contract_schedule_notes:''
+                    })
 
                     if(add_year){
                         this.app_year++
@@ -1060,7 +1073,14 @@ export default {
             try {
                 this.tables.charges.items.forEach(charge => {
                     if(charge.is_selected){
-                        this.tables[charge_type].items.push({charge_id: charge.charge_id, charge_desc: charge.charge_desc, contract_rate:0, contract_default_reading:0, contract_is_vatted:0, contract_notes:''})
+                        this.tables[charge_type].items.push({
+                            charge_id: charge.charge_id,
+                            charge_desc: charge.charge_desc,
+                            contract_rate: 0,
+                            contract_default_reading: 0,
+                            contract_is_vatted: 0,
+                            contract_notes:''
+                        })
                         charge.is_selected = false
                     }
                 });
@@ -1080,14 +1100,7 @@ export default {
                 this.forms.contract.fields.contract_signatory = tenant.contact_person;
                 this.forms.contract.fields.contract_billing_address = tenant.billing_address;
             }
-            else{
-                //this.contract.tenant_code = '';
-            }
-        },
-        formatNumber(value) {
-            let val = (value/1).toFixed(2)
-            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        },
+        }
     },
     created () {
         this.fillTableList('contracts')

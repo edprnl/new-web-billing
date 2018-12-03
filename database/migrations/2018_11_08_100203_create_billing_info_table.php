@@ -25,7 +25,7 @@ class CreateBillingInfoTable extends Migration
             $table->decimal('total_fixed_rent', 15, 5)->nullable(true);
             $table->decimal('total_util_charges', 15, 5)->nullable(true);
             $table->decimal('total_misc_charges', 15, 5)->nullable(true);
-            $table->decimal('total_other_charges', 15, 5)->nullable(true);
+            $table->decimal('total_othr_charges', 15, 5)->nullable(true);
             $table->decimal('sub_total', 15, 5)->nullable(true);
             $table->decimal('vattable_amount', 15, 5)->nullable(true);
             $table->decimal('vat_percent', 15, 5)->nullable(true);

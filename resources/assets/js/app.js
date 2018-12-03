@@ -7,6 +7,7 @@
 
 require('./bootstrap');
 require('select2');
+window.moment = require('moment')
 window.Vue = require('vue');
 
 /**
@@ -17,14 +18,13 @@ window.Vue = require('vue');
 
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
-import App from './App.vue';
-import router from './router';
+import Vue from 'vue'
+import BootstrapVue from 'bootstrap-vue'
+import App from './App.vue'
+import router from './router'
 import FormMixin from './mixins/FormMixin'
 import axios from 'axios'
 import Notifications from 'vue-notification'
-// import select2 from './select2/select2'
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -35,7 +35,6 @@ import DatePicker from 'vue2-datepicker'
 
 Vue.use(Notifications)
 Vue.use(DatePicker)
-Vue.use(require('vue-moment'))
 Vue.component('icon', Icon)
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
@@ -48,7 +47,6 @@ Vue.component('icon', Icon)
 Vue.component('App', require('./App.vue'))
 Vue.component('select2', require('./select2/select2'))
 Vue.component('vue-autonumeric', require('vue-autonumeric'))
-Vue.component('moment', require('moment'))
 window.$ = window.jQuery = require('jquery')
 Vue.use(BootstrapVue)
 

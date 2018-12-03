@@ -1,31 +1,30 @@
 <template>
-  <router-view></router-view>
+    <router-view></router-view>
 </template>
 
 <script>
 export default {
   name: 'app',
-  created() {
-            if(localStorage.token) {
-                this.$http.get('/api/user', {
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
-                },
-                ).then(response => {
-                    this.$store.commit('loginUser')
-                    this.$store.commit('user', response.data)
-                }).catch(error => {
-                    if (error.response.status === 401 || error.response.status === 403) {
-                        this.$store.commit('logoutUser')
-                        localStorage.setItem('token', '')
-                        this.$router.push({name: 'Login'})
-                    }
+    created() {
+        if(localStorage.token) {
+            this.$http.get('/api/user', {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            },
+            ).then(response => {
+                this.$store.commit('loginUser')
+                this.$store.commit('user', response.data)
+            }).catch(error => {
+                if (error.response.status === 401 || error.response.status === 403) {
+                    this.$store.commit('logoutUser')
+                    localStorage.setItem('token', '')
+                    this.$router.push({name: 'Login'})
+                }
 
-                });
-            }
-
+            });
         }
+    }
 }
 </script>
 <style>

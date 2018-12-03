@@ -138,8 +138,9 @@
           }
         },
 
-        fillTableList (entity) {
-          this.$http.get('/api/' + entity ,{
+        //fill table with filter
+        filterTableList (entity, filter) {
+          this.$http.get('/api/' + entity + '/' + filter ,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
@@ -158,7 +159,42 @@
             })
         },
 
-        
+        fillTableList (entity) {
+          this.$http.get('/api/' + entity,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+              const records = response.data
+              this.tables[entity].items = records.data
+              this.paginations[entity].totalRows = records.data.length
+              // ### commented for future server side pagination
+              // this.paginations[entity].totalRows = records.meta.total
+              // this.paginations[entity].currentPage = records.meta.current_page
+              // this.paginations[entity].perPage = records.meta.per_page
+            }).catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
+        },
+
+        //fill options with filter
+        filterOptionsList (entity, filter) {
+          this.$http.get('api/' + entity + '/' + filter,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+              const items = response.data.data
+              this.options[entity].items = items
+            })
+            .catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
+        },
 
         fillOptionsList (entity) {
           this.$http.get('api/' + entity,{
@@ -169,7 +205,8 @@
             .then((response) => {
               const items = response.data.data
               this.options[entity].items = items
-            }).catch(error => {
+            })
+            .catch(error => {
               if (!error.response) return
               console.log(error)
             })
@@ -183,14 +220,22 @@
             })
             .then((response) => {
               const items = response.data.data
-              console.log(items);
               this.forms[entity].fields = items
-            }).catch(error => {
+            })
+            .catch(error => {
               if (!error.response) return
               console.log(error)
             })
+        },
+        // format number into 2 decimal places with comma
+        formatNumber(value) {
+            let val = (value/1).toFixed(2)
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
+        // format date with date and format as parameters
+        moment: function (date, format) {
+            return moment(date).format(format);
         }
-
       }
     }
 </script>

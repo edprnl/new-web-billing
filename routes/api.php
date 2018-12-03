@@ -116,11 +116,13 @@ Route::middleware('auth:api')->group(function () {
 
      //---------------------------------- REFERENCES -----------------------------------------------
 
+     //---------------------------------- TRANSACTIONS ---------------------------------------------
     //CONTRACT INFO
     //List contracts
     Route::get('contracts', 'Transactions\ContractsController@index');
+    Route::get('contracts/{tenant_id}', 'Transactions\ContractsController@index');
     //List Schedules and Charges
-    Route::get('contracts/{id}', 'Transactions\ContractsController@scheduleAndCharges');
+    Route::get('contracts/sc/{id}', 'Transactions\ContractsController@scheduleAndCharges');
     //List Schedules and Charges for Billing
     Route::get('contracts/{id}/{app_year}/{month_id}', 'Transactions\ContractsController@scheduleAndChargesBilling');
     //List single contract
@@ -132,4 +134,22 @@ Route::middleware('auth:api')->group(function () {
     //Delete contract
     Route::delete('contract/{id}', 'Transactions\ContractsController@delete');
     // END CONTRACT
+
+    //List Billings
+    Route::get('billings', 'Transactions\BillingsController@index');
+    Route::get('billings/{period_id}', 'Transactions\BillingsController@index');
+    //schedule and charges of billing
+    Route::get('billings/sc/{id}', 'Transactions\BillingsController@scheduleAndCharges');
+    //List single billing
+    Route::get('billing/{id}', 'Transactions\BillingsController@show');
+    Route::get('billing/{month_id}/{app_year}/{tenant_id}', 'Transactions\BillingsController@prevBalance');
+    //Create new contract
+    Route::post('billing', 'Transactions\BillingsController@create');
+    //Update billing
+    Route::put('billing/{id}', 'Transactions\BillingsController@update');
+    //Delete billing
+    Route::delete('billing/{id}', 'Transactions\BillingsController@delete');
+    // END billing
+
+    //---------------------------------- TRANSACTIONS ---------------------------------------------
 });

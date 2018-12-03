@@ -1,12 +1,12 @@
 <style>
     .select2-container--bootstrap4 .select2-selection {
-        font-size: .73rem!important;
+        font-size: .69rem!important;
     }
     .select2-search--dropdown .select2-search__field{
-        font-size: .73rem!important;
+        font-size: .69rem!important;
     }
     .select2-results__option {
-        font-size: .73rem!important;
+        font-size: .69rem!important;
     }
 </style>
 
@@ -38,9 +38,9 @@
         },
         watch: {
             value: function (value) {
-            $(this.$el)
-                .val(value)
-                .trigger('change')
+                $(this.$el)
+                    .val(value)
+                    .trigger('change')
             },
             options: function (options) {
                 $(this.$el).empty().select2({

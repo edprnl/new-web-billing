@@ -16,7 +16,7 @@ class MonthsController extends Controller
      */
     public function index()
     {
-        $months = Months::orderBy('month_id', 'desc')->get();
+        $months = Months::orderBy('month_id', 'asc')->get();
         return Reference::collection($months);
     }
 

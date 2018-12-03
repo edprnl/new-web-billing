@@ -22,16 +22,19 @@ class ContractsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($tenant_id = null)
     {
         $contracts = ContractInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
                             ->leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
                             ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
                             ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
                             ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
-                            ->where('b_contract_info.is_deleted', 0)
-                            ->get();
-        return Reference::collection($contracts);
+                            ->where('b_contract_info.is_deleted', 0);
+        if($tenant_id != null){
+            $contracts->where('b_contract_info.tenant_id', $tenant_id);
+        }  
+
+        return Reference::collection($contracts->get());
     }
 
     public function scheduleAndCharges($id)
@@ -44,6 +47,63 @@ class ContractsController extends Controller
                     )
                     ->join('b_refmonths', 'b_refmonths.month_id', '=', 'b_contract_schedule.month_id')
                     ->where('contract_id', $id)->get();
+        $util_charges = ContractUtilCharges::select(
+                        'contract_util_id',
+                        'contract_id',
+                        'contract_util_rate as contract_rate',
+                        'contract_util_default_reading as contract_default_reading',
+                        'contract_util_is_vatted as contract_is_vatted',
+                        'contract_util_notes as contract_notes',
+                        'b_refcharges.charge_id',
+                        'b_refcharges.charge_desc'
+                    )
+                    ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_contract_util_charges.charge_id')
+                    ->where('contract_id', $id)->get();
+        $misc_charges = ContractMiscCharges::select(
+                        'contract_misc_id',
+                        'contract_id',
+                        'contract_misc_rate as contract_rate',
+                        'contract_misc_default_reading as contract_default_reading',
+                        'contract_misc_is_vatted as contract_is_vatted',
+                        'contract_misc_notes as contract_notes',
+                        'b_refcharges.charge_id',
+                        'b_refcharges.charge_desc'
+                    )
+                    ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_contract_misc_charges.charge_id')
+                    ->where('contract_id', $id)->get();
+        $othr_charges = ContractOthrCharges::select(
+                        'contract_othr_id',
+                        'contract_id',
+                        'contract_othr_rate as contract_rate',
+                        'contract_othr_default_reading as contract_default_reading',
+                        'contract_othr_is_vatted as contract_is_vatted',
+                        'contract_othr_notes as contract_notes',
+                        'b_refcharges.charge_id',
+                        'b_refcharges.charge_desc'
+                    )
+                    ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_contract_othr_charges.charge_id')
+                    ->where('contract_id', $id)->get();
+
+        $contracts['schedules'] = Reference::collection($schedules);
+        $contracts['util_charges'] = Reference::collection($util_charges);
+        $contracts['misc_charges'] = Reference::collection($misc_charges);
+        $contracts['othr_charges'] = Reference::collection($othr_charges);
+        return $contracts;
+    }
+
+    public function scheduleAndChargesBilling($id, $app_year = NULL, $month_id = NULL)
+    {
+        DB::statement(DB::raw('set @row=0'));
+        $schedules = ContractSchedule::select(
+                        'b_contract_schedule.*',
+                        'b_refmonths.*',
+                        DB::raw("@row := @row + 1 as count")
+                    )
+                    ->join('b_refmonths', 'b_refmonths.month_id', '=', 'b_contract_schedule.month_id')
+                    ->where('app_year', $app_year)
+                    ->where('b_contract_schedule.month_id', $month_id)
+                    ->where('contract_id', $id)
+                    ->get();
         $util_charges = ContractUtilCharges::select(
                         'contract_util_id',
                         'contract_id',
@@ -239,7 +299,7 @@ class ContractsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $contract_info = ContractInfo::findOrFail($request->input('contract_id'));;
+        $contract_info = ContractInfo::findOrFail($request->input('contract_id'));
         $contract_schedule = new ContractSchedule;
         $contract_util_charges = new ContractUtilCharges;
         $contract_misc_charges = new ContractMiscCharges;
