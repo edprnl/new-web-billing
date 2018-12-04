@@ -40,7 +40,13 @@ export default {
           name: 'Nature Of Business',
           url: '/references/natureofbusiness',
           //icon: 'fas fa-code-branch'
+        },
+        {
+          name: 'Billing Period',
+          url: '/references/billingperiods',
+          //icon: 'fas fa-code-branch'
         }
+
 
       ]
     },

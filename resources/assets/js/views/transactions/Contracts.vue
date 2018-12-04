@@ -118,7 +118,7 @@
                                                         :placeholder="'Select Tenants'"
                                                         v-model="forms.contract.fields.tenant_id"
                                                     >
-                                                        <option v-for="tenant in options.tenants.items" :key="tenant.tenant_id" :value="tenant.tenant_id">{{tenant.trade_name}}</option>
+                                                    <option v-for="tenant in options.tenants.items" :key="tenant.tenant_id" :value="tenant.tenant_id">{{tenant.trade_name}}</option>
                                                     </select2>
                                                 </b-form-group>
                                                 <b-form-group>

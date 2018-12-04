@@ -36,6 +36,7 @@ import categories from '@/views/references/Categories'
 import locations from '@/views/references/Locations'
 import contracttypes from '@/views/references/ContractTypes'
 import natureofbusiness from '@/views/references/NatureOfBusiness'
+import billingperiods from '@/views/references/BillingPeriods'
 
 //Views - Transactions
 import contracts from '@/views/transactions/Contracts'
@@ -108,6 +109,12 @@ const router = new Router({
               path: 'natureofbusiness',
               name: 'Nature Of Business',
               component: natureofbusiness,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'billingperiods',
+              name: 'Billing Periods',
+              component: billingperiods,
               meta: {requiresAuth: true}
             },
 

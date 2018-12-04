@@ -20,8 +20,7 @@ class BillingPeriodController extends Controller
      */
     public function index()
     {
-        $periods = BillingPeriod::select('*', 'app_year AS view_year')
-                    ->join('b_refmonths', 'b_refmonths.month_id', '=', 'b_refbillingperiod.month_id')
+        $periods = BillingPeriod::join('b_refmonths', 'b_refmonths.month_id', '=', 'b_refbillingperiod.month_id')
                     ->where('is_deleted', 0)->orderBy('period_id', 'desc')->get();
         return Reference::collection($periods);
     }
@@ -31,9 +30,33 @@ class BillingPeriodController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        Validator::make($request->all(),
+        [
+            'period_start_date' => 'required',
+            'period_end_date' => 'required',
+            'month_id' => 'required',
+            'app_year' => 'required',
+            'period_due_date' => 'required'
+        ]
+        )->validate();
+
+        $period = new BillingPeriod();
+        $period->period_start_date = date("Y-m-d",strtotime($request->input('period_start_date')));
+        $period->period_end_date = date("Y-m-d",strtotime($request->input('period_end_date')));
+        $period->month_id = $request->input('month_id');
+        $period->app_year = date("Y",strtotime($request->input('app_year')));
+        $period->period_due_date = date("Y-m-d",strtotime($request->input('period_due_date')));
+        $period->created_datetime = Carbon::now();
+        $period->created_by = Auth::user()->id;
+
+        $period->save();
+
+        //return json based from the resource data
+        return ( new Reference( $period ))
+                ->response()
+                ->setStatusCode(201);
     }
 
     /**
@@ -55,7 +78,13 @@ class BillingPeriodController extends Controller
      */
     public function show($id)
     {
-        //
+        //$period = BillingPeriod::select('*',DB::raw("CONCAT(app_year,'-01','-01') as app_year"))->findOrFail($id);
+
+        $period = BillingPeriod::findOrFail($id);
+
+        return ( new Reference( $period ) )
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -79,6 +108,34 @@ class BillingPeriodController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $period = BillingPeriod::findOrFail($id);
+
+        Validator::make($request->all(),
+        [
+            'period_start_date' => 'required',
+            'period_end_date' => 'required',
+            'month_id' => 'required',
+            'app_year' => 'required',
+            'period_due_date' => 'required'
+        ]
+        )->validate();
+
+        
+        $period->period_start_date = date("Y-m-d",strtotime($request->input('period_start_date')));
+        $period->period_end_date = date("Y-m-d",strtotime($request->input('period_end_date')));
+        $period->month_id = $request->input('month_id');
+        $period->app_year = date("Y",strtotime($request->input('app_year')));
+        $period->period_due_date = date("Y-m-d",strtotime($request->input('period_due_date')));
+        $period->modified_datetime = Carbon::now();
+        $period->modified_by = Auth::user()->id;
+
+        $period->update();
+
+        //return json based from the resource data
+        return ( new Reference( $period ))
+                ->response()
+                ->setStatusCode(201);
+
     }
 
     /**
