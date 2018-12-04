@@ -8,6 +8,7 @@ use App\Models\References\Charges;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Auth;
 
 class ChargesController extends Controller
 {
@@ -18,7 +19,8 @@ class ChargesController extends Controller
      */
     public function index()
     {
-        $charges = Charges::where('is_deleted', 0)->orderBy('charge_id', 'desc')->get();
+        $charges = Charges::leftJoin('account_titles', 'account_titles.account_id', '=', 'b_refcharges.account_id')
+                        ->where('b_refcharges.is_deleted', 0)->orderBy('charge_id', 'desc')->get();
         return Reference::collection($charges);
     }
 
@@ -29,8 +31,27 @@ class ChargesController extends Controller
      */
     public function create(Request $request)
     {
+        Validator::make($request->all(),
+            [
+                'charge_code' => 'required',
+                'charge_desc' => 'required'
+            ]
+        )->validate();
 
-    }
+        $charge = new Charges();
+        $charge->charge_code = $request->input('charge_code');
+        $charge->charge_desc = $request->input('charge_desc');
+        $charge->account_id = $request->input('account_id');
+        $charge->created_datetime = Carbon::now();
+        $charge->created_by = Auth::user()->id;
+
+        $charge->save();
+
+        //return json based from the resource data
+        return ( new Reference( $charge ))
+                ->response()
+                ->setStatusCode(201);
+        }
 
     /**
      * Store a newly created resource in storage.
@@ -51,7 +72,11 @@ class ChargesController extends Controller
      */
     public function show($id)
     {
+        $charge = Charges::findOrFail($id);
 
+        return ( new Reference( $charge ) )
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -74,7 +99,26 @@ class ChargesController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Validator::make($request->all(),
+            [
+                'charge_code' => 'required',
+                'charge_desc' => 'required'
+            ]
+        )->validate();
 
+        $charge = Charges::findOrFail($id);
+        $charge->charge_code = $request->input('charge_code');
+        $charge->charge_desc = $request->input('charge_desc');
+        $charge->account_id = $request->input('account_id');
+        $charge->modified_datetime = Carbon::now();
+        $charge->modified_by = Auth::user()->id;
+
+        $charge->save();
+
+        //return json based from the resource data
+        return ( new Reference( $charge ))
+                ->response()
+                ->setStatusCode(201);
     }
 
     /**

@@ -33,8 +33,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('auth:api')->group(function () {
 
    //---------------------------------- REFERENCES -----------------------------------------------
-
+   // List of Charges
    Route::get('charges', 'References\ChargesController@index');
+   // List of Account
+   Route::get('accounts', 'References\AccountTitlesController@index');
+   //List single charge
+   Route::get('charge/{id}', 'References\ChargesController@show');
+   //Create new category
+   Route::post('charge', 'References\ChargesController@create');
+   //Update charge
+   Route::put('charge/{id}', 'References\ChargesController@update');
+   //Delete charge
+   Route::delete('charge/{id}', 'References\ChargesController@delete');
+   // Charges
+
    Route::get('periods', 'References\BillingPeriodController@index');
    //List categories
    Route::get('categories', 'References\CategoriesController@index');
@@ -108,7 +120,7 @@ Route::middleware('auth:api')->group(function () {
     //Create new tenant
     Route::post('tenant', 'References\TenantsController@create');
     //Update tenant
-    Route::put('tenant', 'References\TenantsController@update');
+    Route::put('tenant/{id}', 'References\TenantsController@update');
     //Delete tenant
     Route::delete('tenant/{id}', 'References\TenantsController@delete');
     // END TENANT

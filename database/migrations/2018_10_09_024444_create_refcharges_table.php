@@ -17,6 +17,7 @@ class CreateRefchargesTable extends Migration
             $table->increments('charge_id');
             $table->string('charge_code')->default('');
             $table->string('charge_desc')->default('');
+            $table->integer('account_title')->nullable(true);
             $table->datetime('created_datetime')->nullable(true);
             $table->integer('created_by')->nullable(true);
             $table->datetime('modified_datetime')->nullable(true);
