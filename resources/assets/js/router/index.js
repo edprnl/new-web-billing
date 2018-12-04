@@ -32,6 +32,7 @@ import Register from '@/views/pages/Register'
 //Views - References
 import tenants from '@/views/references/Tenants'
 import departments from '@/views/references/Departments'
+import charges from '@/views/references/Charges'
 import categories from '@/views/references/Categories'
 import locations from '@/views/references/Locations'
 import contracttypes from '@/views/references/ContractTypes'
@@ -91,6 +92,12 @@ const router = new Router({
               path: 'categories',
               name: 'Categories',
               component: categories,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'charges',
+              name: 'Charges',
+              component: charges,
               meta: {requiresAuth: true}
             },
             {

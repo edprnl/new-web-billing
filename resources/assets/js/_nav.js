@@ -21,6 +21,11 @@ export default {
           //icon: 'fas fa-code-branch'
         },
         {
+          name: 'Charges',
+          url: '/references/charges',
+          //icon: 'fas fa-code-branch'
+        },
+        {
           name: 'Categories',
           url: '/references/categories',
           //icon: 'fas fa-code-branch'

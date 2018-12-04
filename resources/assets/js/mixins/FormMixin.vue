@@ -39,8 +39,8 @@
         },
 
         updateEntity (entity, entity_id, isModal, entity_table) {
-          this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
+          this.resetFieldStates(entity)
 
           this.$http.put('api/' + entity + '/' + this.forms[entity].fields[entity_id], this.forms[entity].fields ,{
               headers: {
@@ -67,7 +67,14 @@
               this.forms[entity].isSaving = false
               if (!error.response) return
               const errors = error.response.data.errors
-              console.log(errors)
+              for (var key in errors) {
+                this.forms[entity].states[key] = false
+                this.forms[entity].errors[key] =  errors[key]
+              }
+              // this.forms[entity].isSaving = false
+              // if (!error.response) return
+              // const errors = error.response.data.errors
+              // console.log(errors)
             })
         },
 
