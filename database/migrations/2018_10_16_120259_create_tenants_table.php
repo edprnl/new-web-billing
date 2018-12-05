@@ -26,15 +26,15 @@ class CreateTenantsTable extends Migration
             $table->string('contact_number', 60)->default('');
             $table->string('email_address', 100)->default('');
             $table->string('tin_number', 60)->default('');
-            $table->tinyInteger('is_auto', false, '0')->default(0);
-            $table->tinyInteger('business_permit', false, '0')->default(0);
-            $table->tinyInteger('tenant_information_sheet', false, '0')->default(0);
-            $table->tinyInteger('valid_id', false, '0')->default(0);
-            $table->tinyInteger('tin_cor', false, '0')->default(0);
-            $table->tinyInteger('dti_sec', false, '0')->default(0);
-            $table->tinyInteger('notarized_contract', false, '0')->default(0);
-            $table->tinyInteger('proof_of_billing', false, '0')->default(0);
-            $table->tinyInteger('others', false, '0')->default(0);
+            $table->boolean('is_auto')->default(0);
+            $table->boolean('business_permit')->default(0);
+            $table->boolean('tenant_information_sheet')->default(0);
+            $table->boolean('valid_id')->default(0);
+            $table->boolean('tin_cor')->default(0);
+            $table->boolean('dti_sec')->default(0);
+            $table->boolean('notarized_contract')->default(0);
+            $table->boolean('proof_of_billing')->default(0);
+            $table->boolean('others')->default(0);
             $table->string('others_specify', 255)->default('')->nullable(true);;
             $table->datetime('created_datetime')->nullable(true);
             $table->integer('created_by')->nullable(true);
@@ -42,7 +42,7 @@ class CreateTenantsTable extends Migration
             $table->integer('modified_by')->nullable(true);
             $table->datetime('deleted_datetime')->nullable(true);
             $table->integer('deleted_by')->nullable(true);
-            $table->tinyInteger('is_deleted', false, '0')->default(0);
+            $table->boolean('is_deleted')->default(0);
         });
     }
 

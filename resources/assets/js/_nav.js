@@ -50,7 +50,16 @@ export default {
       ]
     },
     {
-      divider: true
+      name: 'Utilities',
+      url: '/utilities',
+      icon: 'icon-star',
+      children:[
+        {
+          name: 'Users',
+          url: '/utilities/users',
+          //icon: 'fa-building'
+        }
+      ]
     },
     {
       name: 'Transactions',

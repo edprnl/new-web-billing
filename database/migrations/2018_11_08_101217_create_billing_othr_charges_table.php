@@ -20,7 +20,7 @@ class CreateBillingOthrChargesTable extends Migration
             $table->integer('billing_othr_rate')->default(0)->nullable(true);
             $table->decimal('billing_othr_reading', 15, 5)->default(0)->nullable(true);
             $table->decimal('billing_othr_line_total', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('billing_othr_is_vatted', false, '0')->default(0);
+            $table->boolean('billing_othr_is_vatted')->default(0);
             $table->string('billing_othr_notes')->default('')->nullable(true);
         });
     }

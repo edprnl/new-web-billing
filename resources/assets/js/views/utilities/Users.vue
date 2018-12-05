@@ -1,0 +1,321 @@
+<template>
+    <!--<b-animated fade-in>  main container -->
+    <div>
+        <notifications group="notification" />
+        <div class="animated fadeIn">
+            <b-row>
+                <b-col sm="12">
+                    <b-card >
+                        <h5 slot="header">
+                            <span class="text-primary">
+                                <i class="fa fa-bars"></i> 
+                                User List
+                                <small class="font-italic">List of all registered user.</small></span>
+                        </h5>
+                        <b-row class="mb-2">
+                            <b-col sm="4">
+                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('user')">
+                                            <i class="fa fa-plus-circle"></i> Create New User
+                                    </b-button>
+                            </b-col>
+
+                            <b-col  sm="4">
+                                <span></span>
+                            </b-col>
+
+                            <b-col  sm="4">
+                                <b-form-input 
+                                            v-model="filters.users.criteria"
+                                            type="text" 
+                                            placeholder="Search">
+                                </b-form-input>
+                            </b-col>
+                        </b-row>
+
+                        <b-row>
+                            <b-col sm="12">
+                                <b-table 
+                                    :filter="filters.users.criteria"
+                                    :fields="tables.users.fields"
+                                    :items.sync="tables.users.items"
+                                    :current-page="paginations.users.currentPage"
+                                    :per-page="paginations.users.perPage"
+                                    striped hover small bordered show-empty
+                                >
+                                    <template slot="action" slot-scope="data">
+                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                            <i class="fa fa-edit"></i>
+                                        </b-btn>
+
+                                        <b-btn :size="'sm'" variant="danger" @click="onUserDelete(data)">
+                                            <i class="fa fa-trash"></i>
+                                        </b-btn>
+                                    </template>
+                                    
+                                </b-table>
+
+                                <b-pagination
+                                            :align="'right'"
+                                            :total-rows="paginations.users.totalRows"
+                                            :per-page="paginations.users.perPage"
+                                            v-model="paginations.users.currentPage" />
+                            </b-col>
+                        </b-row>
+
+                    </b-card>
+                </b-col>
+            </b-row>
+        </div>
+        <b-modal 
+            v-model="showModalEntry"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                User Entry - {{entryMode}}
+            </div>
+            <b-col lg=12>
+                <b-form @keydown="resetFieldStates('user')">
+                    <b-row>
+                        <b-col sm="6">
+                            <b-form-group>
+                                <label for="user_code">* Username</label>
+                                <b-form-input
+                                    id="username"
+                                    v-model="forms.user.fields.username"
+                                    :state="forms.user.states.username"
+                                    type="text"
+                                    placeholder="Username">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.username">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                            <b-form-group>
+                                <label>* Password</label>
+                                <b-form-input
+                                    id="password"
+                                    v-model="forms.user.fields.password"
+                                    :state="forms.user.states.password"
+                                    type="password"
+                                    placeholder="Password">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.password">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                            <b-form-group>
+                                <label>* Confirm Password</label>
+                                <b-form-input
+                                    id="confirm_password"
+                                    v-model="forms.user.fields.password_confirmation"
+                                    :state="forms.user.states.confirm_password"
+                                    type="password"
+                                    placeholder="Confirm Password">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.confirm_password">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                            <b-form-group>
+                                <label for="user_code">* Email</label>
+                                <b-form-input
+                                    id="email"
+                                    v-model="forms.user.fields.email"
+                                    :state="forms.user.states.email"
+                                    type="text"
+                                    placeholder="Email">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.email">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                        </b-col>
+                        <b-col sm="6">
+                            <b-form-group>
+                                <label>Firstname</label>
+                                <b-form-input
+                                    id="firstname"
+                                    v-model="forms.user.fields.firstname"
+                                    :state="forms.user.states.firstname"
+                                    type="text"
+                                    placeholder="Firstname">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.firstname">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                            <b-form-group>
+                                <label>Middlename</label>
+                                <b-form-input
+                                    id="middlename"
+                                    v-model="forms.user.fields.middlename"
+                                    :state="forms.user.states.middlename"
+                                    type="text"
+                                    placeholder="Middlename">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.middlename">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                            <b-form-group>
+                                <label>Lastname</label>
+                                <b-form-input
+                                    id="lastname"
+                                    v-model="forms.user.fields.lastname"
+                                    :state="forms.user.states.lastname"
+                                    type="text"
+                                    placeholder="Lastname">
+                                </b-form-input>
+                                <b-form-invalid-feedback>
+                                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                                    <span v-for="itemError in forms.user.errors.lastname">
+                                        {{itemError}}
+                                    </span>
+                                </b-form-invalid-feedback>
+                            </b-form-group>
+                        </b-col>
+                    </b-row>
+                </b-form>
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.user.isSaving" variant="primary" @click="onUserEntry">
+                    <icon v-if="forms.user.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>            
+            </div>
+        </b-modal>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'users',
+    data () {
+        return {
+            entryMode: 'Add',
+            showModalEntry: false, //if true show modal
+            showModalDelete: false,
+            forms: {
+                user : {
+                    isSaving: false,
+                    fields: {
+                        user_id: null,
+                        username: null,
+                        firstname: null,
+                        middlename: null,
+                        lastname: null,
+                        email: null,
+                        password: null,
+                        password_confirmation: null,
+                    },
+                    states: {
+                        username: null,
+                        firstname: null,
+                        middlename: null,
+                        lastname: null,
+                        email: null,
+                        password: null,
+                        password_confirmation: null,
+                    },
+                    errors: {
+                        username: null,
+                        firstname: null,
+                        middlename: null,
+                        lastname: null,
+                        email: null,
+                        password: null,
+                        password_confirmation: null,
+                    }
+                }
+            },
+            tables: {
+                users: {
+                    fields:[
+                        {
+                            key:'username',
+                            label: 'Username',
+                        },
+                        {
+                            key:'firstname',
+                            label: 'Firstname',
+                        },
+                        {
+                            key:'middlename',
+                            label: 'Middlename',
+                        },
+                        {
+                            key:'lastname',
+                            label: 'Lastname',
+                        },
+                        {
+                            key:'email',
+                            label: 'Email',
+                        },
+                        {
+                            key:'action',
+                            label:'',
+                            thStyle: {width: '75px'}
+                        }
+                    ],
+                    items: []
+                }
+            },
+            filters: {
+                users: {
+                    criteria: null
+                }
+            },
+            paginations: {
+                users: {
+                    totalRows: 0,
+                    currentPage: 1,
+                    perPage: 10
+                }
+            },
+        }
+    },
+    methods:{
+        onUserEntry () {
+            if(this.entryMode == 'Add'){
+                this.createEntity('user', true, 'users')
+            }
+            else{
+                this.updateEntity('user', 'id', true, 'users')
+            }
+        },
+        onUserDelete(data){
+            this.deleteEntity('user', data.item.id, false, 'users')
+        },
+        setUpdate(data){
+            this.fillEntityForm('user', data.item.id)
+            this.showModalEntry=true
+            this.entryMode='Edit'
+        }
+    },
+    created () {
+        this.fillTableList('users');
+    },
+  }
+</script>
+

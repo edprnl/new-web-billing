@@ -19,7 +19,7 @@ class CreateBillingScheduleTable extends Migration
             $table->integer('month_id')->default(0)->nullable(true);
             $table->integer('app_year')->default(0)->nullable(true);
             $table->decimal('line_total', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('is_vatted', false, '0')->default(0);
+            $table->boolean('is_vatted')->default(0);
             $table->string('billing_schedule_notes')->default('')->nullable(true);
         });
     }

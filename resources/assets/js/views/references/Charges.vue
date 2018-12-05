@@ -86,7 +86,7 @@
                         <b-form-group>
                             <label for="charge_code">* Charge Code</label>
                             <b-form-input
-                                name="charge_code"
+                                id="charge_code"
                                 v-model="forms.charge.fields.charge_code"
                                 :state="forms.charge.states.charge_code"
                                 type="text"
@@ -102,7 +102,7 @@
                         <b-form-group>
                             <label>* Charge Desc</label>
                             <b-form-input
-                                name="charge_desc"
+                                id="charge_desc"
                                 v-model="forms.charge.fields.charge_desc"
                                 :state="forms.charge.states.charge_desc"
                                 type="text"
@@ -118,7 +118,7 @@
                         <b-form-group>
                             <label>Account Title</label>
                             <select2
-                                name="account_title"
+                                id="account_title"
                                 :allowClear="false"
                                 :placeholder="'Select Account Title'"
                                 v-model="forms.charge.fields.account_id"
@@ -225,7 +225,6 @@ export default {
             perPage: 10
           }
         },
-        modalShow: false
       }
     },
     methods:{

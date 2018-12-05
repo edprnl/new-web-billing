@@ -19,7 +19,7 @@ class CreateContractUtilChargesTable extends Migration
             $table->integer('charge_id')->default(0)->nullable(true);
             $table->decimal('contract_util_rate', 15, 5)->default(0)->nullable(true);
             $table->decimal('contract_util_default_reading', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('contract_util_is_vatted', false, '0')->default(0);
+            $table->boolean('contract_util_is_vatted')->default(0);
             $table->string('contract_util_notes')->default('')->nullable(true);
         });
     }

@@ -75,7 +75,7 @@
                                 Tenant Entry - {{entryMode}}
                             </span>
                         </h5>
-                        <form @keydown="forms.tenant.errors[$event.target.name] = null, forms.tenant.states[$event.target.name] = null">
+                        <form @keydown="resetFieldStates('tenant')">
                             <b-row>
                                 <b-col sm="4">
                                     <div class="border border-dark text-center">
@@ -85,6 +85,7 @@
                                     <b-form-group>
                                         <label>Tenant Code</label>
                                         <b-form-input
+                                            id="tenant_code"
                                             v-model="forms.tenant.fields.tenant_code"
                                             type="text"
                                             readonly
@@ -94,7 +95,7 @@
                                     <b-form-group>
                                         <label>* Trade Name</label>
                                         <b-form-input
-                                            name="trade_name"
+                                            id="trade_name"
                                             v-model="forms.tenant.fields.trade_name"
                                             :state="forms.tenant.states.trade_name"
                                             type="text"
@@ -110,7 +111,7 @@
                                     <b-form-group>
                                         <label>* Company Name</label>
                                         <b-form-input
-                                            name="company_name"
+                                            id="company_name"
                                             v-model="forms.tenant.fields.company_name"
                                             :state="forms.tenant.states.company_name"
                                             type="text"
@@ -126,7 +127,7 @@
                                     <b-form-group>
                                         <label>* Business Concept</label>
                                         <b-form-input
-                                            name="business_concept"
+                                            id="business_concept"
                                             v-model="forms.tenant.fields.business_concept"
                                             :state="forms.tenant.states.business_concept"
                                             type="text"
@@ -142,7 +143,7 @@
                                     <b-form-group>
                                         <label>* Head Office Address</label>
                                         <b-form-textarea
-                                            name="head_office_address"
+                                            id="head_office_address"
                                             v-model="forms.tenant.fields.head_office_address"
                                             :state="forms.tenant.states.head_office_address"
                                             type="text"
@@ -159,7 +160,7 @@
                                     <b-form-group>
                                         <label>* Billing Address</label>
                                         <b-form-textarea
-                                            name="billing_address"
+                                            id="billing_address"
                                             v-model="forms.tenant.fields.billing_address"
                                             :state="forms.tenant.states.billing_address"
                                             type="text"
@@ -182,7 +183,7 @@
                                     <b-form-group>
                                         <label>* Contact Person</label>
                                         <b-form-input
-                                            name="contact_person"
+                                            id="contact_person"
                                             v-model="forms.tenant.fields.contact_person"
                                             :state="forms.tenant.states.contact_person"
                                             type="text"
@@ -198,7 +199,7 @@
                                     <b-form-group>
                                         <label>* Designation</label>
                                         <b-form-input
-                                            name="designation"
+                                            id="designation"
                                             v-model="forms.tenant.fields.designation"
                                             :state="forms.tenant.states.designation"
                                             type="text"
@@ -214,7 +215,7 @@
                                     <b-form-group>
                                         <label>* Contact Number</label>
                                         <b-form-input
-                                            name="contact_number"
+                                            id="contact_number"
                                             v-model="forms.tenant.fields.contact_number"
                                             :state="forms.tenant.states.contact_number"
                                             type="text"
@@ -230,7 +231,7 @@
                                     <b-form-group>
                                         <label>* Email Address</label>
                                         <b-form-input
-                                            name="email_address"
+                                            id="email_address"
                                             v-model="forms.tenant.fields.email_address"
                                             :state="forms.tenant.states.email_address"
                                             type="text"
@@ -246,7 +247,7 @@
                                     <b-form-group>
                                         <label>* TIN</label>
                                         <b-form-input
-                                            name="tin_number"
+                                            id="tin_number"
                                             v-model="forms.tenant.fields.tin_number"
                                             :state="forms.tenant.states.tin_number"
                                             type="text"
@@ -262,6 +263,7 @@
                                     <b-form-group>
                                         <label>Auto Penalty Previous Balance</label>
                                         <b-form-radio-group 
+                                            id="is_auto"
                                             v-model="forms.tenant.fields.is_auto">
                                             <b-form-radio value="1">On</b-form-radio>
                                             <b-form-radio value="0">Off</b-form-radio>
@@ -275,6 +277,7 @@
                                     <br>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="business_permit"
                                             v-model="forms.tenant.fields.business_permit"
                                             value="1"
                                             unchecked-value="0">
@@ -283,6 +286,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="tenant_information_sheet"
                                             v-model="forms.tenant.fields.tenant_information_sheet"
                                             value="1"
                                             unchecked-value="0">
@@ -291,6 +295,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="valid_id"
                                             v-model="forms.tenant.fields.valid_id"
                                             value="1"
                                             unchecked-value="0">
@@ -299,6 +304,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="tin_cor"
                                             v-model="forms.tenant.fields.tin_cor"
                                             value="1"
                                             unchecked-value="0">
@@ -307,6 +313,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="dti_sec"
                                             v-model="forms.tenant.fields.dti_sec"
                                             value="1"
                                             unchecked-value="0">
@@ -315,6 +322,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="notarized_contract"
                                             v-model="forms.tenant.fields.notarized_contract"
                                             value="1"
                                             unchecked-value="0">
@@ -323,6 +331,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="proof_of_billing"
                                             v-model="forms.tenant.fields.proof_of_billing"
                                             value="1"
                                             unchecked-value="0">
@@ -331,6 +340,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-checkbox
+                                            id="others"
                                             @change="forms.tenant.fields.others_specify=null"
                                             v-model="forms.tenant.fields.others"
                                             value="1"
@@ -340,6 +350,7 @@
                                     </b-form-group>
                                     <b-form-group>
                                         <b-form-textarea
+                                            id="others_specify"
                                             :disabled="forms.tenant.fields.others == 1 ? false : true"
                                             v-model="forms.tenant.fields.others_specify"
                                             type="text"

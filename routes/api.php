@@ -124,9 +124,22 @@ Route::middleware('auth:api')->group(function () {
     //Delete tenant
     Route::delete('tenant/{id}', 'References\TenantsController@delete');
     // END TENANT
-
-
      //---------------------------------- REFERENCES -----------------------------------------------
+
+     //---------------------------------- UTILITIES ------------------------------------------------
+    //USER
+    //List users
+    Route::get('users', 'Utilities\UsersController@index');
+    //List single user
+    Route::get('user/{id}', 'Utilities\UsersController@show');
+    //Create new user
+    Route::post('user', 'Utilities\UsersController@create');
+    //Update user
+    Route::put('user/{id}', 'Utilities\UsersController@update');
+    //Delete user
+    Route::delete('tenuserant/{id}', 'Utilities\UsersController@delete');
+    // END USER
+     //---------------------------------- UTILITIES ------------------------------------------------
 
      //---------------------------------- TRANSACTIONS ---------------------------------------------
     //CONTRACT INFO

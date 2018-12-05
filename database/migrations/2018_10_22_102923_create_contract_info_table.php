@@ -35,8 +35,8 @@ class CreateContractInfoTable extends Migration
             $table->decimal('contract_floor_area', 15, 5)->nullable(true);
             $table->integer('department_id')->default(0)->nullable(true);
             $table->integer('nature_of_business_id')->default(0)->nullable(true);
-            $table->tinyInteger('is_approved', false, '0')->default(0);
-            $table->tinyInteger('is_closed', false, '0')->default(0);
+            $table->boolean('is_approved')->default(0);
+            $table->boolean('is_closed')->default(0);
             $table->integer('approved_by')->default(0)->nullable(true);
             $table->datetime('created_datetime')->nullable(true);
             $table->integer('created_by')->default(0)->nullable(true);
@@ -44,7 +44,7 @@ class CreateContractInfoTable extends Migration
             $table->integer('modified_by')->default(0)->nullable(true);
             $table->datetime('deleted_datetime')->nullable(true);
             $table->integer('deleted_by')->default(0)->nullable(true);
-            $table->tinyInteger('is_deleted', false, '0')->default(0);
+            $table->boolean('is_deleted')->default(0);
         });
     }
 

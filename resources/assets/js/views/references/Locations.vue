@@ -195,7 +195,6 @@ export default {
             perPage: 10
           }
         },
-        modalShow: false
       }
     },
     methods:{

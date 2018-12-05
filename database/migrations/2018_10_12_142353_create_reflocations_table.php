@@ -23,7 +23,7 @@ class CreateReflocationsTable extends Migration
             $table->integer('modified_by')->nullable(true);
             $table->datetime('deleted_datetime')->nullable(true);
             $table->integer('deleted_by')->nullable(true);
-            $table->tinyInteger('is_deleted', false, '0')->default(0);
+            $table->boolean('is_deleted')->default(0);
         });
     }
 

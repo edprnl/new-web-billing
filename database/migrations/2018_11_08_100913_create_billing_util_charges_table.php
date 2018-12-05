@@ -20,7 +20,7 @@ class CreateBillingUtilChargesTable extends Migration
             $table->integer('billing_util_rate')->default(0)->nullable(true);
             $table->decimal('billing_util_reading', 15, 5)->default(0)->nullable(true);
             $table->decimal('billing_util_line_total', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('billing_util_is_vatted', false, '0')->default(0);
+            $table->boolean('billing_util_is_vatted')->default(0);
             $table->string('billing_util_notes')->default('')->nullable(true);
         });
     }

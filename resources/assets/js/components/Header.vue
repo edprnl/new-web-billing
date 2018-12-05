@@ -21,7 +21,7 @@
       <b-nav-item-dropdown right>
         <template slot="button-content">
           <!-- image -->
-          <span class="d-md-down-none">{{$store.state.user.name}}</span>
+          <span class="d-md-down-none">{{$store.state.user.firstname}}</span>
         </template>
         <b-dropdown-item @click="logOut()"><i class="fa fa-lock"></i>Logout</b-dropdown-item>
       </b-nav-item-dropdown>

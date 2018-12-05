@@ -21,7 +21,7 @@ class CreateContractScheduleTable extends Migration
             $table->decimal('fixed_rent', 15, 5)->default(0)->nullable(true);
             $table->decimal('escalation_percent', 15, 5)->default(0)->nullable(true);
             $table->decimal('amount_due', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('is_vatted', false, '0')->default(0);
+            $table->boolean('is_vatted')->default(0);
             $table->string('contract_schedule_notes')->default('')->nullable(true);
         });
     }

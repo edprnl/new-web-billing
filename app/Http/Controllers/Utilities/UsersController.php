@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\References;
+namespace App\Http\Controllers\Utilities;
 
 use Illuminate\Http\Request;
+use App\User;
 use App\Http\Controllers\Controller;
-use App\Models\References\Charges;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use Auth;
 
-class ChargesController extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,9 +20,8 @@ class ChargesController extends Controller
      */
     public function index()
     {
-        $charges = Charges::leftJoin('account_titles', 'account_titles.account_id', '=', 'b_refcharges.account_id')
-                        ->where('b_refcharges.is_deleted', 0)->orderBy('charge_id', 'desc')->get();
-        return Reference::collection($charges);
+        $users = User::where('is_deleted', 0)->get();                           
+        return Reference::collection($users);
     }
 
     /**
@@ -30,25 +30,29 @@ class ChargesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-    {
+    {   
         Validator::make($request->all(),
             [
-                'charge_code' => 'required',
-                'charge_desc' => 'required'
+                'username' => 'required|string|max:255|unique:b_users',
+                'email' => 'required|string|email|max:255|unique:b_users',
+                'password' => 'required|string|min:6|confirmed',
             ]
         )->validate();
 
-        $charge = new Charges();
-        $charge->charge_code = $request->input('charge_code');
-        $charge->charge_desc = $request->input('charge_desc');
-        $charge->account_id = $request->input('account_id');
-        $charge->created_datetime = Carbon::now();
-        $charge->created_by = Auth::user()->id;
+        $user = new User();
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        $user->email = $request->input('email');
+        $user->firstname = $request->input('firstname');
+        $user->middlename = $request->input('middlename');
+        $user->lastname = $request->input('lastname');
+        $user->created_datetime = Carbon::now();
+        $user->created_by = Auth::user()->id;
 
-        $charge->save();
+        $user->save();
 
         //return json based from the resource data
-        return ( new Reference( $charge ))
+        return ( new Reference( $user ))
                 ->response()
                 ->setStatusCode(201);
     }
@@ -72,9 +76,9 @@ class ChargesController extends Controller
      */
     public function show($id)
     {
-        $charge = Charges::findOrFail($id);
+        $user = User::findOrFail($id);
 
-        return ( new Reference( $charge ) )
+        return ( new Reference( $user ) )
             ->response()
             ->setStatusCode(200);
     }
@@ -101,22 +105,26 @@ class ChargesController extends Controller
     {
         Validator::make($request->all(),
             [
-                'charge_code' => 'required',
-                'charge_desc' => 'required'
+                'username' => 'required|string|max:255|unique:b_users,username,'.$id,
+                'email' => 'required|string|email|max:255|unique:b_users,email,'.$id,
+                'password' => 'required|string|min:6|confirmed',
             ]
         )->validate();
 
-        $charge = Charges::findOrFail($id);
-        $charge->charge_code = $request->input('charge_code');
-        $charge->charge_desc = $request->input('charge_desc');
-        $charge->account_id = $request->input('account_id');
-        $charge->modified_datetime = Carbon::now();
-        $charge->modified_by = Auth::user()->id;
+        $user = User::findOrFail($id);
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        $user->email = $request->input('email');
+        $user->firstname = $request->input('firstname');
+        $user->middlename = $request->input('middlename');
+        $user->lastname = $request->input('lastname');
+        $user->modified_datetime = Carbon::now();
+        $user->modified_by = Auth::user()->id;
 
-        $charge->save();
+        $user->save();
 
         //return json based from the resource data
-        return ( new Reference( $charge ))
+        return ( new Reference( $user ))
                 ->response()
                 ->setStatusCode(201);
     }

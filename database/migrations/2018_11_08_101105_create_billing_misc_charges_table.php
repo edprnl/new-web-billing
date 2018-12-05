@@ -20,7 +20,7 @@ class CreateBillingMiscChargesTable extends Migration
             $table->integer('billing_misc_rate')->default(0)->nullable(true);
             $table->decimal('billing_misc_reading', 15, 5)->default(0)->nullable(true);
             $table->decimal('billing_misc_line_total', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('billing_misc_is_vatted', false, '0')->default(0);
+            $table->boolean('billing_misc_is_vatted')->default(0);
             $table->string('billing_misc_notes')->default('')->nullable(true);
         });
     }

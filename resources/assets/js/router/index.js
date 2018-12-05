@@ -38,6 +38,9 @@ import locations from '@/views/references/Locations'
 import contracttypes from '@/views/references/ContractTypes'
 import natureofbusiness from '@/views/references/NatureOfBusiness'
 
+//Views - Utilities
+import users from '@/views/utilities/Users'
+
 //Views - Transactions
 import contracts from '@/views/transactions/Contracts'
 import billing from '@/views/transactions/Billing'
@@ -118,6 +121,21 @@ const router = new Router({
               meta: {requiresAuth: true}
             },
 
+          ]
+        },
+        {
+          path: 'utilities',
+          name: 'Utilities',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'users',
+              name: 'Users',
+              component: users,
+              meta: {requiresAuth: true}
+            }
           ]
         },
         {
@@ -271,7 +289,7 @@ router.beforeEach((to, from, next) => {
 
 // if logged in redirect to dashboard
   if(to.path === '/login' && store.state.isLoggedIn) {
-      next({ name: 'Dashboard' })
+      next({name: from.name})
       return
   }
 

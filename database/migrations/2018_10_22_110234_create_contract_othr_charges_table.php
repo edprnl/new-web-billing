@@ -19,7 +19,7 @@ class CreateContractOthrChargesTable extends Migration
             $table->integer('charge_id')->default(0)->nullable(true);
             $table->decimal('contract_othr_rate', 15, 5)->default(0)->nullable(true);
             $table->decimal('contract_othr_default_reading', 15, 5)->default(0)->nullable(true);
-            $table->tinyInteger('contract_othr_is_vatted', false, '0')->default(0);
+            $table->boolean('contract_othr_is_vatted')->default(0);
             $table->string('contract_othr_notes')->default('')->nullable(true);
         });
     }
