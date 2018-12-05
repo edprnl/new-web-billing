@@ -83,7 +83,7 @@
           this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
 
-          this.$http.delete('api/' + entity + '/' + entity_id, this.forms[entity].fields  ,{
+          this.$http.delete('api/' + entity + '/delete/' + entity_id, this.forms[entity].fields  ,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }

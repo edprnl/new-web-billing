@@ -47,7 +47,19 @@ Route::middleware('auth:api')->group(function () {
    Route::delete('charge/{id}', 'References\ChargesController@delete');
    // Charges
 
+   //List billing period
    Route::get('periods', 'References\BillingPeriodController@index');
+   //List billing period
+   Route::get('period/{id}', 'References\BillingPeriodController@show');
+   //Create billing period
+   Route::post('period', 'References\BillingPeriodController@create');
+   //Update billing period
+   Route::put('period/{id}', 'References\BillingPeriodController@update');
+   //Delete billing period
+   Route::delete('period/{id}', 'References\BillingPeriodController@delete');
+   // END billing period
+
+   Route::get('charges', 'References\ChargesController@index');
    //List categories
    Route::get('categories', 'References\CategoriesController@index');
    //List single category
