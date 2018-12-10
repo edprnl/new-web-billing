@@ -48,7 +48,7 @@
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" >
+                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -634,6 +634,26 @@
                 <b-button variant="secondary" @click="showModalCharges=false">Close</b-button>            
             </div>
         </b-modal>
+        <b-modal 
+            v-model="showModalDelete"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Delete Billing
+            </div>
+            <b-col lg=12>
+                Are you sure you want to delete this billing?
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.billing.isSaving" variant="primary" @click="onBillingDelete">
+                    <icon v-if="forms.billing.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    OK
+                </b-button>
+                <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -1034,7 +1054,8 @@ export default {
             counter: 0,
             charge_type: null,
             previous_balance: 0,
-            whtax_percent: 0
+            whtax_percent: 0,
+            billing_id: null
         }
     },
     methods:{
@@ -1054,6 +1075,22 @@ export default {
             else{
                 this.updateEntity('billing', 'billing_id', false, 'billings')
             }
+        },
+        onBillingDelete(){
+            this.deleteEntity('billing', this.billing_id, true, 'billings')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('billing', data.item.billing_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.billing_id = data.item.billing_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.filterOptionsList('contracts', data.item.tenant_id)

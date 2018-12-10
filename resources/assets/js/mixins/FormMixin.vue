@@ -83,7 +83,7 @@
           this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
 
-          this.$http.delete('api/' + entity + '/delete/' + entity_id, this.forms[entity].fields  ,{
+          this.$http.put('api/' + entity + '/delete/' + entity_id, this.forms[entity].fields  ,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
@@ -98,10 +98,7 @@
               })
               this.fillTableList(entity_table)
               if(isModal){
-                this.showModalEntry = false
-              }
-              else{
-                this.showEntry = false
+                this.showModalDelete = false
               }
               
             }).catch(error => {
@@ -233,6 +230,27 @@
               if (!error.response) return
               console.log(error)
             })
+        },
+
+        // function which checks if id of entity was used
+        async checkIfUsed (entity, filter) {
+          let is_used = false
+          this.forms[entity].isDeleting = true
+          await this.$http.get('api/' + entity + '/check/' + filter,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+              this.forms[entity].isDeleting = false
+              is_used = response.data
+            })
+            .catch(error => {
+              this.forms[entity].isDeleting = false
+              if (!error.response) return
+              console.log(error)
+            })
+          return is_used
         },
         // format number into 2 decimal places with comma
         formatNumber(value) {

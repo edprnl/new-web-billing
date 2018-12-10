@@ -5,6 +5,7 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\Category;
+use App\Models\Transactions\ContractInfo;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -139,7 +140,7 @@ class CategoriesController extends Controller
         $category->deleted_by = Auth::user()->id;
 
         //update classification based on the http json body that is sent
-        $category->update();
+        $category->save();
 
         return ( new Reference( $category ) )
             ->response()
@@ -156,5 +157,18 @@ class CategoriesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(ContractInfo::where('category_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }

@@ -48,7 +48,7 @@
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="onNatureOfBusinessDelete(data)">
+                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -68,14 +68,14 @@
                 </b-col>
             </b-row> <!-- main row -->
 
-            </div><!-- main div -->
+        </div><!-- main div -->
 
-            <div> <!-- modal div -->
-                <b-modal 
-                    v-model="showModalEntry"
-                    :noCloseOnEsc="true"
-                    :noCloseOnBackdrop="true"
-                >
+        <div> <!-- modal div -->
+            <b-modal 
+                v-model="showModalEntry"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
                 
                 <div slot="modal-title"> <!-- modal title -->
                     Nature Of Business Entry - {{entryMode}}
@@ -127,10 +127,30 @@
                     <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
                 </div> <!-- modal footer buttons -->
 
-                </b-modal>
-            </div> <!-- modal div -->
+            </b-modal>
+            <b-modal 
+                v-model="showModalDelete"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+                <div slot="modal-title">
+                    Delete Nature of Business
+                </div>
+                <b-col lg=12>
+                    Are you sure you want to delete this nature of business?
+                </b-col>
+                <div slot="modal-footer">
+                    <b-button :disabled="forms.natureofbusiness.isSaving" variant="primary" @click="onNatureOfBusinessDelete">
+                        <icon v-if="forms.natureofbusiness.isSaving" name="sync" spin></icon>
+                        <i class="fa fa-check"></i>
+                        OK
+                    </b-button>
+                    <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+                </div>
+            </b-modal>
+        </div> <!-- modal div -->
 
-</div> <!-- main container -->
+    </div> <!-- main container -->
 
    
 </template>
@@ -195,14 +215,10 @@ export default {
             perPage: 10
           }
         },
-        modalShow: false
+        nature_of_business_id: null
       }
     },
     methods:{
-        clearFilter(){
-            this.filters.natureofbusinesses.criteria = null;
-            //alert("aa");
-        },
         onNatureOfBusinessEntry () {
             if(this.entryMode == 'Add'){
                 
@@ -211,12 +227,22 @@ export default {
             else{
                 this.updateEntity('natureofbusiness', 'nature_of_business_id', true, 'natureofbusinesses')
             }
-        
-            //this.showModalEntry=false
-            //this.fillTableList('categories');
         },
-        onNatureOfBusinessDelete(data){
-            this.deleteEntity('natureofbusiness', data.item.nature_of_business_id, false, 'natureofbusinesses')
+        onNatureOfBusinessDelete(){
+            this.deleteEntity('natureofbusiness', this.nature_of_business_id, true, 'natureofbusinesses')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('natureofbusiness', data.item.nature_of_business_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.nature_of_business_id = data.item.nature_of_business_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.fillEntityForm('natureofbusiness', data.item.nature_of_business_id)

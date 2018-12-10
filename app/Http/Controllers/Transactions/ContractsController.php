@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Transactions;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Transactions\BillingInfo;
 use App\Models\Transactions\ContractInfo;
 use App\Models\Transactions\ContractSchedule;
 use App\Models\Transactions\ContractUtilCharges;
@@ -34,7 +35,7 @@ class ContractsController extends Controller
             $contracts->where('b_contract_info.tenant_id', $tenant_id);
         }  
 
-        return Reference::collection($contracts->get());
+        return Reference::collection($contracts->orderBy('contract_id','desc')->get());
     }
 
     public function scheduleAndCharges($id)
@@ -410,6 +411,29 @@ class ContractsController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {   
+        $contract = ContractInfo::findOrFail($id);
+        $contract->is_deleted = 1;
+        $contract->deleted_datetime = Carbon::now();
+        $contract->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $contract->save();
+
+        return ( new Reference( $contract ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -418,5 +442,18 @@ class ContractsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(BillingInfo::where('contract_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }

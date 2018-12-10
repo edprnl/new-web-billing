@@ -48,7 +48,7 @@
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="onLocationDelete(data)">
+                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -68,15 +68,15 @@
                 </b-col>
             </b-row> <!-- main row -->
 
-            </div><!-- main div -->
+        </div><!-- main div -->
 
-            <div> <!-- modal div -->
-                <b-modal 
-                    v-model="showModalEntry"
-                    :noCloseOnEsc="true"
-                    :noCloseOnBackdrop="true"
-                >
-                
+        <div> <!-- modal div -->
+            <b-modal 
+                v-model="showModalEntry"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+            
                 <div slot="modal-title"> <!-- modal title -->
                     Charge Entry - {{entryMode}}
                 </div> <!-- modal title -->
@@ -145,10 +145,30 @@
                     <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
                 </div> <!-- modal footer buttons -->
 
-                </b-modal>
-            </div> <!-- modal div -->
+            </b-modal>
+            <b-modal 
+                v-model="showModalDelete"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+                <div slot="modal-title">
+                    Delete Charge
+                </div>
+                <b-col lg=12>
+                    Are you sure you want to delete this charge?
+                </b-col>
+                <div slot="modal-footer">
+                    <b-button :disabled="forms.charge.isSaving" variant="primary" @click="onChargeDelete">
+                        <icon v-if="forms.charge.isSaving" name="sync" spin></icon>
+                        <i class="fa fa-check"></i>
+                        OK
+                    </b-button>
+                    <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+                </div>
+            </b-modal>
+        </div> <!-- modal div -->
 
-</div> <!-- main container -->
+    </div> <!-- main container -->
 
    
 </template>
@@ -225,6 +245,7 @@ export default {
             perPage: 10
           }
         },
+        charge_id: null
       }
     },
     methods:{
@@ -237,8 +258,21 @@ export default {
                 this.updateEntity('charge', 'charge_id', true, 'charges')
             }
         },
-        onLocationDelete(data){
-            this.deleteEntity('charge', data.item.charge_id, false, 'charges')
+        onChargeDelete(){
+            this.deleteEntity('charge', this.charge_id, false, 'charges')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('charge', data.item.charge_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.charge_id = data.item.charge_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.fillEntityForm('charge', data.item.charge_id)

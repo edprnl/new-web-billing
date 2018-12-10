@@ -8,8 +8,8 @@
                         <h5 slot="header">  <!-- table header -->
                             <span class="text-primary">
                                 <i class="fa fa-bars"></i> 
-                                Location List
-                                <small class="bfont-italic">List of all registered contract types.</small></span>s
+                                Contract Type List
+                                <small class="bfont-italic">List of all registered contract types.</small></span>
                         </h5>
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
@@ -48,7 +48,7 @@
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="onContractTypeDelete(data)">
+                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -68,14 +68,14 @@
                 </b-col>
             </b-row> <!-- main row -->
 
-            </div><!-- main div -->
+        </div><!-- main div -->
 
-            <div> <!-- modal div -->
-                <b-modal 
-                    v-model="showModalEntry"
-                    :noCloseOnEsc="true"
-                    :noCloseOnBackdrop="true"
-                >
+        <div> <!-- modal div -->
+            <b-modal 
+                v-model="showModalEntry"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
                 
                 <div slot="modal-title"> <!-- modal title -->
                     Contract Type Entry - {{entryMode}}
@@ -127,10 +127,30 @@
                     <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
                 </div> <!-- modal footer buttons -->
 
-                </b-modal>
-            </div> <!-- modal div -->
+            </b-modal>
+            <b-modal 
+                v-model="showModalDelete"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+                <div slot="modal-title">
+                    Delete Contract Type
+                </div>
+                <b-col lg=12>
+                    Are you sure you want to delete this contract type?
+                </b-col>
+                <div slot="modal-footer">
+                    <b-button :disabled="forms.contracttype.isSaving" variant="primary" @click="onContractTypeDelete">
+                        <icon v-if="forms.contracttype.isSaving" name="sync" spin></icon>
+                        <i class="fa fa-check"></i>
+                        OK
+                    </b-button>
+                    <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+                </div>
+            </b-modal>
+        </div> <!-- modal div -->
 
-</div> <!-- main container -->
+    </div> <!-- main container -->
 
    
 </template>
@@ -195,14 +215,10 @@ export default {
             perPage: 10
           }
         },
-        modalShow: false
+        contract_type_id: null
       }
     },
     methods:{
-        clearFilter(){
-            this.filters.contracttypes.criteria = null;
-            //alert("aa");
-        },
         onContractTypeEntry () {
             if(this.entryMode == 'Add'){
                 
@@ -211,12 +227,22 @@ export default {
             else{
                 this.updateEntity('contracttype', 'contract_type_id', true, 'contracttypes')
             }
-        
-            //this.showModalEntry=false
-            //this.fillTableList('categories');
         },
-        onContractTypeDelete(data){
-            this.deleteEntity('contracttype', data.item.contract_type_id, false, 'contracttypes')
+        onContractTypeDelete(){
+            this.deleteEntity('contracttype', this.contract_type_id, true, 'contracttypes')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('contracttype', data.item.contract_type_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.contract_type_id = data.item.contract_type_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.fillEntityForm('contracttype', data.item.contract_type_id)

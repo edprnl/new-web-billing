@@ -5,6 +5,7 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\Location;
+use App\Models\Transactions\ContractInfo;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -124,6 +125,29 @@ class LocationsController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $location = Location::findOrFail($id);
+        $location->is_deleted = 1;
+        $location->deleted_datetime = Carbon::now();
+        $location->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $location->save();
+
+        return ( new Reference( $location ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -131,16 +155,19 @@ class LocationsController extends Controller
      */
     public function destroy($id)
     {
-        // $category = RefCategory::findOrFail($id);
-        // $category->is_deleted = 1;
-        // $category->deleted_datetime = Carbon::now();
-        // $category->deleted_by = Auth::user()->id;
 
-        // //update classification based on the http json body that is sent
-        // $category->update();
+    }
 
-        // return ( new Reference( $category ) )
-        //     ->response()
-        //     ->setStatusCode(200);
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(ContractInfo::where('location_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }

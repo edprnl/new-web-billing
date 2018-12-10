@@ -47,7 +47,7 @@
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="onUserDelete(data)">
+                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -205,6 +205,26 @@
                 <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>            
             </div>
         </b-modal>
+        <b-modal 
+            v-model="showModalDelete"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Delete User
+            </div>
+            <b-col lg=12>
+                Are you sure you want to delete this user?
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.user.isSaving" variant="primary" @click="onUserDelete">
+                    <icon v-if="forms.user.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    OK
+                </b-button>
+                <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -293,6 +313,7 @@ export default {
                     perPage: 10
                 }
             },
+            id: null
         }
     },
     methods:{
@@ -304,8 +325,12 @@ export default {
                 this.updateEntity('user', 'id', true, 'users')
             }
         },
-        onUserDelete(data){
-            this.deleteEntity('user', data.item.id, false, 'users')
+        onUserDelete(){
+            this.deleteEntity('user', this.id, true, 'users')
+        },
+        setDelete(data){
+            this.showModalDelete=true
+            this.id = data.item.id
         },
         setUpdate(data){
             this.fillEntityForm('user', data.item.id)

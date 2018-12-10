@@ -46,7 +46,7 @@
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="onItemDelete(data)">
+                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -378,6 +378,26 @@
                 </b-col>
             </b-row>
         </div>
+        <b-modal 
+            v-model="showModalDelete"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Delete Tenant
+            </div>
+            <b-col lg=12>
+                Are you sure you want to delete this tenant?
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.tenant.isSaving" variant="primary" @click="onTenantDelete">
+                    <icon v-if="forms.tenant.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    OK
+                </b-button>
+                <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -392,6 +412,7 @@ export default {
             forms: {
                 tenant: {
                     isSaving: false,
+                    isDeleting: false,
                     fields: {
                         tenant_id: null,
                         tenant_code: null,
@@ -516,7 +537,8 @@ export default {
                     currentPage: 1,
                     perPage: 10
                 }
-            }
+            },
+            tenant_id: null
         }
     },
     methods:{
@@ -527,6 +549,22 @@ export default {
             else{
                 this.updateEntity('tenant', 'tenant_id', false, 'tenants')
             }
+        },
+        onTenantDelete(){
+            this.deleteEntity('tenant', this.tenant_id, true, 'tenants')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('tenant', data.item.tenant_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.tenant_id = data.item.tenant_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.resetFieldStates('tenant')

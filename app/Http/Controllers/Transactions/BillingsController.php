@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Transactions;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\References\BillingPeriod;
 use App\Models\Transactions\BillingInfo;
 use App\Models\Transactions\BillingSchedule;
 use App\Models\Transactions\BillingMiscCharges;
@@ -348,6 +349,29 @@ class BillingsController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $billing = BillingInfo::findOrFail($id);
+        $billing->is_deleted = 1;
+        $billing->deleted_datetime = Carbon::now();
+        $billing->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $billing->save();
+
+        return ( new Reference( $billing ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -361,5 +385,20 @@ class BillingsController extends Controller
     public function prevBalance($month_id, $app_year, $tenant_id){
         $response['balance'] = DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.")");
         return DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.") as prevBalance");
+    }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(BillingPeriod::leftJoin('b_billing_info', 'b_billing_info.period_id', '=', 'b_refbillingperiod.period_id')
+            ->where('b_billing_info.billing_id', '=', $id)
+            ->where('b_billing_info.is_deleted', 0)
+            ->where('b_refbillingperiod.is_closed', 1)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\ContractType;
+use App\Models\Transactions\ContractInfo;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -122,6 +123,29 @@ class ContractTypesController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $contracttype = ContractType::findOrFail($id);
+        $contracttype->is_deleted = 1;
+        $contracttype->deleted_datetime = Carbon::now();
+        $contracttype->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $contracttype->save();
+
+        return ( new Reference( $contracttype ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -129,16 +153,19 @@ class ContractTypesController extends Controller
      */
     public function destroy($id)
     {
-        // $category = RefCategory::findOrFail($id);
-        // $category->is_deleted = 1;
-        // $category->deleted_datetime = Carbon::now();
-        // $category->deleted_by = Auth::user()->id;
+        
+    }
 
-        // //update classification based on the http json body that is sent
-        // $category->update();
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
 
-        // return ( new Reference( $category ) )
-        //     ->response()
-        //     ->setStatusCode(200);
+        if(ContractInfo::where('contract_type_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }

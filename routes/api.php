@@ -44,7 +44,9 @@ Route::middleware('auth:api')->group(function () {
    //Update charge
    Route::put('charge/{id}', 'References\ChargesController@update');
    //Delete charge
-   Route::delete('charge/{id}', 'References\ChargesController@delete');
+   Route::put('charge/delete/{id}', 'References\ChargesController@delete');
+   //Check if charge was used
+   Route::get('charge/check/{id}', 'References\ChargesController@checkIfUsed');
    // Charges
 
    //List billing period
@@ -56,7 +58,9 @@ Route::middleware('auth:api')->group(function () {
    //Update billing period
    Route::put('period/{id}', 'References\BillingPeriodController@update');
    //Delete billing period
-   Route::delete('period/{id}', 'References\BillingPeriodController@delete');
+   Route::put('period/delete/{id}', 'References\BillingPeriodController@delete');
+   //Check if billing period was used
+   Route::get('period/check/{id}', 'References\BillingPeriodController@checkIfUsed');
    // END billing period
 
    Route::get('charges', 'References\ChargesController@index');
@@ -69,7 +73,9 @@ Route::middleware('auth:api')->group(function () {
    //Update category
    Route::put('category/{id}', 'References\CategoriesController@update');
    //Delete category
-   Route::delete('category/{id}', 'References\CategoriesController@delete');
+   Route::put('category/delete/{id}', 'References\CategoriesController@delete');
+   //Check if category was used
+   Route::get('category/check/{id}', 'References\CategoriesController@checkIfUsed');
    // END categories
 
    //List departments
@@ -81,7 +87,9 @@ Route::middleware('auth:api')->group(function () {
    //Update departments
    Route::put('department/{id}', 'References\DepartmentsController@update');
    //Delete departments
-   Route::delete('department/{id}', 'References\DepartmentsController@delete');
+   Route::put('department/delete/{id}', 'References\DepartmentsController@delete');
+   //Check if department was used
+   Route::get('department/check/{id}', 'References\DepartmentsController@checkIfUsed');
    // END departments
 
    //List locations
@@ -93,7 +101,9 @@ Route::middleware('auth:api')->group(function () {
    //Update location
    Route::put('location/{id}', 'References\LocationsController@update');
    //Delete location
-   Route::delete('location/{id}', 'References\LocationsController@delete');
+   Route::put('location/delete/{id}', 'References\LocationsController@delete');
+   //Check if location was used
+   Route::get('location/check/{id}', 'References\LocationsController@checkIfUsed');
    // END locations
 
    //List natures
@@ -105,20 +115,24 @@ Route::middleware('auth:api')->group(function () {
    //Update nature
    Route::put('natureofbusiness/{id}', 'References\NatureOfBusinessController@update');
    //Delete nature
-   Route::delete('natureofbusiness/{id}', 'References\NatureOfBusinessController@delete');
+   Route::put('natureofbusiness/delete/{id}', 'References\NatureOfBusinessController@delete');
+   //Check if nature was used
+   Route::get('natureofbusiness/check/{id}', 'References\NatureOfBusinessController@checkIfUsed');
    // END natures
 
    //List contract types
    Route::get('contracttypes', 'References\ContractTypesController@index');
    //List single contract type
    Route::get('contracttype/{id}', 'References\ContractTypesController@show');
-   //Create new nature
+   //Create new contract type
    Route::post('contracttype', 'References\ContractTypesController@create');
-   //Update nature
+   //Update contract type
    Route::put('contracttype/{id}', 'References\ContractTypesController@update');
-   //Delete nature
-   Route::delete('contracttype/{id}', 'References\ContractTypesController@delete');
-   // END natures
+   //Delete contract type
+   Route::put('contracttype/delete/{id}', 'References\ContractTypesController@delete');
+   //Check if contract type was used
+   Route::get('contracttype/check/{id}', 'References\ContractTypesController@checkIfUsed');
+   // END contract type
 
    //MONTHS
    Route::get('months', 'References\MonthsController@index');
@@ -134,7 +148,9 @@ Route::middleware('auth:api')->group(function () {
     //Update tenant
     Route::put('tenant/{id}', 'References\TenantsController@update');
     //Delete tenant
-    Route::delete('tenant/{id}', 'References\TenantsController@delete');
+    Route::put('tenant/delete/{id}', 'References\TenantsController@delete');
+    //Check if department was used
+    Route::get('tenant/check/{id}', 'References\TenantsController@checkIfUsed');
     // END TENANT
      //---------------------------------- REFERENCES -----------------------------------------------
 
@@ -149,7 +165,7 @@ Route::middleware('auth:api')->group(function () {
     //Update user
     Route::put('user/{id}', 'Utilities\UsersController@update');
     //Delete user
-    Route::delete('tenuserant/{id}', 'Utilities\UsersController@delete');
+    Route::put('user/delete/{id}', 'Utilities\UsersController@delete');
     // END USER
      //---------------------------------- UTILITIES ------------------------------------------------
 
@@ -169,7 +185,9 @@ Route::middleware('auth:api')->group(function () {
     //Update contract
     Route::put('contract/{id}', 'Transactions\ContractsController@update');
     //Delete contract
-    Route::delete('contract/{id}', 'Transactions\ContractsController@delete');
+    Route::put('contract/delete/{id}', 'Transactions\ContractsController@delete');
+    //Check if contract was used
+    Route::get('contract/check/{id}', 'Transactions\ContractsController@checkIfUsed');
     // END CONTRACT
 
     //List Billings
@@ -185,7 +203,9 @@ Route::middleware('auth:api')->group(function () {
     //Update billing
     Route::put('billing/{id}', 'Transactions\BillingsController@update');
     //Delete billing
-    Route::delete('billing/{id}', 'Transactions\BillingsController@delete');
+    Route::put('billing/delete/{id}', 'Transactions\BillingsController@delete');
+    //Check if billing was used
+    Route::get('billing/check/{id}', 'Transactions\BillingsController@checkIfUsed');
     // END billing
 
     //---------------------------------- TRANSACTIONS ---------------------------------------------

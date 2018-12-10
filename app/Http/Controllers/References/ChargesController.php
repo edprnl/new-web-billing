@@ -5,6 +5,12 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\Charges;
+use App\Models\Transactions\BillingMiscCharges;
+use App\Models\Transactions\BillingOthrCharges;
+use App\Models\Transactions\BillingUtilCharges;
+use App\Models\Transactions\ContractMiscCharges;
+use App\Models\Transactions\ContractOthrCharges;
+use App\Models\Transactions\ContractUtilCharges;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -122,6 +128,29 @@ class ChargesController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $charge = Charges::findOrFail($id);
+        $charge->is_deleted = 1;
+        $charge->deleted_datetime = Carbon::now();
+        $charge->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $charge->save();
+
+        return ( new Reference( $charge ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -130,5 +159,54 @@ class ChargesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(ContractMiscCharges::where('charge_id', '=', $id)
+            ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_contract_misc_charges.contract_id')
+            ->where('b_contract_info.is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+
+        if(ContractOthrCharges::where('charge_id', '=', $id)
+            ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_contract_othr_charges.contract_id')
+            ->where('b_contract_info.is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+
+        if(ContractUtilCharges::where('charge_id', '=', $id)
+            ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_contract_util_charges.contract_id')
+            ->where('b_contract_info.is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        if(BillingMiscCharges::where('charge_id', '=', $id)
+            ->leftJoin('b_billing_info', 'b_billing_info.billing_id', '=', 'b_billing_misc_charges.billing_id')
+            ->where('b_billing_info.is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+
+        if(BillingOthrCharges::where('charge_id', '=', $id)
+            ->leftJoin('b_billing_info', 'b_billing_info.billing_id', '=', 'b_billing_othr_charges.billing_id')
+            ->where('b_billing_info.is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+
+        if(BillingUtilCharges::where('charge_id', '=', $id)
+            ->leftJoin('b_billing_info', 'b_billing_info.billing_id', '=', 'b_billing_util_charges.billing_id')
+            ->where('b_billing_info.is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }

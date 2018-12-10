@@ -48,7 +48,7 @@
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="onPeriodDelete(data)">
+                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -68,14 +68,14 @@
                 </b-col>
             </b-row> <!-- main row -->
 
-            </div><!-- main div -->
+        </div><!-- main div -->
 
-            <div> <!-- modal div -->
-                <b-modal 
-                    v-model="showModalEntry"
-                    :noCloseOnEsc="true"
-                    :noCloseOnBackdrop="true"
-                >
+        <div> <!-- modal div -->
+            <b-modal 
+                v-model="showModalEntry"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
                 
                 <div slot="modal-title"> <!-- modal title -->
                     Billing Period Entry - {{entryMode}}
@@ -187,10 +187,30 @@
                     <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
                 </div> <!-- modal footer buttons -->
 
-                </b-modal>
-            </div> <!-- modal div -->
+            </b-modal>
+            <b-modal 
+                v-model="showModalDelete"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+                <div slot="modal-title">
+                    Delete Billing Period
+                </div>
+                <b-col lg=12>
+                    Are you sure you want to delete this billing period?
+                </b-col>
+                <div slot="modal-footer">
+                    <b-button :disabled="forms.period.isSaving" variant="primary" @click="onPeriodDelete">
+                        <icon v-if="forms.period.isSaving" name="sync" spin></icon>
+                        <i class="fa fa-check"></i>
+                        OK
+                    </b-button>
+                    <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+                </div>
+            </b-modal>
+        </div> <!-- modal div -->
 
-</div> <!-- main container -->
+    </div> <!-- main container -->
 
    
 </template>
@@ -294,14 +314,10 @@ export default {
             perPage: 10
           }
         },
-        modalShow: false
+        period_id: null
       }
     },
     methods:{
-        clearFilter(){
-            this.filters.periods.criteria = null;
-            //alert("aa");
-        },
         onPeriodEntry () {
             if(this.entryMode == 'Add'){
                 
@@ -311,8 +327,21 @@ export default {
                this.updateEntity('period', 'period_id', true, 'periods')
             }
         },
-        onPeriodDelete(data){
-            //this.deleteEntity('location', data.item.location_id, false, 'locations')
+        onPeriodDelete(){
+            this.deleteEntity('period', this.period_id, true, 'periods')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('period', data.item.period_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.period_id = data.item.period_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.fillEntityForm('period', data.item.period_id)

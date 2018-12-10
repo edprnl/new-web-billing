@@ -49,8 +49,9 @@
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="onDepartmentDelete(data)">
-                                        <i class="fa fa-trash"></i>
+                                    <b-btn :size="'sm'" :disabled="forms.department.isDeleting" variant="danger" @click="setDelete(data)">
+                                        <icon v-if="forms.department.isDeleting" name="sync" spin></icon>
+                                        <i v-else class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
 
@@ -69,69 +70,89 @@
                 </b-col>
             </b-row> <!-- main row -->
 
-            </div><!-- main div -->
+        </div><!-- main div -->
 
-            <div> <!-- modal div -->
-                <b-modal 
-                    v-model="showModalEntry"
-                    :noCloseOnEsc="true"
-                    :noCloseOnBackdrop="true"
-                >
-                
-                <div slot="modal-title"> <!-- modal title -->
-                    Department Entry - {{entryMode}}
-                </div> <!-- modal title -->
+        <div> <!-- modal div -->
+            <b-modal 
+                v-model="showModalEntry"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+            
+            <div slot="modal-title"> <!-- modal title -->
+                Department Entry - {{entryMode}}
+            </div> <!-- modal title -->
 
-                <b-col lg=12> <!-- modal body -->
-                    <b-form @keydown="resetFieldStates('department')">
-                        <b-form-group>
-                            <label for="department_code">* Department Code</label>
-                            <b-form-input
-                                id="department_code"
-                                v-model="forms.department.fields.department_code"
-                                :state="forms.department.states.department_code"
-                                type="text"
-                                placeholder="Department Code">
-                            </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.department.errors.department_code">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
-                        </b-form-group>
-                        <b-form-group>
-                            <label>* Department Desc</label>
-                            <b-form-input
-                                id="department_desc"
-                                v-model="forms.department.fields.department_desc"
-                                :state="forms.department.states.department_desc"
-                                type="text"
-                                placeholder="Department Description">
-                            </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.department.errors.department_desc">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
-                        </b-form-group>
-                    </b-form>
-                </b-col> <!-- modal body -->
+            <b-col lg=12> <!-- modal body -->
+                <b-form @keydown="resetFieldStates('department')">
+                    <b-form-group>
+                        <label for="department_code">* Department Code</label>
+                        <b-form-input
+                            id="department_code"
+                            v-model="forms.department.fields.department_code"
+                            :state="forms.department.states.department_code"
+                            type="text"
+                            placeholder="Department Code">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.department.errors.department_code">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Department Desc</label>
+                        <b-form-input
+                            id="department_desc"
+                            v-model="forms.department.fields.department_desc"
+                            :state="forms.department.states.department_desc"
+                            type="text"
+                            placeholder="Department Description">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.department.errors.department_desc">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                </b-form>
+            </b-col> <!-- modal body -->
 
-                <div slot="modal-footer"><!-- modal footer buttons -->
-                    <b-button :disabled="forms.department.isSaving" variant="primary" @click="onDepartmentEntry">
+            <div slot="modal-footer"><!-- modal footer buttons -->
+                <b-button :disabled="forms.department.isSaving" variant="primary" @click="onDepartmentEntry">
+                    <icon v-if="forms.department.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
+            </div> <!-- modal footer buttons -->
+
+            </b-modal>
+            <b-modal 
+                v-model="showModalDelete"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+            >
+                <div slot="modal-title">
+                    Delete Department
+                </div>
+                <b-col lg=12>
+                    Are you sure you want to delete this department?
+                </b-col>
+                <div slot="modal-footer">
+                    <b-button :disabled="forms.department.isSaving" variant="primary" @click="onDepartmentDelete">
                         <icon v-if="forms.department.isSaving" name="sync" spin></icon>
                         <i class="fa fa-check"></i>
-                        Save
+                        OK
                     </b-button>
-                    <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>
-                </div> <!-- modal footer buttons -->
+                    <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+                </div>
+            </b-modal>
+        </div> <!-- modal div -->
 
-                </b-modal>
-            </div> <!-- modal div -->
-
-</div> <!-- main container -->
+    </div> <!-- main container -->
 
    
 </template>
@@ -147,6 +168,7 @@ export default {
         forms:{
             department : {
                 isSaving: false,
+                isDeleting: false,
                 fields: {
                     department_id: null,
                     department_code: null,
@@ -178,7 +200,8 @@ export default {
                     
                     key: 'action',
                     label: '',
-                    thStyle: {width: '75px'}
+                    thStyle: {width: '80px'},
+                    tdClass: 'text-center'
                 },
                 ],
                 items: []
@@ -196,14 +219,11 @@ export default {
             perPage: 10
           }
         },
-        modalShow: false
+        department_id: null,
+        is_used: null,
       }
     },
     methods:{
-        clearFilter(){
-            this.filters.departments.criteria = null;
-            //alert("aa");
-        },
         onDepartmentEntry () {
             if(this.entryMode == 'Add'){
                 
@@ -212,19 +232,28 @@ export default {
             else{
                 this.updateEntity('department', 'department_id', true, 'departments')
             }
-        
-            //this.showModalEntry=false
-            //this.fillTableList('categories');
         },
-        onDepartmentDelete(data){
-            this.deleteEntity('department', data.item.department_id, false, 'departments')
+        onDepartmentDelete(){
+            this.deleteEntity('department', this.department_id, true, 'departments')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('department', data.item.department_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.department_id = data.item.department_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.fillEntityForm('department', data.item.department_id)
             this.showModalEntry=true
             this.entryMode='Edit'
-
-        }
+        },
     },
     computed: {
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\Tenants;
+use App\Models\Transactions\ContractInfo;
+use App\Models\Transactions\BillingInfo;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -173,6 +175,29 @@ class TenantsController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $tenant = Tenants::findOrFail($id);
+        $tenant->is_deleted = 1;
+        $tenant->deleted_datetime = Carbon::now();
+        $tenant->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $tenant->save();
+
+        return ( new Reference( $tenant ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -181,5 +206,24 @@ class TenantsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(ContractInfo::where('tenant_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        if(BillingInfo::where('tenant_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+
+        return $exists;
     }
 }

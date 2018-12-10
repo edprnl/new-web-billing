@@ -47,7 +47,7 @@
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="onCategoryDelete(data)">
+                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -119,6 +119,26 @@
                 <b-button variant="secondary" @click="showModalEntry=false">Close</b-button>            
             </div>
         </b-modal>
+        <b-modal 
+            v-model="showModalDelete"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Delete Category
+            </div>
+            <b-col lg=12>
+                Are you sure you want to delete this category?
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.category.isSaving" variant="primary" @click="onCategoryDelete">
+                    <icon v-if="forms.category.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    OK
+                </b-button>
+                <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -181,7 +201,7 @@ export default {
                     perPage: 10
                 }
             },
-            contract_id: null
+            category_id: null
         }
     },
     methods:{
@@ -193,12 +213,22 @@ export default {
             else{
                 this.updateEntity('category', 'category_id', true, 'categories')
             }
-        
-            //this.showModalEntry=false
-            //this.fillTableList('categories');
         },
-        onCategoryDelete(data){
-            this.deleteEntity('category', data.item.category_id, false, 'categories')
+        onCategoryDelete(){
+            this.deleteEntity('category', this.category_id, true, 'categories')
+        },
+        async setDelete(data){
+            if(await this.checkIfUsed('category', data.item.category_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
+            this.category_id = data.item.category_id
+            this.showModalDelete = true
         },
         setUpdate(data){
             this.fillEntityForm('category', data.item.category_id)

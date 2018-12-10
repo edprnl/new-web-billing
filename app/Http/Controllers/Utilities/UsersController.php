@@ -130,6 +130,29 @@ class UsersController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+        $user->is_deleted = 1;
+        $user->deleted_datetime = Carbon::now();
+        $user->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $user->save();
+
+        return ( new Reference( $user ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id

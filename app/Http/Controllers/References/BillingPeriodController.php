@@ -5,6 +5,7 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\BillingPeriod;
+use App\Models\Transactions\BillingInfo;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -139,6 +140,29 @@ class BillingPeriodController extends Controller
     }
 
     /**
+     * Update the specified resource in storage for deleting.
+     * preventing force delete rather update the is_deleted = true
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $period = BillingPeriod::findOrFail($id);
+        $period->is_deleted = 1;
+        $period->deleted_datetime = Carbon::now();
+        $period->deleted_by = Auth::user()->id;
+
+        //update classification based on the http json body that is sent
+        $period->save();
+
+        return ( new Reference( $period ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -147,5 +171,18 @@ class BillingPeriodController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        if(BillingInfo::where('period_id', '=', $id)
+            ->where('is_deleted', 0)
+            ->exists()) {
+            $exists = 'true';
+        }
+        
+        return $exists;
     }
 }
