@@ -46,6 +46,9 @@ import users from '@/views/utilities/Users'
 import contracts from '@/views/transactions/Contracts'
 import billing from '@/views/transactions/Billing'
 
+//Views - Reports
+import soa from '@/views/reports/Soa'
+
 import store from '../store'
 
 Vue.use(Router)
@@ -142,6 +145,21 @@ const router = new Router({
               name: 'Users',
               component: users,
               meta: {requiresAuth: true}
+            }
+          ]
+        },
+        {
+          path: 'reports',
+          name: 'Reports',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'soa',
+              name: 'Soa',
+              component: soa,
+              meta: { requiresAuth: true }
             }
           ]
         },

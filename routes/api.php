@@ -197,6 +197,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('billings/sc/{id}', 'Transactions\BillingsController@scheduleAndCharges');
     //List single billing
     Route::get('billing/{id}', 'Transactions\BillingsController@show');
+    Route::get('billing/{id}/{soa}', 'Transactions\BillingsController@show');
     Route::get('billing/{month_id}/{app_year}/{tenant_id}', 'Transactions\BillingsController@prevBalance');
     //Create new contract
     Route::post('billing', 'Transactions\BillingsController@create');

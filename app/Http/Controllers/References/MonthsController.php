@@ -49,7 +49,11 @@ class MonthsController extends Controller
      */
     public function show($id)
     {
-        //
+        $months = Months::findOrFail($id);
+
+        return ( new Reference( $months ) )
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**

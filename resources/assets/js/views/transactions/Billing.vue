@@ -44,6 +44,10 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
+                                        <b-btn :size="'sm'" variant="primary" @click="printSoa(data)">
+                                            <i class="fa fa-edit"></i>
+                                        </b-btn>
+
                                         <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
@@ -484,7 +488,7 @@
                                         <b-col sm="6">
                                             <vue-autonumeric 
                                                 :class="'text-right form-control'" 
-                                                v-model="whtax_percent" 
+                                                v-model="forms.billing.fields.wtax_percent" 
                                                 :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                             </vue-autonumeric>
                                         </b-col>
@@ -729,7 +733,7 @@ export default {
                             key: 'action',
                             label: 'Action',
                             thClass: 'text-center',
-                            thStyle: {width: '75px'},
+                            thStyle: {width: '115px'},
                             tdClass: 'text-center'
                         }
                     ],
@@ -833,7 +837,7 @@ export default {
                         },
                         {
                             key: 'contract_default_reading',
-                            label: 'Default Reading',
+                            label: 'Reading',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             thStyle: {width: '17%'}
@@ -894,7 +898,7 @@ export default {
                         },
                         {
                             key: 'contract_default_reading',
-                            label: 'Default Reading',
+                            label: 'Reading',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             thStyle: {width: '17%'}
@@ -955,7 +959,7 @@ export default {
                         },
                         {
                             key: 'contract_default_reading',
-                            label: 'Default Reading',
+                            label: 'Reading',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             thStyle: {width: '17%'}
@@ -1003,11 +1007,11 @@ export default {
                         tenant_id: null,
                         tenant_code: null,
                         period_id: null,
-                        period_due_date: null,
                         app_year: null,
                         month_id: null,
                         contract_id: null,
                         contract_no: null,
+                        contract_discounted_rent: null,
                         commencement_date: null,
                         termination_date: null,
                         contract_fixed_rent: null,
@@ -1017,11 +1021,13 @@ export default {
                         total_misc_charges: 0,
                         total_othr_charges: 0,
                         sub_total: 0,
-                        vattable_amount: 0,
+                        vatable_amount: 0,
+                        discounted_vatable_amount: 0,
                         vat_percent: 0,
                         total_vat: 0,
                         total_amount_due: 0,
                         wtax_amount: 0,
+                        wtax_percent: 0,
                         schedules: [],
                         utilities: [],
                         miscellaneous: [],
@@ -1054,7 +1060,6 @@ export default {
             counter: 0,
             charge_type: null,
             previous_balance: 0,
-            whtax_percent: 0,
             billing_id: null
         }
     },
@@ -1065,7 +1070,7 @@ export default {
             this.forms.billing.fields.miscellaneous = this.tables.miscellaneous.items
             this.forms.billing.fields.other = this.tables.other.items
             this.forms.billing.fields.period_id = this.forms.period.fields.period_id
-            this.forms.billing.fields.period_due_date = this.forms.period.fields.period_due_date
+            this.forms.billing.fields.due_date = this.forms.period.fields.period_due_date
             this.forms.billing.fields.app_year = this.forms.period.fields.app_year
             this.forms.billing.fields.month_id = this.forms.period.fields.month_id
 
@@ -1209,8 +1214,15 @@ export default {
                     this.forms.billing.fields.commencement_date = moment(contract.commencement_date).format('MMMM DD, YYYY')
                     this.forms.billing.fields.termination_date = moment(contract.termination_date).format('MMMM DD, YYYY')
                     this.forms.billing.fields.contract_fixed_rent = contract.contract_fixed_rent
-
-                    this.$http.get('/api/contracts/' + value + '/' + this.forms.period.fields.app_year + '/' + this.forms.period.fields.month_id,{
+                    this.forms.billing.fields.contract_discounted_rent = contract.contract_discounted_rent
+                    var nmonth_id = Number(this.forms.period.fields.month_id + 1)
+                    var nyear = this.forms.period.fields.app_year
+                    if(nmonth_id == 13){
+                        nmonth_id = 1
+                        nyear++
+                    }
+                    console.log(nmonth_id)
+                    this.$http.get('/api/contracts/' + value + '/' + nyear + '/' + nmonth_id,{
                         headers: {
                                 Authorization: 'Bearer ' + localStorage.getItem('token')
                             }
@@ -1236,14 +1248,25 @@ export default {
                 this.showList = true
                 this.showModalPeriod = false
             }
+        },
+        printSoa(data){
+            let routeData = this.$router.resolve({name: 'Soa', query: {billing_id: data.item.billing_id}});
+            window.open(routeData.href, '_blank');
+            //this.$router.push({ name: 'soa' })
         }
     },
     computed :{
         commencement_date: function(){
+            if(this.forms.billing.fields.commencement_date == null){
+                return null
+            }
             this.forms.billing.fields.commencement_date = moment(this.forms.billing.fields.commencement_date).format("MMMM DD, YYYY")
             return this.forms.billing.fields.commencement_date
         },
         termination_date: function(){
+            if(this.forms.billing.fields.termination_date == null){
+                return null
+            }
             this.forms.billing.fields.termination_date = moment(this.forms.billing.fields.termination_date).format("MMMM DD, YYYY")
             return this.forms.billing.fields.termination_date
         },
@@ -1290,10 +1313,12 @@ export default {
             var utilVat = 0
             var miscVat = 0
             var othrVat = 0
+            var dSchedVat = 0
 
             this.tables.schedules.items.forEach(schedule => {
                 if(schedule.is_vatted == 1){
                     schedVat += schedule.amount_due
+                    dSchedVat += this.forms.billing.fields.contract_discounted_rent
                 }
             })
 
@@ -1314,17 +1339,20 @@ export default {
                     othrVat += othr.contract_rate * othr.contract_default_reading
                 }
             })
-            this.forms.billing.fields.vattable_amount = Number(schedVat) + Number(utilVat) + Number(miscVat) + Number(othrVat)
-            return this.forms.billing.fields.vattable_amount
+            this.forms.billing.fields.vatable_amount = Number(schedVat) + Number(utilVat) + Number(miscVat) + Number(othrVat)
+
+            this.forms.billing.fields.discounted_vatable_amount = Number(dSchedVat) + Number(utilVat) + Number(miscVat) + Number(othrVat)
+
+            return this.forms.billing.fields.vatable_amount
         },
 
         getVatTotal: function(){
-            var vatTotal = this.forms.billing.fields.vattable_amount * (this.forms.billing.fields.vat_percent / 100)
-            return vatTotal
+            this.forms.billing.fields.total_vat = this.forms.billing.fields.vatable_amount * (this.forms.billing.fields.vat_percent / 100)
+            return this.forms.billing.fields.total_vat
         },
 
         getWithHoldingTax: function(){
-            this.forms.billing.fields.wtax_amount = this.forms.billing.fields.total_fixed_rent * (this.whtax_percent / 100)
+            this.forms.billing.fields.wtax_amount = this.forms.billing.fields.total_fixed_rent * (this.forms.billing.fields.wtax_percent / 100)
             return this.forms.billing.fields.wtax_amount
         },
 

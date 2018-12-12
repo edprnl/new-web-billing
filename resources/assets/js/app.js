@@ -8,7 +8,8 @@
 require('./bootstrap');
 require('select2');
 window.moment = require('moment')
-window.Vue = require('vue');
+window.Vue = require('vue')
+window.printd = require('printd')
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

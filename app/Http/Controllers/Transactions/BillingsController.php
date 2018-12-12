@@ -28,7 +28,7 @@ class BillingsController extends Controller
         $billings = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
                             ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
                             ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
-                            ->where('b_billing_info.is_deleted', 0);                    
+                            ->where('b_billing_info.is_deleted', 0);     
         if($period_id != null){
             $billings->where('b_billing_info.period_id', $period_id);
         }            
@@ -59,11 +59,12 @@ class BillingsController extends Controller
         $billing_info->total_misc_charges = $request->input('total_misc_charges');
         $billing_info->total_othr_charges = $request->input('total_othr_charges');
         $billing_info->sub_total = $request->input('sub_total');
-        $billing_info->vattable_amount = $request->input('vattable_amount');
+        $billing_info->vatable_amount = $request->input('vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
         $billing_info->total_amount_due = $request->input('total_amount_due');
         $billing_info->wtax_amount = $request->input('wtax_amount');
+        $billing_info->wtax_percent = $request->input('wtax_percent');
 
         $billing_info->created_datetime = Carbon::now();
         $billing_info->created_by = Auth::user()->id;
@@ -167,6 +168,7 @@ class BillingsController extends Controller
                         'billing_util_reading as contract_default_reading',
                         'billing_util_is_vatted as contract_is_vatted',
                         'billing_util_notes as contract_notes',
+                        'billing_util_line_total',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
@@ -179,6 +181,7 @@ class BillingsController extends Controller
                         'billing_misc_reading as contract_default_reading',
                         'billing_misc_is_vatted as contract_is_vatted',
                         'billing_misc_notes as contract_notes',
+                        'billing_misc_line_total',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
@@ -191,6 +194,7 @@ class BillingsController extends Controller
                         'billing_othr_reading as contract_default_reading',
                         'billing_othr_is_vatted as contract_is_vatted',
                         'billing_othr_notes as contract_notes',
+                        'billing_othr_line_total',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
@@ -210,14 +214,20 @@ class BillingsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, $soa = false)
     {
         $billing = BillingInfo::leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
                         ->leftJoin('b_refbillingperiod', 'b_refbillingperiod.period_id', '=', 'b_billing_info.period_id')
-                        ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
-                        ->findOrFail($id);
+                        ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id');
 
-        return ( new Reference( $billing ) )
+        if($soa == true){
+            $billing
+                ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_refbillingperiod.month_id')
+                ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id');
+        }
+
+        return ( new Reference( $billing->findOrFail($id) ) )
             ->response()
             ->setStatusCode(200);
     }
@@ -258,11 +268,13 @@ class BillingsController extends Controller
         $billing_info->total_misc_charges = $request->input('total_misc_charges');
         $billing_info->total_othr_charges = $request->input('total_othr_charges');
         $billing_info->sub_total = $request->input('sub_total');
-        $billing_info->vattable_amount = $request->input('vattable_amount');
+        $billing_info->vatable_amount = $request->input('vatable_amount');
+        $billing_info->discounted_vatable_amount = $request->input('discounted_vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
         $billing_info->total_amount_due = $request->input('total_amount_due');
         $billing_info->wtax_amount = $request->input('wtax_amount');
+        $billing_info->wtax_percent = $request->input('wtax_percent');
 
         $billing_info->modified_datetime = Carbon::now();
         $billing_info->modified_by = Auth::user()->id;
