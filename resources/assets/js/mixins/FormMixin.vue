@@ -2,7 +2,7 @@
     export default {
       methods: {
         // 2nd parameter are callback functions pass as object
-        createEntity (entity, isModal, entity_table) {
+        createEntity (entity, isModal, entity_table, is_filtered = false) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
           this.$http.post('api/' + entity, this.forms[entity].fields,{
@@ -19,7 +19,9 @@
               title: 'Success!',
               text: 'The record has been successfully created.'
             })
-            this.fillTableList(entity_table)
+            if(is_filtered == false){
+              this.fillTableList(entity_table)
+            }
             if(isModal){
               this.showModalEntry = false
             }
@@ -38,7 +40,7 @@
           })
         },
 
-        updateEntity (entity, entity_id, isModal, entity_table) {
+        updateEntity (entity, entity_id, isModal, entity_table, is_filtered = false) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
 
@@ -55,7 +57,9 @@
                 title: 'Success!',
                 text: 'The record has been successfully updated.'
               })
-              this.fillTableList(entity_table)
+              if(is_filtered == false){
+                this.fillTableList(entity_table)
+              }
               if(isModal){
                 this.showModalEntry = false
               }
@@ -143,8 +147,8 @@
         },
 
         //fill table with filter
-        filterTableList (entity, filter) {
-          this.$http.get('/api/' + entity + '/' + filter ,{
+        filterTableList (entity, filter1, filter2) {
+          this.$http.get('/api/' + entity + '/' + filter1 + '/' + filter2 ,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }

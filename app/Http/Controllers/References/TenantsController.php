@@ -37,6 +37,7 @@ class TenantsController extends Controller
             [
                 'trade_name' => 'required',
                 'company_name' => 'required',
+                'space_code' => 'required',
                 'business_concept' => 'required',
                 'head_office_address' => 'required',
                 'billing_address' => 'required',
@@ -52,6 +53,7 @@ class TenantsController extends Controller
         $tenant->tenant_code = DB::raw("CreateTenantCode()");
         $tenant->trade_name = $request->input('trade_name');
         $tenant->company_name = $request->input('company_name');
+        $tenant->space_code = $request->input('space_code');
         $tenant->business_concept = $request->input('business_concept');
         $tenant->head_office_address = $request->input('head_office_address');
         $tenant->billing_address = $request->input('billing_address');
@@ -131,6 +133,7 @@ class TenantsController extends Controller
             [
                 'trade_name' => 'required',
                 'company_name' => 'required',
+                'space_code' => 'required',
                 'business_concept' => 'required',
                 'head_office_address' => 'required',
                 'billing_address' => 'required',
@@ -145,6 +148,7 @@ class TenantsController extends Controller
         $tenant = Tenants::findOrFail($id);
         $tenant->trade_name = $request->input('trade_name');
         $tenant->company_name = $request->input('company_name');
+        $tenant->space_code = $request->input('space_code');
         $tenant->business_concept = $request->input('business_concept');
         $tenant->head_office_address = $request->input('head_office_address');
         $tenant->billing_address = $request->input('billing_address');

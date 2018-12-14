@@ -18,6 +18,7 @@ class CreateTenantsTable extends Migration
             $table->string('tenant_code')->default('')->unique();
             $table->string('trade_name', 150)->default('');
             $table->string('company_name', 150)->default('');
+            $table->string('space_code', 150)->default('');
             $table->string('business_concept', 150)->default('');
             $table->string('head_office_address', 255)->default('');
             $table->string('billing_address', 255)->default('');

@@ -125,6 +125,22 @@
                                         </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
+                                        <label>* Space Code</label>
+                                        <b-form-input
+                                            id="space_code"
+                                            v-model="forms.tenant.fields.space_code"
+                                            :state="forms.tenant.states.space_code"
+                                            type="text"
+                                            placeholder="Space Code">
+                                        </b-form-input>
+                                        <b-form-invalid-feedback>
+                                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                                            <span v-for="itemError in forms.tenant.errors.space_code">
+                                                {{itemError}}
+                                            </span>
+                                        </b-form-invalid-feedback>
+                                    </b-form-group>
+                                    <b-form-group>
                                         <label>* Business Concept</label>
                                         <b-form-input
                                             id="business_concept"
@@ -418,6 +434,7 @@ export default {
                         tenant_code: null,
                         trade_name: null,
                         company_name: null,
+                        space_code: null,
                         business_concept: null,
                         head_office_address: null,
                         billing_address: null,
@@ -442,6 +459,7 @@ export default {
                         tenant_code: null,
                         trade_name: null,
                         company_name: null,
+                        space_code: null,
                         business_concept: null,
                         head_office_address: null,
                         billing_address: null,
@@ -466,6 +484,7 @@ export default {
                         tenant_code: null,
                         trade_name: null,
                         company_name: null,
+                        space_code: null,
                         business_concept: null,
                         head_office_address: null,
                         billing_address: null,

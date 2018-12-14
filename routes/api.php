@@ -192,9 +192,10 @@ Route::middleware('auth:api')->group(function () {
 
     //List Billings
     Route::get('billings', 'Transactions\BillingsController@index');
-    Route::get('billings/{period_id}', 'Transactions\BillingsController@index');
+    Route::get('billings/{period_id}/{department_id}', 'Transactions\BillingsController@index');
     //schedule and charges of billing
-    Route::get('billings/sc/{id}', 'Transactions\BillingsController@scheduleAndCharges');
+    Route::get('billingSC/sc/{id}', 'Transactions\BillingsController@scheduleAndCharges');
+    Route::get('billing/balance/{tenant_id}', 'Transactions\BillingsController@getBillingBalance');
     //List single billing
     Route::get('billing/{id}', 'Transactions\BillingsController@show');
     Route::get('billing/{id}/{soa}', 'Transactions\BillingsController@show');

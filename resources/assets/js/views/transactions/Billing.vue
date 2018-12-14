@@ -44,8 +44,8 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="printSoa(data)">
-                                            <i class="fa fa-edit"></i>
+                                        <b-btn :size="'sm'" variant="success" @click="printSoa(data)">
+                                            <i class="fa fa-print"></i>
                                         </b-btn>
 
                                         <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
@@ -457,12 +457,29 @@
                                         <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(previous_balance)}} </label>
                                     </b-row>
                                     <b-row>
+                                        <label class="col-sm-6 text-right">Fixed Rent :</label>
+                                        <label class="col-sm-6 text-right"> {{formatNumber(this.forms.billing.fields.total_fixed_rent)}} </label>
+                                    </b-row>
+                                    <b-row>
+                                        <label class="col-sm-6 text-right">Utility :</label>
+                                        <label class="col-sm-6 text-right"> {{formatNumber(this.forms.billing.fields.total_util_charges)}} </label>
+                                    </b-row>
+                                    <b-row>
+                                        <label class="col-sm-6 text-right">Miscellaneous :</label>
+                                        <label class="col-sm-6 text-right"> {{formatNumber(this.forms.billing.fields.total_misc_charges)}} </label>
+                                    </b-row>
+                                    <b-row>
+                                        <label class="col-sm-6 text-right">Other :</label>
+                                        <label class="col-sm-6 text-right"> {{formatNumber(this.forms.billing.fields.total_othr_charges)}} </label>
+                                    </b-row>
+                                    <hr>
+                                    <b-row>
                                         <label class="font-weight-bold col-sm-6">Sub Total :</label>
                                         <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(getSubTotal)}} </label>
                                     </b-row>
                                     <b-row>
-                                        <label class="font-weight-bold col-sm-6 text-right">Vatable :</label>
-                                        <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(getVatables)}} </label>
+                                        <label class="col-sm-6 text-right">Vatable :</label>
+                                        <label class="col-sm-6 text-right"> {{formatNumber(getVatables)}} </label>
                                     </b-row>
                                     <b-row>
                                         <label class="font-weight-bold col-sm-6 text-right col-form-label"> X </label>
@@ -480,8 +497,8 @@
                                         <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(getVatTotal)}} </label>
                                     </b-row>
                                     <b-row>
-                                        <label class="font-weight-bold col-sm-6 text-right">Fixed Rent :</label>
-                                        <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(forms.billing.fields.total_fixed_rent)}} </label>
+                                        <label class="col-sm-6 text-right">Fixed Rent :</label>
+                                        <label class="col-sm-6 text-right"> {{formatNumber(forms.billing.fields.total_fixed_rent)}} </label>
                                     </b-row>
                                     <b-row>
                                         <label class="font-weight-bold col-sm-6 text-right col-form-label"> X </label>
@@ -598,6 +615,7 @@
                             :placeholder="'Select Department'"
                             v-model="forms.period.fields.department_id"
                         >
+                            <option value="0">All Departments</option>
                             <option v-for="department in options.departments.items" :key="department.department_id" :value="department.department_id">{{department.department_desc}}</option>
                         </select2>
                     </b-form-group>
@@ -1064,7 +1082,7 @@ export default {
         }
     },
     methods:{
-        onBillingEntry () {
+        async onBillingEntry () {
             this.forms.billing.fields.schedules = this.tables.schedules.items
             this.forms.billing.fields.utilities = this.tables.utilities.items
             this.forms.billing.fields.miscellaneous = this.tables.miscellaneous.items
@@ -1075,10 +1093,12 @@ export default {
             this.forms.billing.fields.month_id = this.forms.period.fields.month_id
 
             if(this.entryMode == 'Add'){
-                this.createEntity('billing', false, 'billings')
+                await this.createEntity('billing', false, 'billings', true)
+                await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
             }
             else{
-                this.updateEntity('billing', 'billing_id', false, 'billings')
+                await this.updateEntity('billing', 'billing_id', false, 'billings', true)
+                await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
             }
         },
         onBillingDelete(){
@@ -1100,7 +1120,7 @@ export default {
         setUpdate(data){
             this.filterOptionsList('contracts', data.item.tenant_id)
             
-            this.$http.get('/api/billings/sc/'+ data.item.billing_id,{
+            this.$http.get('/api/billingSC/sc/'+ data.item.billing_id,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
@@ -1138,7 +1158,7 @@ export default {
                     // fixed_rent: fixed_rent, 
                     // escalation_percent: escalation_percent, 
                     amount_due: amount_due, 
-                    is_vatted: 0, 
+                    is_vatted: 1, 
                     contract_schedule_notes: ''
                 });
             } 
@@ -1175,7 +1195,7 @@ export default {
             this.tables[charge_type].items.splice(index, 1)
         },
         getPrevBalance(month_id, app_year, tenant_id){
-                this.$http.get('api/billing/'+month_id+'/'+app_year+'/'+tenant_id,{
+            this.$http.get('api/billing/'+month_id+'/'+app_year+'/'+tenant_id,{
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('token')
                     }
@@ -1221,7 +1241,6 @@ export default {
                         nmonth_id = 1
                         nyear++
                     }
-                    console.log(nmonth_id)
                     this.$http.get('/api/contracts/' + value + '/' + nyear + '/' + nmonth_id,{
                         headers: {
                                 Authorization: 'Bearer ' + localStorage.getItem('token')
@@ -1233,6 +1252,17 @@ export default {
                         this.tables.utilities.items = res.util_charges
                         this.tables.miscellaneous.items = res.misc_charges
                         this.tables.other.items = res.othr_charges
+
+                        if(this.previous_balance > 0){
+                            this.tables.other.items.push({
+                                charge_id: 1,
+                                charge_desc: 'Penalty 3%',
+                                contract_rate: 0.03,
+                                contract_default_reading: this.previous_balance,
+                                contract_is_vatted: 0,
+                                contract_notes:''
+                            })
+                        }
                         this.counter = this.tables.schedules.items.length
                     })
                     .catch(error => {
@@ -1244,7 +1274,7 @@ export default {
         },
         showBillingList(){
             if(this.forms.period.fields.period_id != null && this.forms.period.fields.department_id != null){
-                this.filterTableList('billings', this.forms.period.fields.period_id)
+                this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
                 this.showList = true
                 this.showModalPeriod = false
             }
@@ -1260,6 +1290,7 @@ export default {
             if(this.forms.billing.fields.commencement_date == null){
                 return null
             }
+            this.forms.billing.fields.commencement_date = new Date(this.forms.billing.fields.commencement_date)
             this.forms.billing.fields.commencement_date = moment(this.forms.billing.fields.commencement_date).format("MMMM DD, YYYY")
             return this.forms.billing.fields.commencement_date
         },
@@ -1267,6 +1298,7 @@ export default {
             if(this.forms.billing.fields.termination_date == null){
                 return null
             }
+            this.forms.billing.fields.termination_date = new Date(this.forms.billing.fields.termination_date)
             this.forms.billing.fields.termination_date = moment(this.forms.billing.fields.termination_date).format("MMMM DD, YYYY")
             return this.forms.billing.fields.termination_date
         },
@@ -1316,27 +1348,35 @@ export default {
             var dSchedVat = 0
 
             this.tables.schedules.items.forEach(schedule => {
-                if(schedule.is_vatted == 1){
-                    schedVat += schedule.amount_due
-                    dSchedVat += this.forms.billing.fields.contract_discounted_rent
+                if(schedule != null){
+                    if(schedule.is_vatted == 1){
+                        schedVat += schedule.amount_due
+                        dSchedVat += this.forms.billing.fields.contract_discounted_rent
+                    }
                 }
             })
 
             this.tables.utilities.items.forEach(util => {
-                if(util.contract_is_vatted == 1){
-                    utilVat += util.contract_rate  * util.contract_default_reading
+                if(util != null){
+                    if(util.contract_is_vatted == 1){
+                        utilVat += util.contract_rate  * util.contract_default_reading
+                    }
                 }
             })
 
             this.tables.miscellaneous.items.forEach(misc => {
-                if(misc.contract_is_vatted == 1){
-                    miscVat += misc.contract_rate * misc.contract_default_reading
+                if(misc != null){
+                    if(misc.contract_is_vatted == 1){
+                        miscVat += misc.contract_rate * misc.contract_default_reading
+                    }
                 }
             })
 
             this.tables.other.items.forEach(othr => {
-                if(othr.contract_is_vatted == 1){
-                    othrVat += othr.contract_rate * othr.contract_default_reading
+                if(othr != null){
+                    if(othr.contract_is_vatted == 1){
+                        othrVat += othr.contract_rate * othr.contract_default_reading
+                    }
                 }
             })
             this.forms.billing.fields.vatable_amount = Number(schedVat) + Number(utilVat) + Number(miscVat) + Number(othrVat)

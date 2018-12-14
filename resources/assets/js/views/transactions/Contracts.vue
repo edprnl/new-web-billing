@@ -1086,7 +1086,7 @@ export default {
                         fixed_rent:fixed_rent,
                         escalation_percent:escalation_percent,
                         amount_due:amount_due,
-                        is_vatted:0,
+                        is_vatted:1,
                         contract_schedule_notes:''
                     })
 

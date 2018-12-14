@@ -34,20 +34,22 @@
                                     <td>{{ moment(billing.period_start_date, "MMMM DD, YYYY") }} to {{ moment(billing.period_end_date, "MMMM DD, YYYY") }}</td>
                                 </tr>
                                 <tr>
+                                    <td>TENANT CODE :</td>
+                                    <td>{{ billing.tenant_code }}</td>
+                                    <td>SPACE CODE :</td>
+                                    <td>{{ billing.space_code }}</td>
+                                </tr>
+                                <tr>
                                     <td>CATEGORY :</td>
                                     <td>{{ billing.category_desc }}</td>
-                                    <td>SPACE CODE :</td>
-                                    <td>{{ billing.tenant_code }}</td>
+                                    <td>LEASED AREA :</td>
+                                    <td>{{ formatNumber(billing.contract_floor_area) }}sqm</td>
                                 </tr>
                                 <tr>
                                     <td>LOCATION :</td>
                                     <td>{{ billing.location_desc }}</td>
                                     <td>DUE DATE :</td>
                                     <td>{{ moment(billing.period_due_date, "MMMM DD, YYYY") }}</td>
-                                </tr>
-                                <tr>
-                                    <td>LEASED AREA :</td>
-                                    <td>{{ formatNumber(billing.contract_floor_area) }}sqm</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -115,7 +117,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <table style="width: 100%">
+                        <table style="width: 100%; margin-top: 5px;">
                             <thead>
                                 <tr>
                                     <th colspan="6" style="text-align: left; font-size: 10pt;">CURRENT BILLING</th>
@@ -221,12 +223,12 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <table class="total" style="width: 100%">
+                        <table class="total" style="width: 100%; margin-top: 5px;">
                             <thead>
                                 <tr>
-                                    <th style="text-align: left"><h2>TOTAL AMOUNT DUE</h2></th>
-                                    <th style="text-align: right"><h2>{{ formatNumber(Number(previous_balance) + Number(billing.total_amount_due) + (Number(previous_balance * 0.03))) }}</h2></th>
-                                    <th style="text-align: right"><h2>{{ formatNumber(Number(previous_balance) + (Number(billing.contract_discounted_rent) + Number(billing.total_util_charges) + Number(billing.total_misc_charges) + Number(billing.total_othr_charges) + Number(billing.discounted_vatable_amount * (billing.vat_percent / 100)) - Number(billing.contract_discounted_rent * (billing.wtax_percent / 100)) + (Number(previous_balance * 0.03)))) }}</h2></th>
+                                    <th style="text-align: left; width: 70%"><h2>TOTAL AMOUNT DUE</h2></th>
+                                    <th style="text-align: right; width: 15%;"><h2>{{ formatNumber(Number(previous_balance) + Number(billing.total_amount_due) + (Number(previous_balance * 0.03))) }}</h2></th>
+                                    <th style="text-align: right; width:15%;"><h2>{{ formatNumber(Number(previous_balance) + (Number(billing.contract_discounted_rent) + Number(billing.total_util_charges) + Number(billing.total_misc_charges) + Number(billing.total_othr_charges) + Number(billing.discounted_vatable_amount * (billing.vat_percent / 100)) - Number(billing.contract_discounted_rent * (billing.wtax_percent / 100)) + (Number(previous_balance * 0.03)))) }}</h2></th>
                                 </tr>
                             </thead>
                         </table>
@@ -299,6 +301,9 @@ export default {
                 .border-left {
                     border-left: 1px solid gray;
                 }
+                @page {
+                    margin: 0.4in;
+                }
                 `
         }
     },
@@ -356,7 +361,9 @@ export default {
         this.d = new Printd()
 
         const { contentWindow } = this.d.getIFrame()
-        
+        contentWindow.addEventListener(
+            'afterprint', () => window.close()
+        )
     },
   }
 </script>

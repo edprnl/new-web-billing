@@ -23,7 +23,7 @@ class BillingsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($period_id = null)
+    public function index($period_id = null, $department_id = null)
     {
         $billings = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
                             ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
@@ -31,7 +31,10 @@ class BillingsController extends Controller
                             ->where('b_billing_info.is_deleted', 0);     
         if($period_id != null){
             $billings->where('b_billing_info.period_id', $period_id);
-        }            
+        }
+        if($department_id != null && $department_id != 0){
+            $billings->where('b_contract_info.department_id', $department_id);
+        }
         return Reference::collection($billings->get());
     }
 
@@ -395,8 +398,28 @@ class BillingsController extends Controller
     }
 
     public function prevBalance($month_id, $app_year, $tenant_id){
-        $response['balance'] = DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.")");
+        // $response['balance'] = DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.")");
         return DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.") as prevBalance");
+    }
+
+    public function getBillingBalance($tenant_id){
+        $billings = BillingInfo::select(
+                                    'b_billing_info.billing_id',
+                                    'b_billing_info.billing_no',
+                                    'b_billing_info.app_year',
+                                    'b_billing_info.month_id',
+                                    'b_refmonths.month_name',
+                                    'b_billing_info.total_amount_due as remaining_balance',
+                                    'b_'
+                                )
+                                ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
+                                ->where('tenant_id', $tenant_id)
+                                ->where('is_deleted', 0)
+                                ->get();
+
+        return ( new Reference( $billings) )
+                                ->response()
+                                ->setStatusCode(200);
     }
 
     public function checkIfUsed($id)
