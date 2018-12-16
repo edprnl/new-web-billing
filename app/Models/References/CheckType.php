@@ -4,9 +4,9 @@ namespace App\Models\References;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class CheckType extends Model
 {
-    protected $table = 'b_refcategory';
-    protected $primaryKey = 'category_id';
+    protected $table = 'b_refchecktype';
+    protected $primaryKey = 'check_type_id';
     public $timestamps = false;
 }

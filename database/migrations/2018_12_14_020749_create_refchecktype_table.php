@@ -13,7 +13,7 @@ class CreateRefchecktypeTable extends Migration
      */
     public function up()
     {
-        Schema::create('refchecktype', function (Blueprint $table) {
+        Schema::create('b_refchecktype', function (Blueprint $table) {
             $table->increments('check_type_id');
             $table->string('check_type_code')->default('');
             $table->string('check_type_desc')->default('');

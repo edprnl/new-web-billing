@@ -42,6 +42,12 @@ export default {
         }
         ,
         {
+          name: 'Check Types',
+          url: '/references/checktypes',
+          //icon: 'fas fa-code-branch'
+        }
+        ,
+        {
           name: 'Nature Of Business',
           url: '/references/natureofbusiness',
           //icon: 'fas fa-code-branch'

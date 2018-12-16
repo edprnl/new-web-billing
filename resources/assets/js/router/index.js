@@ -36,6 +36,7 @@ import charges from '@/views/references/Charges'
 import categories from '@/views/references/Categories'
 import locations from '@/views/references/Locations'
 import contracttypes from '@/views/references/ContractTypes'
+import checktypes from '@/views/references/CheckTypes'
 import natureofbusiness from '@/views/references/NatureOfBusiness'
 import billingperiods from '@/views/references/BillingPeriods'
 
@@ -117,6 +118,12 @@ const router = new Router({
               path: 'contracttypes',
               name: 'Contract Types',
               component: contracttypes,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'checktypes',
+              name: 'Check Types',
+              component: checktypes,
               meta: {requiresAuth: true}
             },
             {

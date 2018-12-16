@@ -63,6 +63,20 @@ Route::middleware('auth:api')->group(function () {
    Route::get('period/check/{id}', 'References\BillingPeriodController@checkIfUsed');
    // END billing period
 
+   //List check types
+   Route::get('check_types', 'References\CheckTypeController@index');
+   //List check type
+   Route::get('check_type/{id}', 'References\CheckTypeController@show');
+   //Create check type
+   Route::post('check_type', 'References\CheckTypeController@create');
+   //Update check type
+   Route::put('check_type/{id}', 'References\CheckTypeController@update');
+   //Delete check type
+   Route::put('check_type/delete/{id}', 'References\CheckTypeController@delete');
+   //Check if check type was used
+   Route::get('check_type/check/{id}', 'References\CheckTypeController@checkIfUsed');
+   // END check types
+
    Route::get('charges', 'References\ChargesController@index');
    //List categories
    Route::get('categories', 'References\CategoriesController@index');
@@ -210,5 +224,19 @@ Route::middleware('auth:api')->group(function () {
     Route::get('billing/check/{id}', 'Transactions\BillingsController@checkIfUsed');
     // END billing
 
+    //PAYMENTS
+    //List payments
+    Route::get('payments', 'Transactions\PaymentsController@index');
+    //List single payment
+    Route::get('payment/{id}', 'Transactions\PaymentsController@show');
+    //Create new payment
+    Route::post('payment', 'Transactions\PaymentsController@create');
+    //Update payment
+    Route::put('payment/{id}', 'Transactions\PaymentsController@update');
+    //Delete payment
+    Route::put('payment/delete/{id}', 'Transactions\PaymentsController@delete');
+    //Check if payment was used
+    Route::get('payment/check/{id}', 'Transactions\PaymentsController@checkIfUsed');
+    // END PAYMENTS
     //---------------------------------- TRANSACTIONS ---------------------------------------------
 });

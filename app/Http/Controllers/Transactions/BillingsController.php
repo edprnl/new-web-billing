@@ -409,12 +409,24 @@ class BillingsController extends Controller
                                     'b_billing_info.app_year',
                                     'b_billing_info.month_id',
                                     'b_refmonths.month_name',
-                                    'b_billing_info.total_amount_due as remaining_balance',
-                                    'b_'
+                                    DB::raw('b_billing_info.total_amount_due - (IFNULL(SUM(b_payment_details.amount_paid), 0) + IFNULL(SUM(b_payment_details.discount), 0)) as remaining_balance'),
+                                    DB::raw('"0.00" as discount'),
+                                    DB::raw('"0.00" as amount_paid')
                                 )
+                                ->leftJoin('b_payment_details', 'b_payment_details.billing_id', '=', 'b_billing_info.billing_id')
+                                ->leftJoin('b_payment_info', 'b_payment_info.payment_id', '=', 'b_payment_details.payment_id')
+                                // ->leftJoin('b_payment_details', function($join) {
+                                //     $join->on('b_payment_details.billing_id', '=', 'b_billing_info.billing_id')
+                                //         ->leftJoin('b_payment_info', 'b_payment_info.payment_id', '=', 'b_payment_details.payment_id')
+                                //         ->where('b_payment_info.is_canceled', 0)
+                                //         ;
+                                //   })
                                 ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
-                                ->where('tenant_id', $tenant_id)
+                                ->where('b_billing_info.tenant_id', $tenant_id)
                                 ->where('is_deleted', 0)
+                                ->where('b_payment_info.is_canceled', 0)
+                                ->groupBy('billing_id')
+                                ->havingRaw('remaining_balance != 0')
                                 ->get();
 
         return ( new Reference( $billings) )

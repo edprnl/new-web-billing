@@ -13,7 +13,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col  sm="4">
-                                    <b-button variant="primary" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true">
+                                    <b-button variant="primary" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true, this.tables.payment_details.items = []">
                                             <i class="fa fa-plus-circle"></i> Create New Payment
                                     </b-button>
                             </b-col>
@@ -42,10 +42,6 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
-                                            <i class="fa fa-edit"></i>
-                                        </b-btn>
-
                                         <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
@@ -86,6 +82,35 @@
                                             <b-form-group>
                                                 <b-row>
                                                     <b-col lg=4>
+                                                        <label class="col-form-label">Transaction No : </label>
+                                                    </b-col>
+                                                    <b-col lg="8">
+                                                        <b-form-input
+                                                            type="text"
+                                                            placeholder="Auto" 
+                                                            v-model="forms.payment.fields.transaction_no"
+                                                            readonly>
+                                                        </b-form-input>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-row>
+                                                    <b-col lg=4>
+                                                        <label class="col-form-label">Reference No.</label>
+                                                    </b-col>
+                                                    <b-col lg="8">
+                                                        <b-form-input
+                                                            type="text"
+                                                            placeholder="Reference No" 
+                                                            v-model="forms.payment.fields.reference_no">
+                                                        </b-form-input>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-row>
+                                                    <b-col lg=4>
                                                         <label class="col-form-label">Trade Name : </label>
                                                     </b-col>
                                                     <b-col lg="8">
@@ -115,6 +140,8 @@
                                                     </b-col>
                                                 </b-row>
                                             </b-form-group>
+                                        </b-col>
+                                        <b-col lg="4">
                                             <b-form-group>
                                                 <b-row>
                                                     <b-col lg=4>
@@ -145,8 +172,6 @@
                                                     </b-col>
                                                 </b-row>
                                             </b-form-group>
-                                        </b-col>
-                                        <b-col lg="4">
                                             <b-form-group>
                                                 <b-row>
                                                     <b-col lg=4>
@@ -159,23 +184,9 @@
                                                             :placeholder="'Select Payment Type'"
                                                             v-model="forms.payment.fields.payment_type"
                                                         >
-                                                            <option value="Cash">Cash</option>
-                                                            <option value="Check">Check</option>
+                                                            <option value="0">Cash</option>
+                                                            <option value="1">Check</option>
                                                         </select2>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Amount :</label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Amount" 
-                                                            v-model="forms.payment.fields.amount">
-                                                        </b-form-input>
                                                     </b-col>
                                                 </b-row>
                                             </b-form-group>
@@ -185,11 +196,13 @@
                                                         <label class="col-form-label">Payment Date : </label>
                                                     </b-col>
                                                     <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Payment Date" 
-                                                            v-model="forms.payment.fields.payment_date">
-                                                        </b-form-input>
+                                                        <date-picker 
+                                                            v-model="forms.payment.fields.payment_date" 
+                                                            lang="en" 
+                                                            input-class="form-control mx-input"
+                                                            format="MMMM DD, YYYY"
+                                                            :clearable="false">
+                                                        </date-picker>
                                                     </b-col>
                                                 </b-row>
                                             </b-form-group>
@@ -205,9 +218,9 @@
                                                             :allowClear="false"
                                                             :placeholder="'Select Check Type'"
                                                             v-model="forms.payment.fields.check_type"
+                                                            :disabled="forms.payment.fields.payment_type == 1 ? false : true"
                                                         >
-                                                            <option value="Cash">Cash</option>
-                                                            <option value="Check">Check</option>
+                                                            <option v-for="check in options.check_types.items" :key="check.check_type_id" :value="check.check_type_id">{{check.check_type_desc}}</option>
                                                         </select2>
                                                     </b-col>
                                                 </b-row>
@@ -220,8 +233,9 @@
                                                     <b-col lg="8">
                                                         <b-form-input
                                                             type="text"
-                                                            placeholder="Amount" 
-                                                            v-model="forms.payment.fields.check_no">
+                                                            placeholder="Check No." 
+                                                            v-model="forms.payment.fields.check_no"
+                                                            :disabled="forms.payment.fields.payment_type == 1 ? false : true">
                                                         </b-form-input>
                                                     </b-col>
                                                 </b-row>
@@ -232,11 +246,14 @@
                                                         <label class="col-form-label">Check Date : </label>
                                                     </b-col>
                                                     <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Payment Date" 
-                                                            v-model="forms.payment.fields.check_date">
-                                                        </b-form-input>
+                                                        <date-picker 
+                                                            v-model="forms.payment.fields.check_date" 
+                                                            lang="en" 
+                                                            input-class="form-control mx-input"
+                                                            format="MMMM DD, YYYY"
+                                                            :clearable="false"
+                                                            :disabled="forms.payment.fields.payment_type == 1 ? false : true">
+                                                        </date-picker>
                                                     </b-col>
                                                 </b-row>
                                             </b-form-group>
@@ -253,25 +270,27 @@
                                     </h6>
                                     <b-form-group>
                                         <b-row>
-                                            <b-col lg="6">
+                                            <b-col lg="4">
                                                 <b-row>
                                                     <b-col lg=3>
                                                         <label class="col-form-label">Amount :</label>
                                                     </b-col>
-                                                    <b-col lg="7">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Amount" 
-                                                            v-model="forms.payment.fields.amount">
-                                                        </b-form-input>
-                                                    </b-col>
-                                                    <b-col lg="2">
-                                                        <b-button 
-                                                            variant="primary" 
-                                                            @click="distributePayment">
-                                                            <i class="fa fa-check"></i>
-                                                            Distribute
-                                                        </b-button>
+                                                    <b-col lg="8">
+                                                        <b-input-group>
+                                                            <vue-autonumeric 
+                                                                v-model="forms.payment.fields.amount"
+                                                                :class="'form-control text-right'" 
+                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            </vue-autonumeric>
+                                                            <b-input-group-append>
+                                                                <b-button 
+                                                                    variant="primary" 
+                                                                    @click="distributePayment">
+                                                                    <i class="fa fa-share"></i>
+                                                                    Distribute
+                                                                </b-button>
+                                                            </b-input-group-append>
+                                                        </b-input-group>
                                                     </b-col>
                                                 </b-row>
                                             </b-col>
@@ -282,6 +301,14 @@
                                         :items.sync="tables.payment_details.items"
                                         striped hover small bordered show-empty
                                     >
+                                        <template slot="discount" slot-scope="data">
+                                            <vue-autonumeric 
+                                                @input='computeDiscount'
+                                                v-model="data.item.discount"
+                                                :class="'form-control text-right'" 
+                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                            </vue-autonumeric>
+                                        </template>
                                         <template slot="amount_paid" slot-scope="data">
                                             <vue-autonumeric 
                                                 v-model="data.item.amount_paid"
@@ -290,6 +317,67 @@
                                             </vue-autonumeric>
                                         </template>
                                     </b-table>
+                                    <b-row>
+                                        <b-col lg="8">
+                                            <b-form-group>
+                                                <label>Remarks</label>
+                                                <b-form-textarea
+                                                    id="remarks"
+                                                    v-model="forms.payment.fields.remarks"
+                                                    :state="forms.payment.states.remarks"
+                                                    type="text"
+                                                    :rows="7"
+                                                    placeholder="Remarks">
+                                                </b-form-textarea>
+                                            </b-form-group>
+                                        </b-col>
+                                        <b-col lg="4">
+                                            <b-form-group>
+                                                <b-row>
+                                                    <b-col lg="4">
+                                                        <label class="col-form-label">Balance Paid : </label>
+                                                    </b-col>
+                                                    <b-col lg="8">
+                                                        <vue-autonumeric 
+                                                            v-model="forms.payment.fields.balance_paid"
+                                                            :class="'form-control text-right'" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}"
+                                                            readonly>
+                                                        </vue-autonumeric>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-row>
+                                                    <b-col lg="4">
+                                                        <label class="col-form-label">Total Discount : </label>
+                                                    </b-col>
+                                                    <b-col lg="8">
+                                                        <vue-autonumeric 
+                                                            v-model="forms.payment.fields.discount"
+                                                            :class="'form-control text-right'" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}" readonly>
+                                                        </vue-autonumeric>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-row>
+                                                    <b-col lg="4">
+                                                        <label class="col-form-label">Advance : </label>
+                                                    </b-col>
+                                                    <b-col lg="8">
+                                                        <vue-autonumeric 
+                                                            v-model="forms.payment.fields.advance"
+                                                            :class="'form-control text-right'" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}" 
+                                                            readonly>
+                                                        </vue-autonumeric>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-form-group>
+                                        </b-col>
+                                    </b-row>
                                 </b-card>
                             </b-col>
                         </b-row>
@@ -316,10 +404,10 @@
             :noCloseOnBackdrop="true"
         >
             <div slot="modal-title">
-                Delete Payment
+                Cancel Payment
             </div>
             <b-col lg=12>
-                Are you sure you want to delete this payment?
+                Are you sure you want to cancel this payment?
             </b-col>
             <div slot="modal-footer">
                 <b-button :disabled="forms.payment.isSaving" variant="primary" @click="onPaymentDelete">
@@ -345,6 +433,9 @@ export default {
                 tenants: {
                     items: []
                 },
+                check_types: {
+                    items: []
+                },
             },
             forms: {
                 payment: {
@@ -352,6 +443,27 @@ export default {
                     isDeleting: false,
                     fields: {
                         payment_id: null,
+                        transaction_no: null,
+                        reference_no: null,
+                        tenant_id: null,
+                        tenant_code: null,
+                        contact_person: null,
+                        space_code: null,
+                        payment_type: null,
+                        amount: 0.00,
+                        payment_date: new Date(),
+                        check_type: null,
+                        check_no: null,
+                        check_date: null,
+                        remarks: null,
+                        balance_paid: 0.00,
+                        advance: 0.00,
+                        discount: 0.00,
+                    },
+                    states: {
+                        payment_id: null,
+                        transaction_no: null,
+                        reference_no: null,
                         tenant_id: null,
                         tenant_code: null,
                         contact_person: null,
@@ -362,73 +474,29 @@ export default {
                         check_type: null,
                         check_no: null,
                         check_date: null,
-                        head_office_address: null,
-                        billing_address: null,
-                        contact_person: null,
-                        designation: null,
-                        contact_number: null,
-                        email_address: null,
-                        tin_number: null,
-                        is_auto: 0,
-                        business_permit: null,
-                        payment_information_sheet: null,
-                        valid_id: null,
-                        tin_cor: null,
-                        dti_sec: null,
-                        notarized_contract: null,
-                        proof_of_billing: null,
-                        others: null,
-                        others_specify: null
-                    },
-                    states: {
-                        payment_id: null,
-                        payment_code: null,
-                        trade_name: null,
-                        company_name: null,
-                        space_code: null,
-                        business_concept: null,
-                        head_office_address: null,
-                        billing_address: null,
-                        contact_person: null,
-                        designation: null,
-                        contact_number: null,
-                        email_address: null,
-                        tin_number: null,
-                        is_auto: null,
-                        business_permit: null,
-                        payment_information_sheet: null,
-                        valid_id: null,
-                        tin_cor: null,
-                        dti_sec: null,
-                        notarized_contract: null,
-                        proof_of_billing: null,
-                        others: null,
-                        others_specify: null
+                        remarks: null,
+                        balance_paid: null,
+                        advance: null,
+                        discount: null,
                     },
                     errors: {
                         payment_id: null,
-                        payment_code: null,
-                        trade_name: null,
-                        company_name: null,
-                        space_code: null,
-                        business_concept: null,
-                        head_office_address: null,
-                        billing_address: null,
+                        transaction_no: null,
+                        reference_no: null,
+                        tenant_id: null,
+                        tenant_code: null,
                         contact_person: null,
-                        designation: null,
-                        contact_number: null,
-                        email_address: null,
-                        tin_number: null,
-                        is_auto: null,
-                        business_permit: null,
-                        payment_information_sheet: null,
-                        valid_id: null,
-                        tin_cor: null,
-                        dti_sec: null,
-                        notarized_contract: null,
-                        proof_of_billing: null,
-                        others: null,
-                        others_specify: null
+                        space_code: null,
+                        payment_type: null,
+                        amount: null,
+                        payment_date: null,
+                        check_type: null,
+                        check_no: null,
+                        check_date: null,
+                        remarks: null,
+                        balance_paid: null,
+                        advance: null,
+                        discount: null,
                     }
                 }
             },
@@ -436,32 +504,50 @@ export default {
                 payments: {
                     fields:[
                         {
-                            key:'payment_code',
-                            label: 'Payment Code'
+                            key:'transaction_no',
+                            label: 'Trans No'
+                        },
+                        {
+                            key:'reference_no',
+                            label: 'Reference No'
                         },
                         {
                             key:'trade_name',
-                            label: 'Trade Name'
+                            label: 'Tenant'
                         },
                         {
-                            key:'company_name',
-                            label: 'Company Name'
+                            key:'payment_date',
+                            label: 'Payment Date',
+                            formatter: (value) => {
+                                return this.moment(value, 'MMMM DD, YYYY')
+                            }
                         },
                         {
-                            key:'head_office_address',
-                            label: 'Address'
+                            key:'discount',
+                            label: 'Discount',
+                            thClass: 'text-right',
+                            tdClass: 'text-right',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
                         },
                         {
-                            key:'contact_person',
-                            label: 'Contact Person'
+                            key:'balance_paid',
+                            label: 'Balance Paid',
+                            thClass: 'text-right',
+                            tdClass: 'text-right',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
                         },
                         {
-                            key:'designation',
-                            label: 'Designation'
-                        },
-                        {
-                            key:'business_concept',
-                            label: 'Business Concept'
+                            key:'amount_paid',
+                            label: 'Amount Paid',
+                            thClass: 'text-right',
+                            tdClass: 'text-right',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
                         },
                         {
                             key: 'action',
@@ -479,28 +565,37 @@ export default {
                         },
                         {
                             key:'billing_no',
-                            label: 'Billing No.'
+                            label: 'Billing No.',
+                            tdClass: 'align-middle'
                         },
                         {
                             key:'app_year',
-                            label: 'App Year'
+                            label: 'App Year',
+                            tdClass: 'align-middle'
                         },
                         {
                             key:'month_name',
-                            label: 'Month'
+                            label: 'Month',
+                            tdClass: 'align-middle'
                         },
                         {
                             key:'remaining_balance',
                             label: 'Remaining Balance',
                             thClass: 'text-right',
-                            tdClass: 'text-right',
+                            tdClass: 'text-right align-middle',
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
                         },
                         {
+                            key:'discount',
+                            label: 'Discount',
+                            thClass: 'text-right'
+                        },
+                        {
                             key:'amount_paid',
-                            label: 'Amount Paid'
+                            label: 'Amount Paid',
+                            thClass: 'text-right'
                         }
                     ],
                     items: []
@@ -523,6 +618,8 @@ export default {
     },
     methods:{
         onPaymentEntry(){
+            this.forms.payment.fields.payment_details = this.tables.payment_details.items
+
             if(this.entryMode == 'Add'){
                 this.createEntity('payment', false, 'payments')
             }
@@ -575,30 +672,46 @@ export default {
                 })
         },
         getPaymentType: function (value, data) {
-            if(data.length > 0){
-                var tenant = this.options.tenants.items[data[0].element.index]
-                this.forms.payment.fields.tenant_code = tenant.tenant_code
-                this.forms.payment.fields.contact_persont = enant.contact_person
-                this.forms.payment.fields.space_code = tenant.space_code
+            if(value == 0){
+                this.forms.payment.fields.check_type = null
+                this.forms.payment.fields.check_no = null
+                this.forms.payment.fields.check_date = null
             }
         },
         distributePayment(){
             var amount = this.forms.payment.fields.amount
+            var balance_paid = 0
+            var discount = 0
             this.tables.payment_details.items.forEach(billing => {
+                discount += Number(billing.discount)
+                amount += Number(billing.discount)
                 if(amount > Number(billing.remaining_balance)){
-                    billing.amount_paid = billing.remaining_balance 
-                    amount -= billing.remaining_balance
+                    billing.amount_paid = Number(billing.remaining_balance) - Number(billing.discount)
+                    balance_paid += Number(billing.remaining_balance) - Number(billing.discount)
+                    amount -= Number(billing.remaining_balance)
                 }
                 else{
-                    billing.amount_paid = amount
+                    billing.amount_paid = Number(amount) - Number(billing.discount)
+                    balance_paid += Number(amount) - Number(billing.discount)
                     amount = 0
                 }
             })
+            this.forms.payment.fields.advance = this.forms.payment.fields.amount - Number(balance_paid)
+            this.forms.payment.fields.balance_paid = balance_paid
+        },
+        computeDiscount(){
+            var totalDiscount = 0
+            this.tables.payment_details.items.forEach(billing => {
+                totalDiscount += Number(billing.discount)
+            })
+            this.forms.payment.fields.discount = totalDiscount
+            //this.distributePayment()
         }
     },
     created () {
-      //this.fillTableList('payments');
+      this.fillTableList('payments')
       this.fillOptionsList('tenants')
+      this.fillOptionsList('check_types')
     }
   }
 </script>
