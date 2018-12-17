@@ -13,7 +13,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col  sm="4">
-                                    <b-button variant="primary" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true, this.tables.payment_details.items = []">
+                                    <b-button variant="primary" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true, tables.payment_details.items = []">
                                             <i class="fa fa-plus-circle"></i> Create New Payment
                                     </b-button>
                             </b-col>
@@ -579,8 +579,8 @@ export default {
                             tdClass: 'align-middle'
                         },
                         {
-                            key:'remaining_balance',
-                            label: 'Remaining Balance',
+                            key:'outstanding_balance',
+                            label: 'Outstanding Balance',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             formatter: (value) => {
@@ -596,7 +596,16 @@ export default {
                             key:'amount_paid',
                             label: 'Amount Paid',
                             thClass: 'text-right'
-                        }
+                        },
+                        {
+                            key:'remaining_balance',
+                            label: 'Remaining Balance',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            formatter: (value, key, item) => {
+                                return this.formatNumber(Math.max(0, item.outstanding_balance - (item.discount + item.amount_paid)));
+                            }
+                        },
                     ],
                     items: []
                 }
@@ -685,18 +694,18 @@ export default {
             this.tables.payment_details.items.forEach(billing => {
                 discount += Number(billing.discount)
                 amount += Number(billing.discount)
-                if(amount > Number(billing.remaining_balance)){
-                    billing.amount_paid = Number(billing.remaining_balance) - Number(billing.discount)
-                    balance_paid += Number(billing.remaining_balance) - Number(billing.discount)
-                    amount -= Number(billing.remaining_balance)
+                if(amount > Number(billing.outstanding_balance)){
+                    billing.amount_paid = Math.max(0, Number(billing.outstanding_balance) - Number(billing.discount))
+                    balance_paid += Math.max(0, Number(billing.outstanding_balance) - Number(billing.discount))
+                    amount -= Number(billing.outstanding_balance)
                 }
                 else{
-                    billing.amount_paid = Number(amount) - Number(billing.discount)
-                    balance_paid += Number(amount) - Number(billing.discount)
+                    billing.amount_paid = Math.max(0, Number(amount) - Number(billing.discount))
+                    balance_paid += Math.max(0, Number(amount) - Number(billing.discount))
                     amount = 0
                 }
             })
-            this.forms.payment.fields.advance = this.forms.payment.fields.amount - Number(balance_paid)
+            this.forms.payment.fields.advance = Math.max(0, this.forms.payment.fields.amount - Number(balance_paid))
             this.forms.payment.fields.balance_paid = balance_paid
         },
         computeDiscount(){
@@ -705,7 +714,7 @@ export default {
                 totalDiscount += Number(billing.discount)
             })
             this.forms.payment.fields.discount = totalDiscount
-            //this.distributePayment()
+            this.distributePayment()
         }
     },
     created () {

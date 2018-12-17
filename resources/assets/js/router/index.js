@@ -72,11 +72,11 @@ const router = new Router({
           component: Dashboard,
           meta: { requiresAuth: true }
         },
-        // {
-        //   path: 'charts',
-        //   name: 'Charts',
-        //   component: Charts
-        // },
+        {
+          path: 'charts',
+          name: 'Charts',
+          component: Charts
+        },
         {
           path: 'references',
           name: 'References',

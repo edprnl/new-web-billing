@@ -1094,15 +1094,18 @@ export default {
 
             if(this.entryMode == 'Add'){
                 await this.createEntity('billing', false, 'billings', true)
-                await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
+                // this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
+                this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
             }
             else{
                 await this.updateEntity('billing', 'billing_id', false, 'billings', true)
                 await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
             }
         },
-        onBillingDelete(){
-            this.deleteEntity('billing', this.billing_id, true, 'billings')
+        async onBillingDelete(){
+            await this.deleteEntity('billing', this.billing_id, true, 'billings', true)
+            await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
+
         },
         async setDelete(data){
             if(await this.checkIfUsed('billing', data.item.billing_id) == true){
@@ -1118,6 +1121,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.filterOptionsList('contracts', data.item.tenant_id)
             
             this.$http.get('/api/billingSC/sc/'+ data.item.billing_id,{

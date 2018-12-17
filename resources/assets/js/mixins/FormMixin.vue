@@ -83,7 +83,7 @@
         },
 
         // params[ entity = table_name, entity_id = primary_key, entity_field = specific field to update]
-        deleteEntity (entity, entity_id, isModal, entity_table) {
+        deleteEntity (entity, entity_id, isModal, entity_table, is_filtered = false) {
           this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
 
@@ -100,7 +100,9 @@
                 title: 'Success!',
                 text: 'The record has been deleted.'
               })
-              this.fillTableList(entity_table)
+              if(is_filtered == false){
+                this.fillTableList(entity_table)
+              }
               if(isModal){
                 this.showModalDelete = false
               }
@@ -240,7 +242,7 @@
         async checkIfUsed (entity, filter) {
           let is_used = false
           this.forms[entity].isDeleting = true
-          await this.$http.get('api/' + entity + '/check/' + filter,{
+          await this.$http.get('api/' + entity + 'check/' + filter,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }

@@ -351,14 +351,14 @@ export default {
         }
     },
     computed: {
-           
-
              year:{
                 get: function(){
                     if(this.forms.period.fields.app_year != null && typeof this.forms.period.fields.app_year == 'number'){
+                        console.log(this.forms.period.fields.app_year)
                         return moment(this.forms.period.fields.app_year + '-01' + '-01').format("MMMM DD, YYYY")
                     }
                     else{
+                        console.log(this.forms.period.fields.app_year)
                         return moment(this.forms.period.fields.app_year).format("MMMM DD, YYYY")
                     }
                 },

@@ -142,6 +142,37 @@ class PaymentsController extends Controller
             ->setStatusCode(200);
     }
 
+    public function getPayments($month_id, $app_year, $tenant_id)
+    {
+        $payments = PaymentInfo::select(
+                                'transaction_no',
+                                'reference_no',
+                                'amount_paid as payment',
+                                DB::raw('"Payment" as trans_type')
+        )
+                                ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-21", INTERVAL -1 MONTH)) AND DATE("'.$app_year.'-'.$month_id.'-21")')
+                                ->where('is_canceled', 0)
+                                ->where('tenant_id', $tenant_id)
+                                ->where('amount_paid', '>', 0);
+        
+        $discounts = PaymentInfo::select(
+                                'transaction_no',
+                                'reference_no',
+                                'discount as payment',
+                                DB::raw('"Discount" as trans_type')
+        )
+            ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-21", INTERVAL -1 MONTH)) AND DATE("'.$app_year.'-'.$month_id.'-21")')
+                                ->where('is_canceled', 0)
+                                ->where('tenant_id', $tenant_id)
+                                ->where('discount', '>', 0);
+
+        $result = $payments->union($discounts)->get();
+
+        return ( new Reference( $result ) )
+                ->response()
+                ->setStatusCode(200);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
