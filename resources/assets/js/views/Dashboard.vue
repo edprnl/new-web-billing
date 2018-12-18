@@ -113,23 +113,33 @@
                     </b-row>
                     <b-row sm="12">
                         <b-col sm="6">
-                            <b-card>
-                                <h5 slot="header">  <!-- table header -->
+                            <!-- <b-card>
+                                <h5 slot="header">  table header
                                     <span class="text-primary">
                                         <i class="fa fa-bars"></i> 
                                         Charge List
                                         <small class="font-italic">List of all registered charges.</small></span>
                                 </h5>
+                            </b-card> -->
+                            <b-card header="Bar Graph">
+                                <div class="chart-wrapper">
+                                    <bar-example/>
+                                </div>
                             </b-card>
                         </b-col>
                         <b-col sm="6">
-                            <b-card>
-                                <h5 slot="header">  <!-- table header -->
+                            <!-- <b-card>
+                                <h5 slot="header">  table header
                                     <span class="text-primary">
                                         <i class="fa fa-bars"></i> 
                                         Charge List
                                         <small class="font-italic">List of all registered charges.</small></span>
                                 </h5>
+                            </b-card> -->
+                            <b-card header="Line Chart">
+                                <div class="chart-wrapper">
+                                    <line-example/>
+                                </div>
                             </b-card>
                         </b-col>
                     </b-row>

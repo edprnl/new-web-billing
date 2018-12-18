@@ -72,11 +72,11 @@ const router = new Router({
           component: Dashboard,
           meta: { requiresAuth: true }
         },
-        {
-          path: 'charts',
-          name: 'Charts',
-          component: Charts
-        },
+        // {
+        //   path: 'charts',
+        //   name: 'Charts',
+        //   component: Charts
+        // },
         {
           path: 'references',
           name: 'References',
@@ -198,71 +198,71 @@ const router = new Router({
             }
           ]
         },
-        {
-          path: 'components',
-          redirect: '/components/buttons',
-          name: 'Components',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'buttons',
-              name: 'Buttons',
-              component: Buttons
-            },
-            {
-              path: 'social-buttons',
-              name: 'Social Buttons',
-              component: SocialButtons
-            },
-            {
-              path: 'cards',
-              name: 'Cards',
-              component: Cards
-            },
-            {
-              path: 'forms',
-              name: 'Forms',
-              component: Forms
-            },
-            {
-              path: 'modals',
-              name: 'Modals',
-              component: Modals
-            },
-            {
-              path: 'switches',
-              name: 'Switches',
-              component: Switches
-            },
-            {
-              path: 'tables',
-              name: 'Tables',
-              component: Tables
-            }
-          ]
-        },
-        {
-          path: 'icons',
-          redirect: '/icons/font-awesome',
-          name: 'Icons',
-          component: {
-            render (c) { return c('router-view') }
-          },
-          children: [
-            {
-              path: 'font-awesome',
-              name: 'Font Awesome',
-              component: FontAwesome
-            },
-            {
-              path: 'simple-line-icons',
-              name: 'Simple Line Icons',
-              component: SimpleLineIcons
-            }
-          ]
-        }
+        // {
+        //   path: 'components',
+        //   redirect: '/components/buttons',
+        //   name: 'Components',
+        //   component: {
+        //     render (c) { return c('router-view') }
+        //   },
+        //   children: [
+        //     {
+        //       path: 'buttons',
+        //       name: 'Buttons',
+        //       component: Buttons
+        //     },
+        //     {
+        //       path: 'social-buttons',
+        //       name: 'Social Buttons',
+        //       component: SocialButtons
+        //     },
+        //     {
+        //       path: 'cards',
+        //       name: 'Cards',
+        //       component: Cards
+        //     },
+        //     {
+        //       path: 'forms',
+        //       name: 'Forms',
+        //       component: Forms
+        //     },
+        //     {
+        //       path: 'modals',
+        //       name: 'Modals',
+        //       component: Modals
+        //     },
+        //     {
+        //       path: 'switches',
+        //       name: 'Switches',
+        //       component: Switches
+        //     },
+        //     {
+        //       path: 'tables',
+        //       name: 'Tables',
+        //       component: Tables
+        //     }
+        //   ]
+        // },
+        // {
+        //   path: 'icons',
+        //   redirect: '/icons/font-awesome',
+        //   name: 'Icons',
+        //   component: {
+        //     render (c) { return c('router-view') }
+        //   },
+        //   children: [
+        //     {
+        //       path: 'font-awesome',
+        //       name: 'Font Awesome',
+        //       component: FontAwesome
+        //     },
+        //     {
+        //       path: 'simple-line-icons',
+        //       name: 'Simple Line Icons',
+        //       component: SimpleLineIcons
+        //     }
+        //   ]
+        // }
       ]
     },
     // {
