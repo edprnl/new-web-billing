@@ -48,9 +48,9 @@ class TenantsController extends Controller
                 'tin_number' => 'required',
             ]
         )->validate();
-
+        
         $tenant = new Tenants;
-        $tenant->tenant_code = DB::raw("CreateTenantCode()");
+        $tenant->tenant_code = DB::select("select CreateTenantCode() as tenant_code")[0]->tenant_code;
         $tenant->trade_name = $request->input('trade_name');
         $tenant->company_name = $request->input('company_name');
         $tenant->space_code = $request->input('space_code');
@@ -75,12 +75,12 @@ class TenantsController extends Controller
         $tenant->created_datetime = Carbon::now();
         $tenant->created_by = Auth::user()->id;
 
-        $tenant->save();
-
-        //return json based from the resource data
-        return ( new Reference( $tenant ))
+        // return json based from the resource data
+        if($tenant->save()){
+            return ( new Reference( $tenant ))
                 ->response()
                 ->setStatusCode(201);
+        }
     }
 
     /**
@@ -167,8 +167,8 @@ class TenantsController extends Controller
         $tenant->proof_of_billing = $request->input('proof_of_billing');
         $tenant->others = $request->input('others');
         $tenant->others_specify = $request->input('others_specify');
-        $tenant->created_datetime = Carbon::now();
-        $tenant->created_by = Auth::user()->id;
+        $tenant->modified_datetime = Carbon::now();
+        $tenant->modified_by = Auth::user()->id;
 
         $tenant->save();
 

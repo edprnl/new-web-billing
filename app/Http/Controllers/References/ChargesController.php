@@ -50,11 +50,13 @@ class ChargesController extends Controller
         $charge->account_id = $request->input('account_id');
         $charge->created_datetime = Carbon::now();
         $charge->created_by = Auth::user()->id;
-
+        
         $charge->save();
 
+        $data = Charges::leftJoin('account_titles', 'account_titles.account_id', '=', 'b_refcharges.account_id')
+                        ->findOrFail($charge->charge_id);
         //return json based from the resource data
-        return ( new Reference( $charge ))
+        return ( new Reference( $data ))
                 ->response()
                 ->setStatusCode(201);
     }
@@ -121,8 +123,10 @@ class ChargesController extends Controller
 
         $charge->save();
 
+        $data = Charges::leftJoin('account_titles', 'account_titles.account_id', '=', 'b_refcharges.account_id')
+                        ->findOrFail($charge->charge_id);
         //return json based from the resource data
-        return ( new Reference( $charge ))
+        return ( new Reference( $data ))
                 ->response()
                 ->setStatusCode(201);
     }

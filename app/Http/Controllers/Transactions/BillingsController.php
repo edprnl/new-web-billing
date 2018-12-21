@@ -135,8 +135,11 @@ class BillingsController extends Controller
             DB::table('b_billing_misc_charges')->insert($miscs_dataSet);
             DB::table('b_billing_othr_charges')->insert($others_dataSet);
         }
-        
-        return ( new Reference( $billing_info ) )
+        $data = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
+                            ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
+                            ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
+                            ->findOrFail($billing_info->billing_id);
+        return ( new Reference( $data ) )
                 ->response()
                 ->setStatusCode(201);
     }
@@ -357,8 +360,11 @@ class BillingsController extends Controller
             DB::table('b_billing_misc_charges')->insert($miscs_dataSet);
             DB::table('b_billing_othr_charges')->insert($others_dataSet);
         }
-        
-        return ( new Reference( $billing_info ) )
+        $data = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
+                            ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
+                            ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
+                            ->findOrFail($billing_info->billing_id);
+        return ( new Reference( $data ) )
                 ->response()
                 ->setStatusCode(201);
     }

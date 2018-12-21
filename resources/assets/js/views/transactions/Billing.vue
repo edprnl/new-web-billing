@@ -300,7 +300,7 @@
                                             <span></span>
                                         </b-col>
                                         <b-col  sm="4">
-                                            <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='utilities'">
+                                            <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('utilities'),charge_type='utilities'">
                                                 <i class="fa fa-plus-circle"></i> Add Charges
                                             </b-button>
                                         </b-col>
@@ -351,7 +351,7 @@
                                             <span></span>
                                         </b-col>
                                         <b-col  sm="4">
-                                            <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='miscellaneous'">
+                                            <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('utilities'),charge_type='miscellaneous'">
                                                 <i class="fa fa-plus-circle"></i> Add Charges
                                             </b-button>
                                         </b-col>
@@ -402,7 +402,7 @@
                                             <span></span>
                                         </b-col>
                                         <b-col  sm="4">
-                                            <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='other'">
+                                            <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('utilities'), charge_type='other'">
                                                 <i class="fa fa-plus-circle"></i> Add Charges
                                             </b-button>
                                         </b-col>
@@ -640,13 +640,22 @@
             <b-col lg=12>
                 <b-table 
                     small bordered
+                    :filter="filters.charges.criteria"
                     :fields="tables.charges.fields"
                     :items.sync="tables.charges.items"
                     show-empty>
                     <template slot="is_selected" slot-scope="data">
                         <input type="checkbox" v-model="data.item.is_selected">
                     </template>
+                    <template slot="HEAD_is_selected" slot-scope="data">
+                        <input @click="toggleSelectAll()" type="checkbox" v-model="is_check_all">
+                    </template>
                 </b-table>
+                <b-pagination
+                    :align="'right'"
+                    :total-rows="paginations.charges.totalRows"
+                    :per-page="paginations.charges.perPage"
+                    v-model="paginations.charges.currentPage" />
             </b-col>
             <div slot="modal-footer">
                 <b-button variant="primary" @click="addCharges(charge_type)">
@@ -767,7 +776,8 @@ export default {
                         {
                             key: 'is_selected',
                             label: '',
-                            tdClass: 'text-center'
+                            tdClass: 'text-center',
+                            thStyle: {width: '5px'}
                         },
                         {
                             key:'charge_code',
@@ -1059,12 +1069,15 @@ export default {
                         app_year: null,
                         month_id: null,
                         month_name: null,
-                        department_id: null
+                        department_id: 0
                     }
                 }
             },
             filters: {
                 billings: {
+                    criteria: null
+                },
+                charges: {
                     criteria: null
                 }
             },
@@ -1073,12 +1086,20 @@ export default {
                     totalRows: 0,
                     currentPage: 1,
                     perPage: 10
+                },
+                charges: {
+                    totalRows: 0,
+                    currentPage: 1,
+                    perPage: 10
                 }
             },
             counter: 0,
             charge_type: null,
             previous_balance: 0,
-            billing_id: null
+            late_payment: 0,
+            billing_id: null,
+            is_check_all: 0,
+            row: []
         }
     },
     methods:{
@@ -1094,18 +1115,13 @@ export default {
 
             if(this.entryMode == 'Add'){
                 await this.createEntity('billing', false, 'billings', true)
-                // this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
-                this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
             }
             else{
-                await this.updateEntity('billing', 'billing_id', false, 'billings', true)
-                await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
+                await this.updateEntity('billing', 'billing_id', false, this.row)
             }
         },
         async onBillingDelete(){
-            await this.deleteEntity('billing', this.billing_id, true, 'billings', true)
-            await this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
-
+            await this.deleteEntity('billing', this.billing_id, true, 'billings', 'billing_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('billing', data.item.billing_id) == true){
@@ -1121,6 +1137,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.filterOptionsList('contracts', data.item.tenant_id)
             
@@ -1198,21 +1215,42 @@ export default {
         removeCharge(charge_type, index){
             this.tables[charge_type].items.splice(index, 1)
         },
+        clearCharges(charge_type){
+            this.tables.charges.items.forEach(charge => {
+                charge.is_selected = false
+            })
+            this.is_check_all = false
+        },
         getPrevBalance(month_id, app_year, tenant_id){
             this.$http.get('api/billing/'+month_id+'/'+app_year+'/'+tenant_id,{
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('token')
                     }
-                })
-                .then((response) => {
-                    const res = response.data
-                    this.previous_balance = res[0]['prevBalance'];
-                })
-                .catch(error => {
-                        if (!error.response) 
-                        return console.log(error)
-                    })
-            },
+            })
+            .then((response) => {
+                const res = response.data
+                this.previous_balance = res[0]['prevBalance'];
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
+        getLatePayment(month_id, app_year, tenant_id){
+            this.$http.get('api/payment/'+month_id+'/'+app_year+'/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.late_payment = res[0]['latePayment'];
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
         getPeriodInfo: function (value, data){
             if(data.length > 0){
                 var period = this.options.periods.items[data[0].element.index]
@@ -1229,6 +1267,7 @@ export default {
                 this.forms.billing.fields.tenant_code = tenant.tenant_code
                 this.filterOptionsList('contracts', tenant.tenant_id)
                 this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
+                this.getLatePayment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
             }
         },
         getContractInfo: function (value, data) {
@@ -1260,9 +1299,19 @@ export default {
                         if(this.previous_balance > 0){
                             this.tables.other.items.push({
                                 charge_id: 1,
-                                charge_desc: 'Penalty 3%',
+                                charge_desc: 'Interest 3%',
                                 contract_rate: 0.03,
                                 contract_default_reading: this.previous_balance,
+                                contract_is_vatted: 0,
+                                contract_notes:''
+                            })
+                        }
+                        if(this.late_payment > 0){
+                            this.tables.other.items.push({
+                                charge_id: 2,
+                                charge_desc: 'Penalty 3%',
+                                contract_rate: 0.03,
+                                contract_default_reading: this.late_payment,
                                 contract_is_vatted: 0,
                                 contract_notes:''
                             })
@@ -1287,6 +1336,20 @@ export default {
             let routeData = this.$router.resolve({name: 'Soa', query: {billing_id: data.item.billing_id}});
             window.open(routeData.href, '_blank');
             //this.$router.push({ name: 'soa' })
+        },
+        toggleSelectAll(){
+            if(this.is_check_all == 0){
+                this.tables.charges.items.forEach(charge => {
+                    charge.is_selected = true
+                })
+                this.is_check_all = 1
+            }
+            else{
+                this.tables.charges.items.forEach(charge => {
+                    charge.is_selected = false
+                })
+                this.is_check_all = 0
+            }
         }
     },
     computed :{

@@ -201,7 +201,8 @@ export default {
                     perPage: 10
                 }
             },
-            check_type_id: null
+            check_type_id: null,
+            row: []
         }
     },
     methods:{
@@ -211,11 +212,11 @@ export default {
                 this.createEntity('check_type', true, 'check_types')
             }
             else{
-                this.updateEntity('check_type', 'check_type_id', true, 'check_types')
+                this.updateEntity('check_type', 'check_type_id', true, this.row)
             }
         },
         onCheckTypeDelete(){
-            this.deleteEntity('check_type', this.check_type_id, true, 'check_types')
+            this.deleteEntity('check_type', this.check_type_id, true, 'check_types', 'check_type_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('check_type', data.item.check_type_id) == true){
@@ -231,6 +232,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('check_type', data.item.check_type_id)
             this.showModalEntry=true
             this.entryMode='Edit'

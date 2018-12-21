@@ -2,7 +2,7 @@
     export default {
       methods: {
         // 2nd parameter are callback functions pass as object
-        createEntity (entity, isModal, entity_table, is_filtered = false) {
+        createEntity (entity, isModal, entity_table) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
           this.$http.post('api/' + entity, this.forms[entity].fields,{
@@ -19,9 +19,10 @@
               title: 'Success!',
               text: 'The record has been successfully created.'
             })
-            if(is_filtered == false){
-              this.fillTableList(entity_table)
-            }
+
+            this.tables[entity_table].items.unshift(response.data.data)
+            this.paginations[entity_table].totalRows++
+
             if(isModal){
               this.showModalEntry = false
             }
@@ -40,7 +41,7 @@
           })
         },
 
-        updateEntity (entity, entity_id, isModal, entity_table, is_filtered = false) {
+        updateEntity (entity, entity_id, isModal, row) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
 
@@ -57,9 +58,11 @@
                 title: 'Success!',
                 text: 'The record has been successfully updated.'
               })
-              if(is_filtered == false){
-                this.fillTableList(entity_table)
+
+              for (var key in response.data.data) {
+                row[key] = response.data.data[key]
               }
+
               if(isModal){
                 this.showModalEntry = false
               }
@@ -83,7 +86,7 @@
         },
 
         // params[ entity = table_name, entity_id = primary_key, entity_field = specific field to update]
-        deleteEntity (entity, entity_id, isModal, entity_table, is_filtered = false) {
+        deleteEntity (entity, entity_id, isModal, entity_table, primary_key) {
           this.resetFieldStates(entity)
           this.forms[entity].isSaving = true
 
@@ -100,9 +103,12 @@
                 title: 'Success!',
                 text: 'The record has been deleted.'
               })
-              if(is_filtered == false){
-                this.fillTableList(entity_table)
-              }
+
+              const index = this.tables[entity_table].items.findIndex(item => item[primary_key] === response.data.data[primary_key])
+
+              this.$delete(this.tables[entity_table].items, index)
+              this.paginations[entity_table].totalRows--
+
               if(isModal){
                 this.showModalDelete = false
               }

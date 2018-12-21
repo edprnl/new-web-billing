@@ -47,7 +47,8 @@
                                         </b-btn>
 
                                         <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
-                                            <i class="fa fa-trash"></i>
+                                            <icon v-if="forms.tenant.isDeleting" name="sync" spin></icon>
+                                            <i v-else class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
                                     
@@ -444,15 +445,15 @@ export default {
                         email_address: null,
                         tin_number: null,
                         is_auto: 0,
-                        business_permit: null,
-                        tenant_information_sheet: null,
-                        valid_id: null,
-                        tin_cor: null,
-                        dti_sec: null,
-                        notarized_contract: null,
-                        proof_of_billing: null,
-                        others: null,
-                        others_specify: null
+                        business_permit: 0,
+                        tenant_information_sheet: 0,
+                        valid_id: 0,
+                        tin_cor: 0,
+                        dti_sec: 0,
+                        notarized_contract: 0,
+                        proof_of_billing: 0,
+                        others: 0,
+                        others_specify: 0
                     },
                     states: {
                         tenant_id: null,
@@ -557,7 +558,8 @@ export default {
                     perPage: 10
                 }
             },
-            tenant_id: null
+            tenant_id: null,
+            row: []
         }
     },
     methods:{
@@ -566,11 +568,11 @@ export default {
                 this.createEntity('tenant', false, 'tenants')
             }
             else{
-                this.updateEntity('tenant', 'tenant_id', false, 'tenants')
+                this.updateEntity('tenant', 'tenant_id', false, this.row)
             }
         },
         onTenantDelete(){
-            this.deleteEntity('tenant', this.tenant_id, true, 'tenants')
+            this.deleteEntity('tenant', this.tenant_id, true, 'tenants', 'tenant_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('tenant', data.item.tenant_id) == true){
@@ -586,6 +588,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.resetFieldStates('tenant')
             this.fillEntityForm('tenant', data.item.tenant_id)
             this.showEntry=true

@@ -264,7 +264,7 @@ export default {
                     key: 'period_start_date',
                     label: 'Start Date',
                     formatter: (value) => {
-                            return this.moment(value,'MMMM DD Y')
+                            return this.moment(value,'MMMM DD, Y')
                                 
                         }
                 },
@@ -272,7 +272,7 @@ export default {
                     key: 'period_end_date',
                     label: 'End Date',
                     formatter: (value) => {
-                            return this.moment(value,'MMMM DD Y')
+                            return this.moment(value,'MMMM DD, Y')
                                 
                         }
                 },
@@ -288,7 +288,7 @@ export default {
                     key: 'period_due_date',
                     label: 'Due Date',
                     formatter: (value) => {
-                            return this.moment(value,'MMMM DD Y')
+                            return this.moment(value,'MMMM DD, Y')
                                 
                         }
                 },
@@ -314,7 +314,8 @@ export default {
             perPage: 10
           }
         },
-        period_id: null
+        period_id: null,
+        row: []
       }
     },
     methods:{
@@ -324,11 +325,11 @@ export default {
                 this.createEntity('period', true, 'periods')
             }
             else{
-               this.updateEntity('period', 'period_id', true, 'periods')
+               this.updateEntity('period', 'period_id', true, this.row)
             }
         },
         onPeriodDelete(){
-            this.deleteEntity('period', this.period_id, true, 'periods')
+            this.deleteEntity('period', this.period_id, true, 'periods', 'period_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('period', data.item.period_id) == true){
@@ -344,6 +345,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('period', data.item.period_id)
             this.showModalEntry=true
             this.entryMode='Edit'
@@ -353,14 +355,20 @@ export default {
     computed: {
              year:{
                 get: function(){
-                    if(this.forms.period.fields.app_year != null && typeof this.forms.period.fields.app_year == 'number'){
-                        // console.log(this.forms.period.fields.app_year)
-                        return moment(this.forms.period.fields.app_year + '-01' + '-01').format("MMMM DD, YYYY")
+                    if(this.forms.period.fields.app_year != null && this.forms.period.fields.app_year != 0){
+                        if(typeof this.forms.period.fields.app_year == 'number'){
+                            console.log(this.forms.period.fields.app_year)
+                            return moment(this.forms.period.fields.app_year + '-01' + '-01').format("MMMM DD, YYYY")
+                        }
+                        else{
+                            return moment(this.forms.period.fields.app_year).format("MMMM DD, YYYY")
+                        }
                     }
                     else{
-                        console.log(this.forms.period.fields.app_year)
-                        return moment(this.forms.period.fields.app_year).format("MMMM DD, YYYY")
+                        this.forms.period.fields.app_year = null
+                        return null
                     }
+                   
                 },
                 set: function(newValue){
                     this.forms.period.fields.app_year = newValue

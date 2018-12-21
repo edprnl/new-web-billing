@@ -313,7 +313,8 @@ export default {
                     perPage: 10
                 }
             },
-            id: null
+            id: null,
+            row: []
         }
     },
     methods:{
@@ -322,17 +323,18 @@ export default {
                 this.createEntity('user', true, 'users')
             }
             else{
-                this.updateEntity('user', 'id', true, 'users')
+                this.updateEntity('user', 'id', true, this.row)
             }
         },
         onUserDelete(){
-            this.deleteEntity('user', this.id, true, 'users')
+            this.deleteEntity('user', this.id, true, 'users', 'id')
         },
         setDelete(data){
             this.showModalDelete=true
             this.id = data.item.id
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('user', data.item.id)
             this.showModalEntry=true
             this.entryMode='Edit'

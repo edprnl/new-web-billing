@@ -231,6 +231,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('payments/{tenant_id}/{month_id}/{app_year}', 'Transactions\PaymentsController@getPayments');
     //List single payment
     Route::get('payment/{id}', 'Transactions\PaymentsController@show');
+    Route::get('payment/{month_id}/{app_year}/{tenant_id}', 'Transactions\PaymentsController@latePayment');
     //Create new payment
     Route::post('payment', 'Transactions\PaymentsController@create');
     //Update payment

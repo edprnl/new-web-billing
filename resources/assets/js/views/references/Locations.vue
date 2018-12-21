@@ -215,25 +215,22 @@ export default {
             perPage: 10
           }
         },
-        location_id: null
+        location_id: null,
+        row: []
       }
     },
     methods:{
-        clearFilter(){
-            this.filters.locations.criteria = null;
-            //alert("aa");
-        },
         onLocationEntry () {
             if(this.entryMode == 'Add'){
                 
                 this.createEntity('location', true, 'locations')
             }
             else{
-                this.updateEntity('location', 'location_id', true, 'locations')
+                this.updateEntity('location', 'location_id', true, this.row)
             }
         },
         onLocationDelete(){
-            this.deleteEntity('location', this.location_id, true, 'locations')
+            this.deleteEntity('location', this.location_id, true, 'locations', 'location_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('location', data.item.location_id) == true){
@@ -249,6 +246,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('location', data.item.location_id)
             this.showModalEntry=true
             this.entryMode='Edit'

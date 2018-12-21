@@ -245,7 +245,8 @@ export default {
             perPage: 10
           }
         },
-        charge_id: null
+        charge_id: null,
+        row: []
       }
     },
     methods:{
@@ -255,11 +256,11 @@ export default {
                 this.createEntity('charge', true, 'charges')
             }
             else{
-                this.updateEntity('charge', 'charge_id', true, 'charges')
+                this.updateEntity('charge', 'charge_id', true, this.row)
             }
         },
         onChargeDelete(){
-            this.deleteEntity('charge', this.charge_id, false, 'charges')
+            this.deleteEntity('charge', this.charge_id, true, 'charges', 'charge_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('charge', data.item.charge_id) == true){
@@ -275,6 +276,8 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
+            this.resetFieldStates('charge')
             this.fillEntityForm('charge', data.item.charge_id)
             this.showModalEntry=true
             this.entryMode='Edit'

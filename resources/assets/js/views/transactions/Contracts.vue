@@ -257,7 +257,7 @@
                                             </b-col>
                                             <b-col lg="4">
                                                 <b-form-group>
-                                                    <label>* Fixed Rental </label>
+                                                    <label>* Basic Rental </label>
                                                     <vue-autonumeric 
                                                         id="fixed_rent"
                                                         :class="'form-control text-right'" 
@@ -274,6 +274,14 @@
                                                     </vue-autonumeric> 
                                                 </b-form-group>
                                                 <b-form-group>
+                                                    <label>Advance Rental </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.contract_advance_rent" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
                                                     <label>Security Deposit </label>
                                                     <vue-autonumeric 
                                                         :class="'form-control text-right'" 
@@ -282,10 +290,26 @@
                                                     </vue-autonumeric> 
                                                 </b-form-group>
                                                 <b-form-group>
-                                                    <label>Power Meter Deposit </label>
+                                                    <label>Electric Meter Deposit </label>
                                                     <vue-autonumeric 
                                                         :class="'form-control text-right'" 
                                                         v-model="forms.contract.fields.power_meter_deposit" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Water Meter Deposit </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.water_meter_deposit" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric> 
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <label>Construction Deposit </label>
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'" 
+                                                        v-model="forms.contract.fields.construction_deposit" 
                                                         :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                     </vue-autonumeric> 
                                                 </b-form-group>
@@ -319,6 +343,13 @@
                                             :fields="tables.schedules.fields"
                                             :items.sync="tables.schedules.items"
                                             show-empty>
+                                            <template slot="fixed_rent" slot-scope="data">
+                                                <vue-autonumeric 
+                                                    :class="'form-control text-right'"
+                                                    v-model="data.item.fixed_rent" 
+                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </template>
                                             <template slot="escalation_percent" slot-scope="data">
                                                 <vue-autonumeric 
                                                     :class="'form-control text-right'"
@@ -369,7 +400,7 @@
                                                                 <span></span>
                                                             </b-col>
                                                             <b-col  sm="4">
-                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='utilities'">
+                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('utilities'), charge_type='utilities'">
                                                                     <i class="fa fa-plus-circle"></i> Add Charges
                                                                 </b-button>
                                                             </b-col>
@@ -406,6 +437,14 @@
                                                                     v-model="data.item.contract_notes">
                                                                 </b-form-input>
                                                             </template>
+                                                            <template slot="sort_key" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-center'"
+                                                                    v-model="data.item.sort_key" 
+                                                                    :options="{modifyValueOnWheel: false, emptyInputBehavior: 0,
+                                                                    decimalPlaces: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
                                                             <template slot="action" slot-scope="data">
                                                                 <b-btn :size="'sm'" variant="danger" @click="removeCharge('utilities', data.index)">
                                                                     <i class="fa fa-times-circle"></i>
@@ -422,7 +461,7 @@
                                                                 <span></span>
                                                             </b-col>
                                                             <b-col  sm="4">
-                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='miscellaneous'">
+                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('miscellaneous'),charge_type='miscellaneous'">
                                                                     <i class="fa fa-plus-circle"></i> Add Charges
                                                                 </b-button>
                                                             </b-col>
@@ -459,6 +498,14 @@
                                                                     v-model="data.item.contract_notes">
                                                                 </b-form-input>
                                                             </template>
+                                                            <template slot="sort_key" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-center'"
+                                                                    v-model="data.item.sort_key" 
+                                                                    :options="{modifyValueOnWheel: false, emptyInputBehavior: 0,
+                                                                    decimalPlaces: 0}">
+                                                                </vue-autonumeric>
+                                                            </template>
                                                             <template slot="action" slot-scope="data">
                                                                 <b-btn :size="'sm'" variant="danger" @click="removeCharge('miscellaneous', data.index)">
                                                                     <i class="fa fa-times-circle"></i>
@@ -475,7 +522,7 @@
                                                                 <span></span>
                                                             </b-col>
                                                             <b-col  sm="4">
-                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, charge_type='other'">
+                                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('other'),charge_type='other'">
                                                                     <i class="fa fa-plus-circle"></i> Add Charges
                                                                 </b-button>
                                                             </b-col>
@@ -511,6 +558,14 @@
                                                                     placeholder="Notes"
                                                                     v-model="data.item.contract_notes">
                                                                 </b-form-input>
+                                                            </template>
+                                                            <template slot="sort_key" slot-scope="data">
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-center'"
+                                                                    v-model="data.item.sort_key" 
+                                                                    :options="{modifyValueOnWheel: false, emptyInputBehavior: 0,
+                                                                    decimalPlaces: 0}">
+                                                                </vue-autonumeric>
                                                             </template>
                                                             <template slot="action" slot-scope="data">
                                                                 <b-btn :size="'sm'" variant="danger" @click="removeCharge('other', data.index)">
@@ -552,15 +607,37 @@
                 Charges
             </div>
             <b-col lg=12>
+                <b-row class='mb-2'>
+                    <b-col  sm="8">
+                        <span></span>
+                    </b-col>
+
+                    <b-col  sm="4">
+                        <b-form-input 
+                            v-model="filters.charges.criteria"
+                            type="text" 
+                            placeholder="Search">
+                        </b-form-input>
+                    </b-col>
+                </b-row>
                 <b-table 
                     small bordered
+                    :filter="filters.charges.criteria"
                     :fields="tables.charges.fields"
                     :items.sync="tables.charges.items"
                     show-empty>
                     <template slot="is_selected" slot-scope="data">
                         <input type="checkbox" v-model="data.item.is_selected">
                     </template>
+                    <template slot="HEAD_is_selected" slot-scope="data">
+                        <input @click="toggleSelectAll()" type="checkbox" v-model="is_check_all">
+                    </template>
                 </b-table>
+                <b-pagination
+                    :align="'right'"
+                    :total-rows="paginations.charges.totalRows"
+                    :per-page="paginations.charges.perPage"
+                    v-model="paginations.charges.currentPage" />
             </b-col>
             <div slot="modal-footer">
                 <b-button variant="primary" @click="addCharges(charge_type)">
@@ -648,9 +725,12 @@ export default {
                         contract_floor_area: 0,
                         contract_fixed_rent: 0,
                         contract_discounted_rent: 0,
+                        contract_advance_rent: 0,
                         contract_escalation_percent: 0,
                         security_deposit: 0,
                         power_meter_deposit: 0,
+                        water_meter_deposit: 0,
+                        construction_deposit: 0,
                         schedules: [],
                         utilities: [],
                         miscellaneous: [],
@@ -676,9 +756,12 @@ export default {
                         contract_floor_area: null,
                         contract_fixed_rent: null,
                         contract_discounted_rent: null,
+                        contract_advance_rent: null,
                         contract_escalation_percent: null,
                         security_deposit: null,
                         power_meter_deposit: null,
+                        water_meter_deposit: null,
+                        construction_deposit: null
                     },
                     errors: {
                         contract_id: null,
@@ -700,9 +783,12 @@ export default {
                         contract_floor_area: null,
                         contract_fixed_rent: null,
                         contract_discounted_rent: null,
+                        contract_advance_rent: null,
                         contract_escalation_percent: null,
                         security_deposit: null,
                         power_meter_deposit: null,
+                        water_meter_deposit: null,
+                        construction_deposit: null
                     }
                 }
             },
@@ -757,15 +843,18 @@ export default {
                         {
                             key: 'is_selected',
                             label: '',
-                            tdClass: 'text-center'
+                            tdClass: 'text-center',
+                            thStyle: {width: '5px'}
                         },
                         {
                             key:'charge_code',
-                            label: 'Charge Code'
+                            label: 'Charge Code',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'charge_desc',
-                            label: 'Description'
+                            label: 'Description',
+                            tdClass: 'align-middle',
                         },
                     ],
                     items:[]
@@ -791,13 +880,10 @@ export default {
                         },
                         {
                             key: 'fixed_rent',
-                            label: 'Fixed Rent',
+                            label: 'Basic Rent',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'},
-                            formatter: (value) => {
-                                return this.formatNumber(value)
-                            }
+                            thStyle: {width: '15%'}
                         },
                         {
                             key: 'escalation_percent',
@@ -873,6 +959,12 @@ export default {
                             label: 'Notes'
                         },
                         {
+                            key: 'sort_key',
+                            label: 'Sort',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'}
+                        },
+                        {
                             key: 'action',
                             label: 'Action',
                             thClass: 'text-center',
@@ -916,6 +1008,12 @@ export default {
                         {
                             key: 'contract_notes',
                             label: 'Notes'
+                        },
+                        {
+                            key: 'sort_key',
+                            label: 'Sort',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'}
                         },
                         {
                             key: 'action',
@@ -963,6 +1061,12 @@ export default {
                             label: 'Notes'
                         },
                         {
+                            key: 'sort_key',
+                            label: 'Sort',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'}
+                        },
+                        {
                             key: 'action',
                             label: 'Action',
                             thClass: 'text-center',
@@ -976,10 +1080,18 @@ export default {
             filters: {
                 contracts: {
                     criteria: null
+                },
+                charges: {
+                    criteria: null
                 }
             },
             paginations: {
                 contracts: {
+                    totalRows: 0,
+                    currentPage: 1,
+                    perPage: 10
+                },
+                charges: {
                     totalRows: 0,
                     currentPage: 1,
                     perPage: 10
@@ -989,7 +1101,9 @@ export default {
             app_year: null,
             charge_type: null,
             tabIndex: 0,
-            contract_id: null
+            contract_id: null,
+            is_check_all: 0,
+            row: []
         }
     },
     methods:{
@@ -1003,11 +1117,11 @@ export default {
                 this.createEntity('contract', false, 'contracts')
             }
             else{
-                this.updateEntity('contract', 'contract_id', false, 'contracts')
+                this.updateEntity('contract', 'contract_id', false, this.row)
             }
         },
         onContractDelete(){
-            this.deleteEntity('contract', this.contract_id, true, 'contracts')
+            this.deleteEntity('contract', this.contract_id, true, 'contracts', 'contract_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('contract', data.item.contract_id) == true){
@@ -1023,6 +1137,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('contract', data.item.contract_id)
             this.$http.get('/api/contracts/sc/'+ data.item.contract_id,{
               headers: {
@@ -1116,7 +1231,8 @@ export default {
                             contract_rate: 0,
                             contract_default_reading: 0,
                             contract_is_vatted: 0,
-                            contract_notes:''
+                            contract_notes:'',
+                            sort_key:0
                         })
                         charge.is_selected = false
                     }
@@ -1130,12 +1246,32 @@ export default {
         removeCharge(charge_type, index){
             this.tables[charge_type].items.splice(index, 1)
         },
+        clearCharges(charge_type){
+            this.tables.charges.items.forEach(charge => {
+                charge.is_selected = false
+            })
+            this.is_check_all = false
+        },
         getTenantInfo: function (value, data) {
             if(data.length > 0){
                 var tenant = this.options.tenants.items[data[0].element.index]
                 this.forms.contract.fields.tenant_code = tenant.tenant_code;
                 this.forms.contract.fields.contract_signatory = tenant.contact_person;
                 this.forms.contract.fields.contract_billing_address = tenant.billing_address;
+            }
+        },
+        toggleSelectAll(){
+            if(this.is_check_all == 0){
+                this.tables.charges.items.forEach(charge => {
+                    charge.is_selected = true
+                })
+                this.is_check_all = 1
+            }
+            else{
+                this.tables.charges.items.forEach(charge => {
+                    charge.is_selected = false
+                })
+                this.is_check_all = 0
             }
         }
     },

@@ -220,21 +220,20 @@ export default {
           }
         },
         department_id: null,
-        is_used: null,
+        row: []
       }
     },
     methods:{
         onDepartmentEntry () {
             if(this.entryMode == 'Add'){
-                
                 this.createEntity('department', true, 'departments')
             }
             else{
-                this.updateEntity('department', 'department_id', true, 'departments')
+                this.updateEntity('department', 'department_id', true, this.row)
             }
         },
         onDepartmentDelete(){
-            this.deleteEntity('department', this.department_id, true, 'departments')
+            this.deleteEntity('department', this.department_id, true, 'departments', 'department_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('department', data.item.department_id) == true){
@@ -250,6 +249,8 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
+            this.resetFieldStates('department')
             this.fillEntityForm('department', data.item.department_id)
             this.showModalEntry=true
             this.entryMode='Edit'

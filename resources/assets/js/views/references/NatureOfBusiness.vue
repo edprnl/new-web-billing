@@ -215,7 +215,8 @@ export default {
             perPage: 10
           }
         },
-        nature_of_business_id: null
+        nature_of_business_id: null,
+        row: []
       }
     },
     methods:{
@@ -225,11 +226,11 @@ export default {
                 this.createEntity('natureofbusiness', true, 'natureofbusinesses')
             }
             else{
-                this.updateEntity('natureofbusiness', 'nature_of_business_id', true, 'natureofbusinesses')
+                this.updateEntity('natureofbusiness', 'nature_of_business_id', true, this.row)
             }
         },
         onNatureOfBusinessDelete(){
-            this.deleteEntity('natureofbusiness', this.nature_of_business_id, true, 'natureofbusinesses')
+            this.deleteEntity('natureofbusiness', this.nature_of_business_id, true, 'natureofbusinesses', 'nature_of_business_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('natureofbusiness', data.item.nature_of_business_id) == true){
@@ -245,6 +246,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('natureofbusiness', data.item.nature_of_business_id)
             this.showModalEntry=true
             this.entryMode='Edit'

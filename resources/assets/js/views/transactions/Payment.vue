@@ -186,6 +186,7 @@
                                                         >
                                                             <option value="0">Cash</option>
                                                             <option value="1">Check</option>
+                                                            <option value="1">Online</option>
                                                         </select2>
                                                     </b-col>
                                                 </b-row>
@@ -201,7 +202,8 @@
                                                             lang="en" 
                                                             input-class="form-control mx-input"
                                                             format="MMMM DD, YYYY"
-                                                            :clearable="false">
+                                                            :clearable="false"
+                                                            :disabled="true">
                                                         </date-picker>
                                                     </b-col>
                                                 </b-row>
@@ -622,7 +624,8 @@ export default {
                     perPage: 10
                 }
             },
-            payment_id: null
+            payment_id: null,
+            row: []
         }
     },
     methods:{
@@ -633,11 +636,11 @@ export default {
                 this.createEntity('payment', false, 'payments')
             }
             else{
-                this.updateEntity('payment', 'payment_id', false, 'payments')
+                this.updateEntity('payment', 'payment_id', false, this.row)
             }
         },
         onPaymentDelete(){
-            this.deleteEntity('payment', this.payment_id, true, 'payments')
+            this.deleteEntity('payment', this.payment_id, true, 'payments', 'payment_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('payment', data.item.payment_id) == true){
@@ -653,6 +656,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.resetFieldStates('payment')
             this.fillEntityForm('payment', data.item.payment_id)
             this.showEntry=true

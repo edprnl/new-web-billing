@@ -215,21 +215,21 @@ export default {
             perPage: 10
           }
         },
-        contract_type_id: null
+        contract_type_id: null,
+        row: []
       }
     },
     methods:{
         onContractTypeEntry () {
             if(this.entryMode == 'Add'){
-                
                 this.createEntity('contracttype', true, 'contracttypes')
             }
             else{
-                this.updateEntity('contracttype', 'contract_type_id', true, 'contracttypes')
+                this.updateEntity('contracttype', 'contract_type_id', true, this.row)
             }
         },
         onContractTypeDelete(){
-            this.deleteEntity('contracttype', this.contract_type_id, true, 'contracttypes')
+            this.deleteEntity('contracttype', this.contract_type_id, true, 'contracttypes', 'contract_type_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('contracttype', data.item.contract_type_id) == true){
@@ -245,6 +245,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('contracttype', data.item.contract_type_id)
             this.showModalEntry=true
             this.entryMode='Edit'

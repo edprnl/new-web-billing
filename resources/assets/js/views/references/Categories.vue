@@ -201,7 +201,8 @@ export default {
                     perPage: 10
                 }
             },
-            category_id: null
+            category_id: null,
+            row: []
         }
     },
     methods:{
@@ -211,11 +212,11 @@ export default {
                 this.createEntity('category', true, 'categories')
             }
             else{
-                this.updateEntity('category', 'category_id', true, 'categories')
+                this.updateEntity('category', 'category_id', true, this.row)
             }
         },
         onCategoryDelete(){
-            this.deleteEntity('category', this.category_id, true, 'categories')
+            this.deleteEntity('category', this.category_id, true, 'categories', 'category_id')
         },
         async setDelete(data){
             if(await this.checkIfUsed('category', data.item.category_id) == true){
@@ -231,6 +232,7 @@ export default {
             this.showModalDelete = true
         },
         setUpdate(data){
+            this.row = data.item
             this.fillEntityForm('category', data.item.category_id)
             this.showModalEntry=true
             this.entryMode='Edit'

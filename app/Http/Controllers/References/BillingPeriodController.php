@@ -53,9 +53,11 @@ class BillingPeriodController extends Controller
         $period->created_by = Auth::user()->id;
 
         $period->save();
-
+        
+        $data = BillingPeriod::join('b_refmonths', 'b_refmonths.month_id', '=', 'b_refbillingperiod.month_id')
+                            ->findOrFail($period->period_id);
         //return json based from the resource data
-        return ( new Reference( $period ))
+        return ( new Reference( $data ))
                 ->response()
                 ->setStatusCode(201);
     }
@@ -130,10 +132,12 @@ class BillingPeriodController extends Controller
         $period->modified_datetime = Carbon::now();
         $period->modified_by = Auth::user()->id;
 
-        $period->update();
-
+        $period->save();
+        
+        $data = BillingPeriod::join('b_refmonths', 'b_refmonths.month_id', '=', 'b_refbillingperiod.month_id')
+                            ->findOrFail($period->period_id);
         //return json based from the resource data
-        return ( new Reference( $period ))
+        return ( new Reference( $data ))
                 ->response()
                 ->setStatusCode(201);
 

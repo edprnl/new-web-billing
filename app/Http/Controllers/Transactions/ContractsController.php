@@ -55,11 +55,12 @@ class ContractsController extends Controller
                         'contract_util_default_reading as contract_default_reading',
                         'contract_util_is_vatted as contract_is_vatted',
                         'contract_util_notes as contract_notes',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_contract_util_charges.charge_id')
-                    ->where('contract_id', $id)->get();
+                    ->where('contract_id', $id)->orderBy('sort_key', 'asc')->get();
         $misc_charges = ContractMiscCharges::select(
                         'contract_misc_id',
                         'contract_id',
@@ -67,11 +68,12 @@ class ContractsController extends Controller
                         'contract_misc_default_reading as contract_default_reading',
                         'contract_misc_is_vatted as contract_is_vatted',
                         'contract_misc_notes as contract_notes',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_contract_misc_charges.charge_id')
-                    ->where('contract_id', $id)->get();
+                    ->where('contract_id', $id)->orderBy('sort_key', 'asc')->get();
         $othr_charges = ContractOthrCharges::select(
                         'contract_othr_id',
                         'contract_id',
@@ -79,11 +81,12 @@ class ContractsController extends Controller
                         'contract_othr_default_reading as contract_default_reading',
                         'contract_othr_is_vatted as contract_is_vatted',
                         'contract_othr_notes as contract_notes',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_contract_othr_charges.charge_id')
-                    ->where('contract_id', $id)->get();
+                    ->where('contract_id', $id)->orderBy('sort_key', 'asc')->get();
 
         $contracts['schedules'] = Reference::collection($schedules);
         $contracts['util_charges'] = Reference::collection($util_charges);
@@ -156,6 +159,25 @@ class ContractsController extends Controller
      */
     public function create(Request $request)
     {
+        // Validator::make($request->all(),
+        //     [
+        //         'tenant_id' => 'required',
+        //         'contract_billing_address' => 'required',
+        //         'contract_type_id' => 'required',
+        //         'category_id' => 'required',
+        //         'commencement_date' => 'required',
+        //         'termination_date' => 'required',
+        //         'location_id' => 'required',
+        //         'contract_signatory' => 'required',
+        //         'contract_terms' => 'required|not_in:0|numeric',
+        //         'contract_fixed_rent' => 'required|not_in:0|numeric',
+        //         'tin_number' => 'required',
+        //         'contract_floor_area' => 'required|not_in:0|numeric',
+        //         'department_id' => 'required',
+        //         'nature_of_business_id' => 'required'
+        //     ]
+        // )->validate();
+
         $contract_info = new ContractInfo;
         $contract_schedule = new ContractSchedule;
         $contract_util_charges = new ContractUtilCharges;
@@ -215,7 +237,8 @@ class ContractsController extends Controller
                     'contract_util_rate' => $utility['contract_rate'],
                     'contract_util_default_reading' => $utility['contract_default_reading'],
                     'contract_util_is_vatted' => $utility['contract_is_vatted'],
-                    'contract_util_notes' => $utility['contract_notes']
+                    'contract_util_notes' => $utility['contract_notes'],
+                    'sort_key' => $utility['sort_key']
                 ];
             }
 
@@ -227,7 +250,8 @@ class ContractsController extends Controller
                     'contract_misc_rate' => $misc['contract_rate'],
                     'contract_misc_default_reading' => $misc['contract_default_reading'],
                     'contract_misc_is_vatted' => $misc['contract_is_vatted'],
-                    'contract_misc_notes' => $misc['contract_notes']
+                    'contract_misc_notes' => $misc['contract_notes'],
+                    'sort_key' => $misc['sort_key']
                 ];
             }
 
@@ -239,7 +263,8 @@ class ContractsController extends Controller
                     'contract_othr_rate' => $other['contract_rate'],
                     'contract_othr_default_reading' => $other['contract_default_reading'],
                     'contract_othr_is_vatted' => $other['contract_is_vatted'],
-                    'contract_othr_notes' => $other['contract_notes']
+                    'contract_othr_notes' => $other['contract_notes'],
+                    'sort_key' => $other['sort_key']
                 ];
             }
 
@@ -248,7 +273,15 @@ class ContractsController extends Controller
             DB::table('b_contract_misc_charges')->insert($miscs_dataSet);
             DB::table('b_contract_othr_charges')->insert($others_dataSet);
         }
-        return ( new Reference( $contract_info ) )
+
+        $data = ContractInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+                            ->leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
+                            ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
+                            ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
+                            ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->findOrFail($contract_info->contract_id);
+
+        return ( new Reference( $data ) )
             ->response()
             ->setStatusCode(201);
         
@@ -300,6 +333,25 @@ class ContractsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Validator::make($request->all(),
+        //     [
+        //         'tenant_id' => 'required',
+        //         'contract_billing_address' => 'required',
+        //         'contract_type_id' => 'required',
+        //         'category_id' => 'required',
+        //         'commencement_date' => 'required',
+        //         'termination_date' => 'required',
+        //         'location_id' => 'required',
+        //         'contract_signatory' => 'required',
+        //         'contract_terms' => 'required|not_in:0|numeric',
+        //         'contract_fixed_rent' => 'required|not_in:0|numeric',
+        //         'tin_number' => 'required',
+        //         'contract_floor_area' => 'required|not_in:0|numeric',
+        //         'department_id' => 'required',
+        //         'nature_of_business_id' => 'required'
+        //     ]
+        // )->validate();
+
         $contract_info = ContractInfo::findOrFail($request->input('contract_id'));
         $contract_schedule = new ContractSchedule;
         $contract_util_charges = new ContractUtilCharges;
@@ -370,7 +422,8 @@ class ContractsController extends Controller
                     'contract_util_rate' => $utility['contract_rate'],
                     'contract_util_default_reading' => $utility['contract_default_reading'],
                     'contract_util_is_vatted' => $utility['contract_is_vatted'],
-                    'contract_util_notes' => $utility['contract_notes']
+                    'contract_util_notes' => $utility['contract_notes'],
+                    'sort_key' => $utility['sort_key']
                 ];
             }
 
@@ -382,7 +435,8 @@ class ContractsController extends Controller
                     'contract_misc_rate' => $misc['contract_rate'],
                     'contract_misc_default_reading' => $misc['contract_default_reading'],
                     'contract_misc_is_vatted' => $misc['contract_is_vatted'],
-                    'contract_misc_notes' => $misc['contract_notes']
+                    'contract_misc_notes' => $misc['contract_notes'],
+                    'sort_key' => $misc['sort_key']
                 ];
             }
 
@@ -394,7 +448,8 @@ class ContractsController extends Controller
                     'contract_othr_rate' => $other['contract_rate'],
                     'contract_othr_default_reading' => $other['contract_default_reading'],
                     'contract_othr_is_vatted' => $other['contract_is_vatted'],
-                    'contract_othr_notes' => $other['contract_notes']
+                    'contract_othr_notes' => $other['contract_notes'],
+                    'sort_key' => $other['sort_key']
                 ];
             }
 
@@ -404,7 +459,14 @@ class ContractsController extends Controller
             DB::table('b_contract_othr_charges')->insert($others_dataSet);
         }
 
-        return ( new Reference($contract_info) )
+        $data = ContractInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+                            ->leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
+                            ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
+                            ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
+                            ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->findOrFail($contract_info->contract_id);
+
+        return ( new Reference($data) )
             ->response()
             ->setStatusCode(201);
         
