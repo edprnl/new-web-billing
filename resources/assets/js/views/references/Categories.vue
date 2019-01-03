@@ -70,15 +70,17 @@
             v-model="showModalEntry"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
+            @shown="focusElement('category_code')"
         >
             <div slot="modal-title">
                 Category Entry - {{entryMode}}
             </div>
             <b-col lg=12>
-                <b-form @keydown="resetFieldStates('category')">
+                <b-form @keydown="resetFieldStates('category')" autocomplete="off">
                     <b-form-group>
                         <label for="category_code">* Category Code</label>
                         <b-form-input
+                            ref="category_code"
                             id="category_code"
                             v-model="forms.category.fields.category_code"
                             :state="forms.category.states.category_code"

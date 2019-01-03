@@ -75,7 +75,7 @@
                 User Entry - {{entryMode}}
             </div>
             <b-col lg=12>
-                <b-form @keydown="resetFieldStates('user')">
+                <b-form @keydown="resetFieldStates('user')" autocomplete="off">
                     <b-row>
                         <b-col sm="6">
                             <b-form-group>

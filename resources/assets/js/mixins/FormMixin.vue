@@ -272,6 +272,15 @@
         // format date with date and format as parameters
         moment: function (date, format) {
             return moment(date).format(format);
+        },
+        // focus element using refs
+        focusElement(e, is_el = false){
+            if(is_el){
+              this.$refs[e].$el.focus()
+            }
+            else{
+              this.$refs[e].focus()
+            }
         }
       }
     }

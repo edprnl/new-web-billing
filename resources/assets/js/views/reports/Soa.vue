@@ -62,58 +62,25 @@
                             <tbody>
                                 <tr>
                                     <td colspan="2">BALANCE AS OF : {{ billing.prev_month }}</td>
-                                    <td style="text-align: right; width: 15%">{{ formatNumber(as_of_balance) }}</td>
                                     <td style="width: 15%"></td>
+                                    <td style="text-align: right; width: 15%">{{ formatNumber(as_of_balance) }}</td>
                                 </tr>
-                                <tr>
+                                <tr v-if="payments.length > 0">
                                     <td colspan="2">PAYMENTS :</td>
                                     <td></td>
                                     <td></td>
                                 </tr>
                                 <!-- may foreach dito -->
-                                <tr v-for="payment in payments">
+                                <tr v-if="payments.length > 0" v-for="payment in payments">
                                     <td style="width: 8%"></td>
                                     <td>{{ moment(payment.payment_date, 'MMMM DD, Y') }} Trans. No.: {{ payment.transaction_no }} Ref. No. {{ payment.reference_no }} - {{payment.trans_type}}</td>
-                                    <td style="text-align:right;">{{formatNumber(payment.payment)}}</td>
                                     <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">BALANCE :</td>
-                                    <td></td>
-                                    <td style="text-align: right">{{ formatNumber(previous_balance) }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">PENALTIES :</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>PENALTY CHARGES - {{formatNumber(penalty.contract_rate * 100)}}%</td>
-                                    <td></td>
-                                    <td style="text-align: right">{{ formatNumber(penalty.billing_othr_line_total) }}</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>INTEREST CHARGES - {{formatNumber(interest.contract_rate * 100)}}%</td>
-                                    <td></td>
-                                    <td style="text-align: right">{{ formatNumber(interest.billing_othr_line_total) }}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">ADJUSTMENTS :</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <!-- may foreach dito -->
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td style="text-align: right">0.00</td>
-                                    <td style="text-align: right">0.00</td>
+                                    <td style="text-align:right;">({{formatNumber(payment.payment)}})</td>
+
                                 </tr>
                                 <tr>
                                     <td colspan="3" style="font-size: 9pt;"><b>TOTAL OUTSTANDING BALANCE</b></td>
-                                    <td style="text-align: right; border-top: 1px solid gray"><b>{{ formatNumber(Number(previous_balance) + Number(interest.billing_othr_line_total) + Number(penalty.billing_othr_line_total)) }}</b></td>
+                                    <td style="text-align: right; font-size: 9pt;"><b>{{ formatNumber(previous_balance) }}</b></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -218,9 +185,43 @@
                                     <td style="text-align: right">{{ formatNumber(billing.discounted_vatable_amount * (billing.vat_percent / 100)) }}</td>
                                 </tr>
                                 <tr>
+                                    <td colspan="4">PENALTIES :</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>PENALTY CHARGES - {{formatNumber(penalty.contract_rate * 100)}}%</td>
+                                    <td colspan="2"></td>
+                                    <td style="text-align: right">{{ formatNumber(penalty.billing_othr_line_total) }}</td>
+                                    <td style="text-align: right">{{ formatNumber(penalty.billing_othr_line_total) }}</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>INTEREST CHARGES - {{formatNumber(interest.contract_rate * 100)}}%</td>
+                                    <td colspan="2"></td>
+                                    <td style="text-align: right">{{ formatNumber(interest.billing_othr_line_total) }}</td>
+                                    <td style="text-align: right">{{ formatNumber(interest.billing_othr_line_total) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">ADJUSTMENTS :</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <!-- may foreach dito -->
+                                <tr v-for="adjustment in adjustments">
+                                    <td></td>
+                                    <td>Adj. No.: {{ adjustment.adjustment_no }} - {{adjustment.adjustment_type}}</td>
+                                    <td colspan="2"></td>
+                                    <td v-if="adjustment.adjustment_type == 'IN'" style="text-align:right;">{{ formatNumber(adjustment.amount) }}</td>
+                                    <td v-else style="text-align:right;">({{ formatNumber(adjustment.amount) }})</td>
+                                     <td v-if="adjustment.adjustment_type == 'IN'" style="text-align:right;">{{ formatNumber(adjustment.amount) }}</td>
+                                    <td v-else style="text-align:right;">({{ formatNumber(adjustment.amount) }})</td>
+                                </tr>
+                                <tr>
                                     <td colspan="4" style="font-size: 9pt;"><b>TOTAL CURRENT CHARGES</b></td>
-                                    <td style="text-align: right; border-top: 1px solid gray"><b>{{ formatNumber(Number(billing.total_amount_due) - Number(interest.billing_othr_line_total)) }}</b></td>
-                                    <td style="text-align: right; border-top: 1px solid gray"><b>{{ formatNumber(Number(billing.contract_discounted_rent) + (Number(billing.total_util_charges) - Number(interest.billing_othr_line_total)) + Number(billing.total_misc_charges) + Number(billing.total_othr_charges) + Number(billing.discounted_vatable_amount * (billing.vat_percent / 100)) - Number(billing.contract_discounted_rent * (billing.wtax_percent / 100))) }}</b></td>
+                                    <td style="text-align: right; border-top: 1px solid gray"><b>{{ formatNumber(total_fixed_charges) }}</b></td>
+                                    <td style="text-align: right; border-top: 1px solid gray"><b>{{ formatNumber(total_discounted_charges) }}</b></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -228,8 +229,8 @@
                             <thead>
                                 <tr>
                                     <th style="text-align: left; width: 70%"><h2>TOTAL AMOUNT DUE</h2></th>
-                                    <th style="text-align: right; width: 15%;"><h2>{{ formatNumber(Number(previous_balance) + (Number(billing.total_amount_due) )) }}</h2></th>
-                                    <th style="text-align: right; width:15%;"><h2>{{ formatNumber(Number(previous_balance) + (Number(billing.contract_discounted_rent) + (Number(billing.total_util_charges) - Number(interest.billing_othr_line_total)) + Number(billing.total_misc_charges) + Number(billing.total_othr_charges) + Number(billing.discounted_vatable_amount * (billing.vat_percent / 100)) - Number(billing.contract_discounted_rent * (billing.wtax_percent / 100)) + (Number(previous_balance * 0.03)))) }}</h2></th>
+                                    <th style="text-align: right; width: 15%;"><h2>{{ formatNumber(this.total_fixed_amount_due) }}</h2></th>
+                                    <th style="text-align: right; width:15%;"><h2>{{ formatNumber(this.total_discounted_amounted_due) }}</h2></th>
                                 </tr>
                             </thead>
                         </table>
@@ -281,10 +282,17 @@ export default {
             },
             billing: [],
             payments: [],
+            adjustments: [],
             schedules: [],
             utilities: [],
             miscellaneous: [],
             other: [],
+            total_adjustment_in: 0,
+            total_adjustment_out: 0,
+            total_fixed_charges: 0,
+            total_discounted_charges: 0,
+            total_fixed_amount_due: 0,
+            total_discounted_amounted_due: 0,
             previous_balance: null,
             as_of_balance: null,
             options: {
@@ -363,6 +371,28 @@ export default {
                     if (!error.response) 
                     return console.log(error)
             })
+        
+        await this.$http.get('api/adjustments/'+this.billing.month_id+'/'+this.billing.app_year+'/'+this.billing.tenant_id,{
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then((response) => {
+                const res = response.data
+                this.adjustments = res.data;
+                this.adjustments.forEach(adjustment => {
+                    if(adjustment.adjustment_type == "IN"){
+                        this.total_adjustment_in += Number(adjustment.amount)
+                    }
+                    else{
+                        this.total_adjustment_out += Number(adjustment.amount)
+                    }
+                });
+            })
+            .catch(error => {
+                    if (!error.response) 
+                    return console.log(error)
+            })
 
         await this.$http.get('api/billing/as_of/'+this.billing.month_id+'/'+this.billing.app_year+'/'+this.billing.tenant_id,{
                 headers: {
@@ -395,6 +425,7 @@ export default {
               console.log(error)
             })
         await this.filterOther(1)
+        await this.computeAll()
         await this.d.print(this.$refs.soa, this.cssText)
     },
     mounted(){
@@ -423,6 +454,19 @@ export default {
             else{
                 return this.other.filter(u => u.charge_id !== 1 && u.charge_id !== 2)
             }    
+        },
+        computeAll(){
+            // total current charges 
+            //fixed rental
+            this.total_fixed_charges = Number(this.billing.total_amount_due)
+            //discounted rental
+            this.total_discounted_charges = Number(this.billing.contract_discounted_rent) + Number(this.billing.total_util_charges) + Number(this.billing.total_misc_charges) + Number(this.billing.total_othr_charges) + Number(this.billing.discounted_vatable_amount * (this.billing.vat_percent / 100)) - Number(this.billing.contract_discounted_rent * (this.billing.wtax_percent / 100)) + Number(this.total_adjustment_in) - Number(this.total_adjustment_out)
+
+            //total amount due
+            //fixed rental
+            this.total_fixed_amount_due = Number(this.previous_balance) + Number(this.total_fixed_charges)
+            //discounted rental
+            this.total_discounted_amounted_due = Number(this.previous_balance) + Number(this.total_discounted_charges)
         }
     },
   }

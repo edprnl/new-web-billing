@@ -82,7 +82,7 @@
                 </div> <!-- modal title -->
 
                 <b-col lg=12> <!-- modal body -->
-                    <b-form @keydown="resetFieldStates('period')">
+                    <b-form @keydown="resetFieldStates('period')" autocomplete="off">
                         <b-form-group>
                             <label for="period_start_date">* Period Start Date</label>
                             <date-picker 

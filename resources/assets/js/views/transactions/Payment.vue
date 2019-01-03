@@ -77,190 +77,193 @@
                                     <h6 slot="header">
                                         Payment Info
                                     </h6>
-                                    <b-row>
-                                        <b-col lg="4">
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Transaction No : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Auto" 
-                                                            v-model="forms.payment.fields.transaction_no"
-                                                            readonly>
-                                                        </b-form-input>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Reference No.</label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Reference No" 
-                                                            v-model="forms.payment.fields.reference_no">
-                                                        </b-form-input>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Trade Name : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <select2
-                                                            @input="getTenantInfo"
-                                                            :allowClear="false"
-                                                            :placeholder="'Select Tenants'"
-                                                            v-model="forms.payment.fields.tenant_id"
-                                                        >
-                                                            <option v-for="tenant in options.tenants.items" :key="tenant.tenant_id" :value="tenant.tenant_id">{{tenant.trade_name}}</option>
-                                                        </select2>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Tenant Code : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Tenant Code" 
-                                                            v-model="forms.payment.fields.tenant_code"
-                                                            readonly>
-                                                        </b-form-input>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                        </b-col>
-                                        <b-col lg="4">
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Contact Person : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Contact Person" 
-                                                            v-model="forms.payment.fields.contact_person"
-                                                            readonly>
-                                                        </b-form-input>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Space Code : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Space Code" 
-                                                            v-model="forms.payment.fields.space_code"
-                                                            readonly>
-                                                        </b-form-input>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Payment Type : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <select2
-                                                            @input="getPaymentType"
-                                                            :allowClear="false"
-                                                            :placeholder="'Select Payment Type'"
-                                                            v-model="forms.payment.fields.payment_type"
-                                                        >
-                                                            <option value="0">Cash</option>
-                                                            <option value="1">Check</option>
-                                                            <option value="1">Online</option>
-                                                        </select2>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Payment Date : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <date-picker 
-                                                            v-model="forms.payment.fields.payment_date" 
-                                                            lang="en" 
-                                                            input-class="form-control mx-input"
-                                                            format="MMMM DD, YYYY"
-                                                            :clearable="false"
-                                                            :disabled="true">
-                                                        </date-picker>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                        </b-col>
-                                        <b-col lg="4">
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Check Type : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <select2
-                                                            :allowClear="false"
-                                                            :placeholder="'Select Check Type'"
-                                                            v-model="forms.payment.fields.check_type"
-                                                            :disabled="forms.payment.fields.payment_type == 1 ? false : true"
-                                                        >
-                                                            <option v-for="check in options.check_types.items" :key="check.check_type_id" :value="check.check_type_id">{{check.check_type_desc}}</option>
-                                                        </select2>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Check No :</label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <b-form-input
-                                                            type="text"
-                                                            placeholder="Check No." 
-                                                            v-model="forms.payment.fields.check_no"
-                                                            :disabled="forms.payment.fields.payment_type == 1 ? false : true">
-                                                        </b-form-input>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg=4>
-                                                        <label class="col-form-label">Check Date : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <date-picker 
-                                                            v-model="forms.payment.fields.check_date" 
-                                                            lang="en" 
-                                                            input-class="form-control mx-input"
-                                                            format="MMMM DD, YYYY"
-                                                            :clearable="false"
-                                                            :disabled="forms.payment.fields.payment_type == 1 ? false : true">
-                                                        </date-picker>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                        </b-col>
-                                    </b-row>
+                                    <b-form @keydown="resetFieldStates('payment')" autocomplete="off">
+                                        <b-row>
+                                            <b-col lg="4">
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Transaction No : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <b-form-input
+                                                                type="text"
+                                                                placeholder="Auto" 
+                                                                v-model="forms.payment.fields.transaction_no"
+                                                                readonly>
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Reference No.</label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <b-form-input
+                                                                ref="reference_no"
+                                                                type="text"
+                                                                placeholder="Reference No" 
+                                                                v-model="forms.payment.fields.reference_no">
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Trade Name : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <select2
+                                                                @input="getTenantInfo"
+                                                                :allowClear="false"
+                                                                :placeholder="'Select Tenants'"
+                                                                v-model="forms.payment.fields.tenant_id"
+                                                            >
+                                                                <option v-for="tenant in options.tenants.items" :key="tenant.tenant_id" :value="tenant.tenant_id">{{tenant.trade_name}}</option>
+                                                            </select2>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Tenant Code : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <b-form-input
+                                                                type="text"
+                                                                placeholder="Tenant Code" 
+                                                                v-model="forms.payment.fields.tenant_code"
+                                                                readonly>
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Contact Person : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <b-form-input
+                                                                type="text"
+                                                                placeholder="Contact Person" 
+                                                                v-model="forms.payment.fields.contact_person"
+                                                                readonly>
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Space Code : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <b-form-input
+                                                                type="text"
+                                                                placeholder="Space Code" 
+                                                                v-model="forms.payment.fields.space_code"
+                                                                readonly>
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Payment Type : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <select2
+                                                                @input="getPaymentType"
+                                                                :allowClear="false"
+                                                                :placeholder="'Select Payment Type'"
+                                                                v-model="forms.payment.fields.payment_type"
+                                                            >
+                                                                <option value="0">Cash</option>
+                                                                <option value="1">Check</option>
+                                                                <option value="1">Online</option>
+                                                            </select2>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Payment Date : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <date-picker 
+                                                                v-model="forms.payment.fields.payment_date" 
+                                                                lang="en" 
+                                                                input-class="form-control mx-input"
+                                                                format="MMMM DD, YYYY"
+                                                                :clearable="false"
+                                                                :disabled="true">
+                                                            </date-picker>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Check Type : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <select2
+                                                                :allowClear="false"
+                                                                :placeholder="'Select Check Type'"
+                                                                v-model="forms.payment.fields.check_type"
+                                                                :disabled="forms.payment.fields.payment_type == 1 ? false : true"
+                                                            >
+                                                                <option v-for="check in options.check_types.items" :key="check.check_type_id" :value="check.check_type_id">{{check.check_type_desc}}</option>
+                                                            </select2>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Check No :</label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <b-form-input
+                                                                type="text"
+                                                                placeholder="Check No." 
+                                                                v-model="forms.payment.fields.check_no"
+                                                                :disabled="forms.payment.fields.payment_type == 1 ? false : true">
+                                                            </b-form-input>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Check Date : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <date-picker 
+                                                                v-model="forms.payment.fields.check_date" 
+                                                                lang="en" 
+                                                                input-class="form-control mx-input"
+                                                                format="MMMM DD, YYYY"
+                                                                :clearable="false"
+                                                                :disabled="forms.payment.fields.payment_type == 1 ? false : true">
+                                                            </date-picker>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
+                                            </b-col>
+                                        </b-row>
+                                    </b-form>
                                 </b-card>
                             </b-col>
                         </b-row>
@@ -725,6 +728,16 @@ export default {
       this.fillTableList('payments')
       this.fillOptionsList('tenants')
       this.fillOptionsList('check_types')
+    },
+    watch: {
+        showEntry: function (showEntry) {
+            if(showEntry){
+                let self = this
+                Vue.nextTick(function(){
+                    self.focusElement('reference_no', true)
+                })
+            }
+        },
     }
   }
 </script>

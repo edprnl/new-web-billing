@@ -47,6 +47,7 @@ import users from '@/views/utilities/Users'
 import contracts from '@/views/transactions/Contracts'
 import billing from '@/views/transactions/Billing'
 import payment from '@/views/transactions/Payment'
+import adjustment from '@/views/transactions/Adjustment'
 
 //Views - Reports
 import soa from '@/views/reports/Soa'
@@ -194,6 +195,12 @@ const router = new Router({
               path: 'payment',
               name: 'Payment',
               component: payment,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'adjustment',
+              name: 'Adjustment',
+              component: adjustment,
               meta: {requiresAuth: true}
             }
           ]

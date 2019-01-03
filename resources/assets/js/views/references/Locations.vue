@@ -75,6 +75,7 @@
                 v-model="showModalEntry"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('location_code')"
             >
             
                 <div slot="modal-title"> <!-- modal title -->
@@ -82,10 +83,11 @@
                 </div> <!-- modal title -->
 
                 <b-col lg=12> <!-- modal body -->
-                    <b-form @keydown="resetFieldStates('location')">
+                    <b-form @keydown="resetFieldStates('location')" autocomplete="off">
                         <b-form-group>
                             <label for="location_code">* Location Code</label>
                             <b-form-input
+                                ref="location_code"
                                 id="location_code"
                                 v-model="forms.location.fields.location_code"
                                 :state="forms.location.states.location_code"

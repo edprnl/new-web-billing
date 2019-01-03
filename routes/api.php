@@ -241,5 +241,26 @@ Route::middleware('auth:api')->group(function () {
     //Check if payment was used
     Route::get('paymentcheck/{id}', 'Transactions\PaymentsController@checkIfUsed');
     // END PAYMENTS
+
+    //ADJUSTMENTS
+    //List adjustments
+    Route::get('adjustments', 'Transactions\AdjustmentsController@index');
+    Route::get('adjustments/{period_id}', 'Transactions\AdjustmentsController@index');
+    Route::get('adjustments/{tenant_id}/{month_id}/{app_year}', 'Transactions\AdjustmentsController@getAdjustments');
+
+    //List single adjustment
+    Route::get('adjustment/{id}', 'Transactions\AdjustmentsController@show');
+    Route::get('adjustment/{tenant_id}/{month_id}/{app_year}', 'Transactions\AdjustmentsController@getTotalAdjustment');
+
+    //Create new adjustment
+    Route::post('adjustment', 'Transactions\AdjustmentsController@create');
+    //Update adjustment
+    Route::put('adjustment/{id}', 'Transactions\AdjustmentsController@update');
+    //Delete adjustment
+    Route::put('adjustment/delete/{id}', 'Transactions\AdjustmentsController@delete');
+    //Check if adjustment was used
+    Route::get('adjustmentcheck/{id}', 'Transactions\AdjustmentsController@checkIfUsed');
+    // END ADJUSTMENTS
+
     //---------------------------------- TRANSACTIONS ---------------------------------------------
 });

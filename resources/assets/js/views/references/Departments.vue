@@ -77,6 +77,7 @@
                 v-model="showModalEntry"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('department_code')"
             >
             
             <div slot="modal-title"> <!-- modal title -->
@@ -84,7 +85,7 @@
             </div> <!-- modal title -->
 
             <b-col lg=12> <!-- modal body -->
-                <b-form @keydown="resetFieldStates('department')">
+                <b-form @keydown="resetFieldStates('department')" autocomplete="off">
                     <b-form-group>
                         <label for="department_code">* Department Code</label>
                         <b-form-input
@@ -92,7 +93,8 @@
                             v-model="forms.department.fields.department_code"
                             :state="forms.department.states.department_code"
                             type="text"
-                            placeholder="Department Code">
+                            placeholder="Department Code"
+                            ref="department_code">
                         </b-form-input>
                         <b-form-invalid-feedback>
                             <i class="fa fa-exclamation-triangle text-danger"></i>
@@ -254,7 +256,7 @@ export default {
             this.fillEntityForm('department', data.item.department_id)
             this.showModalEntry=true
             this.entryMode='Edit'
-        },
+        }
     },
     computed: {
 

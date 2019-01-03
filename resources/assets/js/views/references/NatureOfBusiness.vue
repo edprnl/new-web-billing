@@ -75,6 +75,7 @@
                 v-model="showModalEntry"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('nature_of_business_code')"
             >
                 
                 <div slot="modal-title"> <!-- modal title -->
@@ -82,10 +83,11 @@
                 </div> <!-- modal title -->
 
                 <b-col lg=12> <!-- modal body -->
-                    <b-form @keydown="resetFieldStates('natureofbusiness')">
+                    <b-form @keydown="resetFieldStates('natureofbusiness')" autocomplete="off">
                         <b-form-group>
                             <label for="nature_of_business_code">* Nature Of Business Code</label>
                             <b-form-input
+                                ref="nature_of_business_code"
                                 id="nature_of_business_code"
                                 v-model="forms.natureofbusiness.fields.nature_of_business_code"
                                 :state="forms.natureofbusiness.states.nature_of_business_code"

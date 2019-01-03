@@ -75,6 +75,7 @@
                 v-model="showModalEntry"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('charge_code')"
             >
             
                 <div slot="modal-title"> <!-- modal title -->
@@ -82,10 +83,11 @@
                 </div> <!-- modal title -->
 
                 <b-col lg=12> <!-- modal body -->
-                    <b-form @keydown="resetFieldStates('charge')">
+                    <b-form @keydown="resetFieldStates('charge')" autocomplete="off">
                         <b-form-group>
                             <label for="charge_code">* Charge Code</label>
                             <b-form-input
+                                ref="charge_code"
                                 id="charge_code"
                                 v-model="forms.charge.fields.charge_code"
                                 :state="forms.charge.states.charge_code"

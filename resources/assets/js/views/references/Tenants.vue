@@ -72,11 +72,11 @@
                     <b-card >
                         <h5 slot="header">
                             <span class="text-primary">
-                                <i class="fa fa-bars"></i> 
+                                <i class="fa fa-bars"></i>
                                 Tenant Entry - {{entryMode}}
                             </span>
                         </h5>
-                        <form @keydown="resetFieldStates('tenant')">
+                        <b-form @keydown="resetFieldStates('tenant')" autocomplete="off">
                             <b-row>
                                 <b-col sm="4">
                                     <div class="border border-dark text-center">
@@ -96,6 +96,7 @@
                                     <b-form-group>
                                         <label>* Trade Name</label>
                                         <b-form-input
+                                            ref="trade_name"
                                             id="trade_name"
                                             v-model="forms.tenant.fields.trade_name"
                                             :state="forms.tenant.states.trade_name"
@@ -377,7 +378,7 @@
                                     </b-form-group>
                                 </b-col>
                             </b-row>
-                        </form>
+                        </b-form>
                         <b-row class="pull-right mt-2">
                             <b-col sm="12">
                                 <b-button 
@@ -453,7 +454,7 @@ export default {
                         notarized_contract: 0,
                         proof_of_billing: 0,
                         others: 0,
-                        others_specify: 0
+                        others_specify: null
                     },
                     states: {
                         tenant_id: null,
@@ -587,7 +588,7 @@ export default {
             this.tenant_id = data.item.tenant_id
             this.showModalDelete = true
         },
-        setUpdate(data){
+        async setUpdate(data){
             this.row = data.item
             this.resetFieldStates('tenant')
             this.fillEntityForm('tenant', data.item.tenant_id)
@@ -597,6 +598,16 @@ export default {
     },
     created () {
       this.fillTableList('tenants');
+    },
+    watch: {
+        showEntry: function (showEntry) {
+            if(showEntry){
+                let self = this
+                Vue.nextTick(function(){
+                    self.focusElement('trade_name')
+                })
+            }
+        },
     }
   }
 </script>

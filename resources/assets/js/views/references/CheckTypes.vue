@@ -70,15 +70,17 @@
             v-model="showModalEntry"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
+            @shown="focusElement('check_type_code')"
         >
             <div slot="modal-title">
                 Check Type Entry - {{entryMode}}
             </div>
             <b-col lg=12>
-                <b-form @keydown="resetFieldStates('check_type')">
+                <b-form @keydown="resetFieldStates('check_type')" autocomplete="off">
                     <b-form-group>
                         <label for="check_type_code">* Check Type Code</label>
                         <b-form-input
+                            ref="check_type_code"
                             id="check_type_code"
                             v-model="forms.check_type.fields.check_type_code"
                             :state="forms.check_type.states.check_type_code"

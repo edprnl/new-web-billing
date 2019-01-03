@@ -92,6 +92,11 @@ export default {
           name: 'Payment',
           url: '/transactions/payment',
           //icon: 'fas fa-code-branch'
+        },
+        {
+          name: 'Adjustment',
+          url: '/transactions/adjustment',
+          //icon: 'fas fa-code-branch'
         }
       ]
     },

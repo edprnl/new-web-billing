@@ -66,6 +66,8 @@ class BillingsController extends Controller
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
         $billing_info->total_amount_due = $request->input('total_amount_due');
+        $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
+        $billing_info->total_adjusted_out = $request->input('total_adjusted_out');
         $billing_info->wtax_amount = $request->input('wtax_amount');
         $billing_info->wtax_percent = $request->input('wtax_percent');
 
@@ -279,6 +281,8 @@ class BillingsController extends Controller
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
         $billing_info->total_amount_due = $request->input('total_amount_due');
+        $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
+        $billing_info->total_adjusted_out = $request->input('total_adjusted_out');
         $billing_info->wtax_amount = $request->input('wtax_amount');
         $billing_info->wtax_percent = $request->input('wtax_percent');
 

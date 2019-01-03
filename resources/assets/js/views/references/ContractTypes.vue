@@ -75,6 +75,7 @@
                 v-model="showModalEntry"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('contract_type_code')"
             >
                 
                 <div slot="modal-title"> <!-- modal title -->
@@ -82,10 +83,11 @@
                 </div> <!-- modal title -->
 
                 <b-col lg=12> <!-- modal body -->
-                    <b-form @keydown="resetFieldStates('contracttype')">
+                    <b-form @keydown="resetFieldStates('contracttype')" autocomplete="off">
                         <b-form-group>
                             <label for="contract_type_code">* Contract Type Code</label>
                             <b-form-input
+                                ref="contract_type_code"
                                 id="contract_type_code"
                                 v-model="forms.contracttype.fields.contract_type_code"
                                 :state="forms.contracttype.states.contract_type_code"
