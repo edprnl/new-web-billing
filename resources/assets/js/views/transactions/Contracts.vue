@@ -1374,7 +1374,7 @@ export default {
         },
         saveOption(reference){
             if(reference == 'department'){
-                this.createOptionsEntity('department', 'showModalDepartment', 'departments')
+                this.createOptionsEntity('department', 'showModalDepartment', 'departments', 'contract', 'department_id')
                 //this.showModalDepartment = false
             }
         }
