@@ -41,6 +41,46 @@
           })
         },
 
+        createOptionsEntity (entity, isModal, entity_table) {
+          this.forms[entity].isSaving = true
+          this.resetFieldStates(entity)
+          this.$http.post('api/' + entity, this.forms[entity].fields,{
+             headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+          })
+          .then((response) => {  
+            this.forms[entity].isSaving = false
+            this.clearFields(entity)
+            this.$notify({
+              type: 'success',
+              group: 'notification',
+              title: 'Success!',
+              text: 'The record has been successfully created.'
+            })
+
+            this.options[entity_table].items.unshift(response.data.data)
+            this.paginations[entity_table].totalRows++
+
+            if(isModal){
+              this.showModalEntry = false
+            }
+            else{
+              this.showEntry = false
+            }
+
+          }).catch(error => {
+            this.forms[entity].isSaving = false
+            if (!error.response) return
+            const errors = error.response.data.errors
+            for (var key in errors) {
+              this.forms[entity].states[key] = false
+              this.forms[entity].errors[key] =  errors[key]
+            }
+          })
+        },
+
+
         updateEntity (entity, entity_id, isModal, row) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)

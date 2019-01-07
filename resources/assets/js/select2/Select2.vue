@@ -17,7 +17,7 @@
 </template>
 <script>
     export default {
-        props: ['options', 'value', 'placeholder', 'allowClear'],
+        props: ['options', 'value', 'placeholder', 'allowClear','reference'],
         mounted(){
             var vm = this
             $('.modal-content').removeAttr('tabindex')
@@ -33,7 +33,7 @@
             .trigger('change')
             .on('select2:select', function () {
                 var option_data = $(this).select2('data')
-                vm.$emit('input', this.value, option_data)
+                vm.$emit('input', this.value, option_data, vm.reference)
             })
         },
         watch: {
