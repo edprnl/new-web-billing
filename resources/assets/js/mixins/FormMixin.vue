@@ -62,12 +62,7 @@
             this.options[entity_table].items.unshift(response.data.data)
             this.paginations[entity_table].totalRows++
 
-            if(isModal){
-              this.showModalEntry = false
-            }
-            else{
-              this.showEntry = false
-            }
+            this[isModal] = false
 
           }).catch(error => {
             this.forms[entity].isSaving = false

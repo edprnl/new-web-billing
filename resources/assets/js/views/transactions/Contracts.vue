@@ -99,327 +99,6 @@
                                                                     readonly
                                                                     placeholder="Auto">
                                                                 </b-form-input>
-                        <b-row>
-                            <b-col sm="12">
-                                <b-tabs v-model="tabIndex">
-                                    <b-tab title="Contract Info" >
-                                        <b-row class="mb-2">
-                                            <b-col sm="4">
-                                                <h5>Contract Info</h5>
-                                            </b-col>
-                                        </b-row>
-                                        <b-row>
-                                            <b-col lg="4">
-                                                <b-form-group>
-                                                    <b-row>
-                                                        <b-col lg="6">
-                                                            <label>Contract No.</label>
-                                                            <b-form-input
-                                                                v-model="forms.contract.fields.contract_no"
-                                                                type="text"
-                                                                readonly
-                                                                placeholder="Auto">
-                                                            </b-form-input>
-                                                        </b-col>
-                                                        <b-col lg="6">
-                                                            <label>Tenant Code</label>
-                                                            <b-form-input
-                                                                v-model="forms.contract.fields.tenant_code"
-                                                                type="text"
-                                                                readonly
-                                                                placeholder="Tenant Code">
-                                                            </b-form-input>
-                                                        </b-col>
-                                                    </b-row>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Lessee/Tenant </label>
-                                                    <select2
-                                                        @input="getTenantInfo"
-                                                        :allowClear="false"
-                                                        :placeholder="'Select Tenants'"
-                                                        v-model="forms.contract.fields.tenant_id"
-                                                    >
-                                                        <option v-for="tenant in options.tenants.items" :key="tenant.tenant_id" :value="tenant.tenant_id">{{tenant.trade_name}}</option>
-                                                    </select2>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Signatory </label>
-                                                    <b-form-input
-                                                        v-model="forms.contract.fields.contract_signatory"
-                                                        type="text"
-                                                        readonly
-                                                        placeholder="Signatory">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Billing Address </label>
-                                                    <b-form-textarea
-                                                        v-model="forms.contract.fields.contract_billing_address"
-                                                        type="text"
-                                                        readonly
-                                                        placeholder="Billing Address">
-                                                    </b-form-textarea>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Department </label>
-                                                    <select2
-                                                        @input="isCreating"
-                                                        :allowClear="false"
-                                                        :placeholder="'Select Department'"
-                                                        v-model="forms.contract.fields.department_id"
-                                                        :reference="'department'"
-                                                    >
-                                                        <option value= "-1">Create New Department</option>
-                                                        <option v-for="department in options.departments.items" :key="department.department_id" :value="department.department_id">{{department.department_desc}}</option>
-                                                    </select2>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Nature of Business </label>
-                                                    <select2
-                                                        :allowClear="false" 
-                                                        :placeholder="'Select Nature of Business'"
-                                                        v-model="forms.contract.fields.nature_of_business_id"
-                                                    >
-                                                        <option v-for="nature in options.natureofbusinesses.items" :key="nature.nature_of_business_id" :value="nature.nature_of_business_id">{{nature.nature_of_business_desc}}</option>
-                                                    </select2>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Approved Merchandise </label>
-                                                    <b-form-input
-                                                        v-model="forms.contract.fields.contract_approved_merch"
-                                                        type="text"
-                                                        placeholder="Approved Merchandise">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                            </b-col>
-                                            <b-col lg="4">
-                                                <b-form-group>
-                                                    <label>* Location </label>
-                                                    <select2
-                                                        :allowClear="false"
-                                                        :placeholder="'Select Location'"
-                                                        v-model="forms.contract.fields.location_id"
-                                                    >
-                                                        <option v-for="location in options.locations.items" :key="location.location_id" :value="location.location_id">{{location.location_desc}}</option>
-                                                    </select2>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Contract Types </label>
-                                                    <select2
-                                                        :allowClear="false"
-                                                        :placeholder="'Select Contract Type'"
-                                                        v-model="forms.contract.fields.contract_type_id"
-                                                    >
-                                                        <option v-for="contract_type in options.contracttypes.items" :key="contract_type.contract_type_id" :value="contract_type.contract_type_id">{{contract_type.contract_type_desc}}</option>
-                                                    </select2>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Category </label>
-                                                    <select2
-                                                        :allowClear="false"
-                                                        :placeholder="'Select Category'"
-                                                        v-model="forms.contract.fields.category_id"
-                                                    >
-                                                        <option v-for="category in options.categories.items" :key="category.category_id" :value="category.category_id">{{category.category_desc}}</option>
-                                                    </select2>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Terms </label>
-                                                    <vue-autonumeric 
-                                                        v-model="forms.contract.fields.contract_terms"
-                                                        :class="'form-control text-right'" 
-                                                        :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 1, decimalPlaces: 0}">
-                                                    </vue-autonumeric>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <b-row>
-                                                        <b-col lg="6">
-                                                            <label>* Commencement Date</label>
-                                                            <date-picker 
-                                                                v-model="forms.contract.fields.commencement_date" 
-                                                                lang="en" 
-                                                                input-class="form-control mx-input"
-                                                                format="MMMM DD, YYYY"
-                                                                :clearable="false">
-                                                            </date-picker>
-                                                        </b-col>
-                                                        <b-col lg="6">
-                                                            <label>* Termination Date</label>
-                                                            <date-picker 
-                                                                v-model="forms.contract.fields.termination_date" 
-                                                                lang="en" 
-                                                                input-class="form-control mx-input"
-                                                                format="MMMM DD, YYYY"
-                                                                :clearable="false">
-                                                            </date-picker>
-                                                        </b-col>
-                                                    </b-row>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* Start Billing Date </label>
-                                                    <date-picker 
-                                                        v-model="forms.contract.fields.start_billing_date" 
-                                                        lang="en" 
-                                                        input-class="form-control mx-input"
-                                                        format="MMMM DD, YYYY"
-                                                        :clearable="false">
-                                                    </date-picker>
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>* App Floor Area </label>
-                                                    <b-row>
-                                                        <b-col lg="6">
-                                                            <vue-autonumeric 
-                                                                :class="'form-control text-right'" 
-                                                                v-model="forms.contract.fields.contract_floor_area" 
-                                                                :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                            </vue-autonumeric> 
-                                                        </b-col>
-                                                        <span class="align-self-center">Sq. Meter</span>
-                                                    </b-row>
-                                                </b-form-group>
-                                            </b-col>
-                                            <b-col lg="4">
-                                                <b-form-group>
-                                                    <label>* Basic Rental </label>
-                                                    <vue-autonumeric 
-                                                        id="fixed_rent"
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.contract_fixed_rent" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Discounted Rental </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.contract_discounted_rent" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Advance Rental </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.contract_advance_rent" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Security Deposit </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.security_deposit" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Electric Meter Deposit </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.power_meter_deposit" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Water Meter Deposit </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.water_meter_deposit" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Construction Deposit </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.construction_deposit" 
-                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric> 
-                                                </b-form-group>
-                                                <b-form-group>
-                                                    <label>Escalation % </label>
-                                                    <vue-autonumeric 
-                                                        :class="'form-control text-right'" 
-                                                        v-model="forms.contract.fields.contract_escalation_percent" 
-                                                        :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                    </vue-autonumeric>
-                                                </b-form-group>
-                                            </b-col>
-                                        </b-row>
-                                    </b-tab>
-                                    <b-tab title="Schedule" >
-                                        <b-row class="mb-2">
-                                            <b-col sm="4">
-                                                <h5>Schedule of Payments</h5>
-                                            </b-col>
-                                            <b-col  sm="4">
-                                                <span></span>
-                                            </b-col>
-                                            <b-col  sm="4">
-                                                <b-button class="float-right" variant="primary" v-if="this.tables.schedules.items.length == 0" @click="addSchedule()">
-                                                        <i class="fa fa-plus-circle"></i> Add Schedule
-                                                </b-button>
-                                            </b-col>
-                                        </b-row>
-                                        <b-table 
-                                            small bordered
-                                            :fields="tables.schedules.fields"
-                                            :items.sync="tables.schedules.items"
-                                            show-empty>
-                                            <template slot="fixed_rent" slot-scope="data">
-                                                <vue-autonumeric 
-                                                    :class="'form-control text-right'"
-                                                    v-model="data.item.fixed_rent" 
-                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                </vue-autonumeric>
-                                            </template>
-                                            <template slot="escalation_percent" slot-scope="data">
-                                                <vue-autonumeric 
-                                                    :class="'form-control text-right'"
-                                                    v-model="data.item.escalation_percent" 
-                                                    :options="{minimumValue: 0, maximumValue: 100,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                </vue-autonumeric>
-                                            </template>
-                                            <template slot="is_vatted" slot-scope="data">
-                                                <b-form-checkbox
-                                                    v-model="data.item.is_vatted"
-                                                    value=1
-                                                    unchecked-value=0>
-                                                </b-form-checkbox>
-                                            </template>
-                                            <template slot="contract_schedule_notes" slot-scope="data">
-                                                <b-form-input 
-                                                    id="contract_schedule_notes"
-                                                    placeholder="Notes"
-                                                    v-model="data.item.contract_schedule_notes">
-                                                </b-form-input>
-                                            </template>
-                                            <template slot="action" slot-scope="data">
-                                                <b-btn :size="'sm'" variant="primary" @click="addSchedule()">
-                                                    <i class="fa fa-plus-circle"></i>
-                                                </b-btn>
-
-                                                <b-btn :size="'sm'" variant="danger" @click="removeSchedule()">
-                                                    <i class="fa fa-times-circle"></i>
-                                                </b-btn>
-                                            </template>
-                                        </b-table>
-                                    </b-tab>
-                                    <b-tab title="Charges">
-                                        <b-row class="mb-2">
-                                            <b-col>
-                                                <h5>Charges</h5>
-                                            </b-col>
-                                        </b-row>
-                                        <b-row>
-                                            <b-col sm="12">
-                                                <b-tabs>
-                                                    <b-tab title="Utility" >
-                                                        <b-row class="mb-2">
-                                                            <b-col sm="4">
-                                                                <h5>Utility</h5>
                                                             </b-col>
                                                             <b-col lg="6">
                                                                 <label>Tenant Code</label>
@@ -468,7 +147,10 @@
                                                             :allowClear="false"
                                                             :placeholder="'Select Department'"
                                                             v-model="forms.contract.fields.department_id"
+                                                            :reference="'department'"
+                                                            @input="isOptionCreating"
                                                         >
+                                                            <option value="-1">Create New Department</option>
                                                             <option v-for="department in options.departments.items" :key="department.department_id" :value="department.department_id">{{department.department_desc}}</option>
                                                         </select2>
                                                     </b-form-group>
@@ -478,7 +160,10 @@
                                                             :allowClear="false" 
                                                             :placeholder="'Select Nature of Business'"
                                                             v-model="forms.contract.fields.nature_of_business_id"
+                                                            :reference="'natureofbusiness'"
+                                                            @input="isOptionCreating"
                                                         >
+                                                            <option value="-1">Create New Nature of Business</option>
                                                             <option v-for="nature in options.natureofbusinesses.items" :key="nature.nature_of_business_id" :value="nature.nature_of_business_id">{{nature.nature_of_business_desc}}</option>
                                                         </select2>
                                                     </b-form-group>
@@ -992,11 +677,11 @@
             </div>
         </b-modal>
 
-        <!-- DEPARTMENT MODAL -->
         <b-modal 
                 v-model="showModalDepartment"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('department_code')"
             >
             
             <div slot="modal-title"> <!-- modal title -->
@@ -1004,7 +689,7 @@
             </div> <!-- modal title -->
 
             <b-col lg=12> <!-- modal body -->
-                <b-form @keydown="resetFieldStates('department')">
+                <b-form @keydown="resetFieldStates('department')" autocomplete="off">
                     <b-form-group>
                         <label for="department_code">* Department Code</label>
                         <b-form-input
@@ -1012,7 +697,8 @@
                             v-model="forms.department.fields.department_code"
                             :state="forms.department.states.department_code"
                             type="text"
-                            placeholder="Department Code">
+                            placeholder="Department Code"
+                            ref="department_code">
                         </b-form-input>
                         <b-form-invalid-feedback>
                             <i class="fa fa-exclamation-triangle text-danger"></i>
@@ -1041,7 +727,7 @@
             </b-col> <!-- modal body -->
 
             <div slot="modal-footer"><!-- modal footer buttons -->
-                <b-button :disabled="forms.department.isSaving" variant="primary" @click="onDepartmentEntry">
+                <b-button :disabled="forms.department.isSaving" variant="primary" @click="saveOption('department')">
                     <icon v-if="forms.department.isSaving" name="sync" spin></icon>
                     <i class="fa fa-check"></i>
                     Save
@@ -1049,9 +735,7 @@
                 <b-button variant="secondary" @click="showModalDepartment=false">Close</b-button>
             </div> <!-- modal footer buttons -->
 
-            </b-modal>
-
-
+        </b-modal>
     </div>
 </template>
 
@@ -1064,7 +748,7 @@ export default {
             showEntry: false, //if true show entry
             showModalDelete: false,
             showModalCharges: false,
-            showModalDepartment : false,
+            showModalDepartment: false,
             options: {
                 tenants: {
                     items: []
@@ -1179,6 +863,7 @@ export default {
                 },
                 department : {
                     isSaving: false,
+                    isDeleting: false,
                     fields: {
                         department_id: null,
                         department_code: null,
@@ -1676,24 +1361,25 @@ export default {
                 this.is_check_all = 0
             }
         },
-        isCreating: function(value, data, reference) {
-            if(data.length > 0){
-                alert(reference)
-                if(data[0].element.index == 0){
-                   // this.showModalDepartment = true
+        isOptionCreating: function(value, data, reference){
+            if(value == -1){
+                if(reference == 'department'){
+                    //show department entry modal
+                   this.showModalDepartment = true 
+                }
+                else if(reference == 'natureofbusiness'){
+
                 }
             }
-            
         },
-        onDepartmentEntry () {
-            this.createOptionsEntity('department', true, 'departments')
-            this.showModalDepartment = false
-            
-        },
-
+        saveOption(reference){
+            if(reference == 'department'){
+                this.createOptionsEntity('department', 'showModalDepartment', 'departments')
+                //this.showModalDepartment = false
+            }
+        }
     },
     created () {
-        
         this.fillTableList('contracts')
         this.fillTableList('charges')
         this.fillOptionsList('tenants')
@@ -1703,10 +1389,6 @@ export default {
         this.fillOptionsList('contracttypes')
         this.fillOptionsList('categories')
         this.fillOptionsList('months')
-
-        //this.options.departments.items.push({department_id: -1, dpeartment_code : '', department_desc:'Create'})
-
-        
     },
     watch: {
         showEntry: function (showEntry) {
