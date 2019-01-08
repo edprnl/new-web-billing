@@ -183,7 +183,10 @@
                                                             :allowClear="false"
                                                             :placeholder="'Select Location'"
                                                             v-model="forms.contract.fields.location_id"
+                                                            :reference="'location'"
+                                                            @input="isOptionCreating"
                                                         >
+                                                            <option value="-1">Create New Location</option>
                                                             <option v-for="location in options.locations.items" :key="location.location_id" :value="location.location_id">{{location.location_desc}}</option>
                                                         </select2>
                                                     </b-form-group>
@@ -193,7 +196,10 @@
                                                             :allowClear="false"
                                                             :placeholder="'Select Contract Type'"
                                                             v-model="forms.contract.fields.contract_type_id"
+                                                            :reference="'contracttype'"
+                                                            @input="isOptionCreating"
                                                         >
+                                                            <option value="-1">Create New Contract Type</option>
                                                             <option v-for="contract_type in options.contracttypes.items" :key="contract_type.contract_type_id" :value="contract_type.contract_type_id">{{contract_type.contract_type_desc}}</option>
                                                         </select2>
                                                     </b-form-group>
@@ -203,7 +209,10 @@
                                                             :allowClear="false"
                                                             :placeholder="'Select Category'"
                                                             v-model="forms.contract.fields.category_id"
+                                                            :reference="'category'"
+                                                            @input="isOptionCreating"
                                                         >
+                                                            <option value="-1">Create New Category</option>
                                                             <option v-for="category in options.categories.items" :key="category.category_id" :value="category.category_id">{{category.category_desc}}</option>
                                                         </select2>
                                                     </b-form-group>
@@ -677,6 +686,7 @@
             </div>
         </b-modal>
 
+        <!-- department modal -->
         <b-modal 
                 v-model="showModalDepartment"
                 :noCloseOnEsc="true"
@@ -735,7 +745,248 @@
                 <b-button variant="secondary" @click="showModalDepartment=false">Close</b-button>
             </div> <!-- modal footer buttons -->
 
+        </b-modal> <!--department modal -->
+        
+
+
+        <!--nature of business modal -->
+        <b-modal 
+                v-model="showModalNature"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+                @shown="focusElement('nature_of_business_code')"
+            >
+                
+            <div slot="modal-title"> <!-- modal title -->
+                Nature Of Business Entry - {{entryMode}}
+            </div> <!-- modal title -->
+
+            <b-col lg=12> <!-- modal body -->
+                <b-form @keydown="resetFieldStates('natureofbusiness')" autocomplete="off">
+                    <b-form-group>
+                        <label for="nature_of_business_code">* Nature Of Business Code</label>
+                        <b-form-input
+                            ref="nature_of_business_code"
+                            id="nature_of_business_code"
+                            v-model="forms.natureofbusiness.fields.nature_of_business_code"
+                            :state="forms.natureofbusiness.states.nature_of_business_code"
+                            type="text"
+                            placeholder="Nature Of Business Code">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.natureofbusiness.errors.nature_of_business_code">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Nature Of Business Desc</label>
+                        <b-form-input
+                            id="nature_of_business_desc"
+                            v-model="forms.natureofbusiness.fields.nature_of_business_desc"
+                            :state="forms.natureofbusiness.states.nature_of_business_desc"
+                            type="text"
+                            placeholder="Nature Of Business Description">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.natureofbusiness.errors.nature_of_business_desc">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                </b-form>
+            </b-col> <!-- modal body -->
+
+            <div slot="modal-footer"><!-- modal footer buttons -->
+                <b-button :disabled="forms.natureofbusiness.isSaving" variant="primary" @click="saveOption('natureofbusiness')">
+                    <icon v-if="forms.natureofbusiness.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalNature=false">Close</b-button>
+            </div> <!-- modal footer buttons -->
+        </b-modal> <!--nature of business modal -->
+
+        <!-- category modal -->
+        <b-modal 
+            v-model="showModalCategory"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+            @shown="focusElement('category_code')"
+        >
+            <div slot="modal-title">
+                Category Entry - {{entryMode}}
+            </div>
+            <b-col lg=12>
+                <b-form @keydown="resetFieldStates('category')" autocomplete="off">
+                    <b-form-group>
+                        <label for="category_code">* Category Code</label>
+                        <b-form-input
+                            ref="category_code"
+                            id="category_code"
+                            v-model="forms.category.fields.category_code"
+                            :state="forms.category.states.category_code"
+                            type="text"
+                            placeholder="Category Code">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.category.errors.category_code">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Category Desc</label>
+                        <b-form-input
+                            id="category_desc"
+                            v-model="forms.category.fields.category_desc"
+                            :state="forms.category.states.category_desc"
+                            type="text"
+                            placeholder="Category Description">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.category.errors.category_desc">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                </b-form>
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.category.isSaving" variant="primary" @click="saveOption('category')">
+                    <icon v-if="forms.category.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalCategory=false">Close</b-button>            
+            </div>
+        </b-modal> <!-- category modal -->
+
+        <!-- contract type modal -->
+        <b-modal 
+                v-model="showModalContractType"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+                @shown="focusElement('contract_type_code')"
+            >
+                
+            <div slot="modal-title"> <!-- modal title -->
+                Contract Type Entry - {{entryMode}}
+            </div> <!-- modal title -->
+
+            <b-col lg=12> <!-- modal body -->
+                <b-form @keydown="resetFieldStates('contracttype')" autocomplete="off">
+                    <b-form-group>
+                        <label for="contract_type_code">* Contract Type Code</label>
+                        <b-form-input
+                            ref="contract_type_code"
+                            id="contract_type_code"
+                            v-model="forms.contracttype.fields.contract_type_code"
+                            :state="forms.contracttype.states.contract_type_code"
+                            type="text"
+                            placeholder="Contract Type Code">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.contracttype.errors.contract_type_code">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Contract Type Desc</label>
+                        <b-form-input
+                            id="contract_type_desc"
+                            v-model="forms.contracttype.fields.contract_type_desc"
+                            :state="forms.contracttype.states.contract_type_desc"
+                            type="text"
+                            placeholder="Contract Type Description">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.contracttype.errors.contract_type_desc">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                </b-form>
+            </b-col> <!-- modal body -->
+
+            <div slot="modal-footer"><!-- modal footer buttons -->
+                <b-button :disabled="forms.contracttype.isSaving" variant="primary" @click="saveOption('contracttype')">
+                    <icon v-if="forms.contracttype.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalContractType=false">Close</b-button>
+            </div> <!-- modal footer buttons -->
+        </b-modal><!-- contract type modal -->
+
+        <!-- location modal -->
+        <b-modal 
+                v-model="showModalLocation"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+                @shown="focusElement('location_code')"
+            >
+            
+            <div slot="modal-title"> <!-- modal title -->
+                Location Entry - {{entryMode}}
+            </div> <!-- modal title -->
+
+            <b-col lg=12> <!-- modal body -->
+                <b-form @keydown="resetFieldStates('location')" autocomplete="off">
+                    <b-form-group>
+                        <label for="location_code">* Location Code</label>
+                        <b-form-input
+                            ref="location_code"
+                            id="location_code"
+                            v-model="forms.location.fields.location_code"
+                            :state="forms.location.states.location_code"
+                            type="text"
+                            placeholder="Location Code">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.location.errors.location_code">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Location Desc</label>
+                        <b-form-input
+                            id="location_desc"
+                            v-model="forms.location.fields.location_desc"
+                            :state="forms.location.states.location_desc"
+                            type="text"
+                            placeholder="Location Description">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.location.errors.location_desc">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                </b-form>
+            </b-col> <!-- modal body -->
+
+            <div slot="modal-footer"><!-- modal footer buttons -->
+                <b-button :disabled="forms.location.isSaving" variant="primary" @click="saveOption('location')">
+                    <icon v-if="forms.location.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalLocation=false">Close</b-button>
+            </div> <!-- modal footer buttons -->
+
         </b-modal>
+
     </div>
 </template>
 
@@ -749,6 +1000,10 @@ export default {
             showModalDelete: false,
             showModalCharges: false,
             showModalDepartment: false,
+            showModalNature: false,
+            showModalCategory: false,
+            showModalContractType: false,
+            showModalLocation: false,
             options: {
                 tenants: {
                     items: []
@@ -877,7 +1132,72 @@ export default {
                         department_code: null,
                         department_desc: null
                     }
+                },
+                natureofbusiness : {
+                    isSaving: false,
+                    fields: {
+                        nature_of_business_id: null,
+                        nature_of_business_code: null,
+                        nature_of_business_desc: null
+                    },
+                    states: {
+                        nature_of_business_code: null,
+                        nature_of_business_desc: null
+                    },
+                    errors: {
+                        nature_of_business_code: null,
+                        nature_of_business_desc: null
+                    }
+                },
+                contracttype : {
+                    isSaving: false,
+                    fields: {
+                        contract_type_id: null,
+                        contract_type_code: null,
+                        contract_type_desc: null
+                    },
+                    states: {
+                        contract_type_code: null,
+                        contract_type_desc: null
+                    },
+                    errors: {
+                        contract_type_code: null,
+                        contract_type_desc: null
+                    }
+                },
+                category : {
+                    isSaving: false,
+                    fields: {
+                        category_id: null,
+                        category_code: null,
+                        category_desc: null
+                    },
+                    states: {
+                        category_code: null,
+                        category_desc: null
+                    },
+                    errors: {
+                        category_code: null,
+                        category_desc: null
+                    }
+                },
+                location : {
+                    isSaving: false,
+                    fields: {
+                        location_id: null,
+                        location_code: null,
+                        location_desc: null
+                    },
+                    states: {
+                        location_code: null,
+                        location_desc: null
+                    },
+                    errors: {
+                        location_code: null,
+                        location_desc: null
+                    }
                 }
+
             },
             tables: {
                 contracts: {
@@ -1365,17 +1685,42 @@ export default {
             if(value == -1){
                 if(reference == 'department'){
                     //show department entry modal
-                   this.showModalDepartment = true 
+                    this.showModalDepartment = true
+                    this.forms.contract.fields.department_id = "null"
                 }
                 else if(reference == 'natureofbusiness'){
-
+                    this.showModalNature = true
+                    this.forms.contract.fields.nature_of_business_id = "null"
+                }
+                else if(reference == 'contracttype'){
+                    this.showModalContractType = true
+                    this.forms.contract.fields.contract_type_id = "null"
+                }
+                else if(reference == 'category'){
+                    this.showModalCategory = true
+                    this.forms.contract.fields.category_id = "null"
+                }
+                else if(reference == 'location'){
+                    this.showModalLocation = true
+                    this.forms.contract.fields.location_id = "null"
                 }
             }
         },
         saveOption(reference){
             if(reference == 'department'){
-                this.createOptionsEntity('department', 'showModalDepartment', 'departments', 'contract', 'department_id')
-                //this.showModalDepartment = false
+                this.createOptionsEntity('department', 'showModalDepartment', 'departments', 'contract','department_id')
+            }
+            else if (reference == 'natureofbusiness'){
+                this.createOptionsEntity('natureofbusiness', 'showModalNature', 'natureofbusinesses','contract','nature_of_business_id')
+            }
+            else if (reference == 'contracttype'){
+                this.createOptionsEntity('contracttype', 'showModalContractType', 'contracttypes','contract','contract_type_id')
+            }
+            else if (reference == 'category'){
+                this.createOptionsEntity('category', 'showModalCategory', 'categories','contract','category_id')
+            }
+            else if (reference == 'location'){
+                this.createOptionsEntity('location', 'showModalLocation', 'locations','contract','location_id')
             }
         }
     },

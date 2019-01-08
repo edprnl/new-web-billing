@@ -41,8 +41,7 @@
           })
         },
 
-        
-        createOptionsEntity (entity, isModal, entity_table, entity_id) {
+        createOptionsEntity (entity, isModal, entity_table, from_entity, entity_id) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
           this.$http.post('api/' + entity, this.forms[entity].fields,{
@@ -62,6 +61,9 @@
 
             this.options[entity_table].items.unshift(response.data.data)
             
+            setTimeout(function(){
+              this.forms[from_entity].fields[entity_id] = response.data.data[entity_id]
+            }.bind(this), 1)
 
             this[isModal] = false
 
