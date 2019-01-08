@@ -221,9 +221,12 @@
                                                             <select2
                                                                 :allowClear="false"
                                                                 :placeholder="'Select Check Type'"
-                                                                v-model="forms.payment.fields.check_type"
+                                                                v-model="forms.payment.fields.check_type_id"
                                                                 :disabled="forms.payment.fields.payment_type == 1 ? false : true"
+                                                                :reference="'checktype'"
+                                                                @input="isOptionCreating"
                                                             >
+                                                                <option value="-1">Create New Check Type</option>
                                                                 <option v-for="check in options.check_types.items" :key="check.check_type_id" :value="check.check_type_id">{{check.check_type_desc}}</option>
                                                             </select2>
                                                         </b-col>
@@ -423,6 +426,65 @@
                 <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
             </div>
         </b-modal>
+
+
+        <!-- check type modal -->
+        <b-modal 
+            v-model="showModalCheckType"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+            @shown="focusElement('check_type_code')"
+        >
+            <div slot="modal-title">
+                Check Type Entry - {{entryMode}}
+            </div>
+            <b-col lg=12>
+                <b-form @keydown="resetFieldStates('check_type')" autocomplete="off">
+                    <b-form-group>
+                        <label for="check_type_code">* Check Type Code</label>
+                        <b-form-input
+                            ref="check_type_code"
+                            id="check_type_code"
+                            v-model="forms.check_type.fields.check_type_code"
+                            :state="forms.check_type.states.check_type_code"
+                            type="text"
+                            placeholder="Check Type Code">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.check_type.errors.check_type_code">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-form-group>
+                        <label>* Check Type Desc</label>
+                        <b-form-input
+                            id="check_type_desc"
+                            v-model="forms.check_type.fields.check_type_desc"
+                            :state="forms.check_type.states.check_type_desc"
+                            type="text"
+                            placeholder="Check Type Description">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            <span v-for="itemError in forms.check_type.errors.check_type_desc">
+                                {{itemError}}
+                            </span>
+                        </b-form-invalid-feedback>
+                    </b-form-group>
+                </b-form>
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.check_type.isSaving" variant="primary" @click="saveOption('checktype')">
+                    <icon v-if="forms.check_type.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Save
+                </b-button>
+                <b-button variant="secondary" @click="showModalCheckType=false">Close</b-button>            
+            </div>
+        </b-modal> <!-- check type modal -->
+
     </div>
 </template>
 
@@ -434,6 +496,7 @@ export default {
             entryMode: 'Add',
             showEntry: false, //if true show entry
             showModalDelete: false,
+            showModalCheckType: false,
             options: {
                 tenants: {
                     items: []
@@ -457,7 +520,7 @@ export default {
                         payment_type: null,
                         amount: 0.00,
                         payment_date: new Date(),
-                        check_type: null,
+                        check_type_id: null,
                         check_no: null,
                         check_date: null,
                         remarks: null,
@@ -476,7 +539,7 @@ export default {
                         payment_type: null,
                         amount: null,
                         payment_date: null,
-                        check_type: null,
+                        check_type_id: null,
                         check_no: null,
                         check_date: null,
                         remarks: null,
@@ -495,7 +558,7 @@ export default {
                         payment_type: null,
                         amount: null,
                         payment_date: null,
-                        check_type: null,
+                        check_type_id: null,
                         check_no: null,
                         check_date: null,
                         remarks: null,
@@ -503,7 +566,24 @@ export default {
                         advance: null,
                         discount: null,
                     }
+                },
+                check_type : {
+                    isSaving: false,
+                    fields: {
+                        check_type_id: null,
+                        check_type_code: null,
+                        check_type_desc: null
+                    },
+                    states: {
+                        check_type_code: null,
+                        check_type_desc: null
+                    },
+                    errors: {
+                        check_type_code: null,
+                        check_type_desc: null
+                    }
                 }
+
             },
             tables: {
                 payments: {
@@ -722,6 +802,22 @@ export default {
             })
             this.forms.payment.fields.discount = totalDiscount
             this.distributePayment()
+        },
+        isOptionCreating: function(value, data, reference){
+            if(value == -1){
+                if(reference == 'checktype'){
+                    //show department entry modal
+                    this.showModalCheckType = true
+                    this.forms.payment.fields.check_type = "null"
+                }
+               
+            }
+        },
+        saveOption(reference){
+            if(reference == 'checktype'){
+                this.createOptionsEntity('check_type', 'showModalCheckType', 'check_types', 'payment','check_type_id')
+            }
+           
         }
     },
     created () {
