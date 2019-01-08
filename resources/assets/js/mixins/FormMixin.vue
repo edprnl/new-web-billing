@@ -41,7 +41,8 @@
           })
         },
 
-        async createOptionsEntity (entity, isModal, entity_table, from_entity, entity_id) {
+        
+        createOptionsEntity (entity, isModal, entity_table, entity_id) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
           this.$http.post('api/' + entity, this.forms[entity].fields,{
@@ -58,15 +59,12 @@
               title: 'Success!',
               text: 'The record has been successfully created.'
             })
-            
-            this.options[entity_table].items.unshift(response.data.data)
 
-            setTimeout(function(){
-              this.forms[from_entity].fields[entity_id] = response.data.data[entity_id]
-            }.bind(this), 1)
+            this.options[entity_table].items.unshift(response.data.data)
+            
 
             this[isModal] = false
-            // this.forms[from_entity].fields[entity_id] = response.data.data[entity_id]
+
           }).catch(error => {
             this.forms[entity].isSaving = false
             if (!error.response) return
