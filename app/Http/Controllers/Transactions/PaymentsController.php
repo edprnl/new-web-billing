@@ -184,9 +184,10 @@ class PaymentsController extends Controller
     }
 
     public function getAdvance($tenant_id){
-        $advance = PaymentInfo::whereRaw('payment_date = (SELECT max(payment_date) FROM b_payment_info WHERE tenant_id = '.$tenant_id.')')
-                                ->where('tenant_id', $tenant_id)
+        $advance = PaymentInfo::where('tenant_id', $tenant_id)
                                 ->where('is_canceled', 0)
+                                ->orderBy('payment_date', 'desc')
+                                ->limit(1)
                                 ->get();
 
         return ( new Reference( $advance ) )
