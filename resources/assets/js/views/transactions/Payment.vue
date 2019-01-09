@@ -882,6 +882,7 @@ export default {
                 if(reference == 'checktype'){
                     //show department entry modal
                     this.showModalCheckType = true
+                    this.forms.payment.fields.check_type_id = "null"
                 }
                
             }
