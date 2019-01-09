@@ -829,7 +829,10 @@ export default {
                 }
             }).then((response) => {
                 const res = response.data
-                this.carried_advance = res.data[0].advance
+                this.carried_advance = 0
+                if(res.data.length > 0){
+                    this.carried_advance = res.data[0].advance
+                }
             }).catch(error => {
                 if (!error.response) 
                 return console.log(error)
