@@ -70,6 +70,16 @@ export default {
           name: 'Users',
           url: '/utilities/users',
           //icon: 'fa-building'
+        },
+        {
+          name: 'User Group',
+          url: '/utilities/user_groups',
+          //icon: 'fa-building'
+        },
+        {
+          name: 'Company Settings',
+          url: '/utilities/company_settings',
+          //icon: 'fa-building'
         }
       ]
     },

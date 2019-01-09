@@ -284,6 +284,7 @@
                                                         <b-input-group>
                                                             <vue-autonumeric 
                                                                 v-model="forms.payment.fields.amount"
+                                                                @blur.native="distributePayment"
                                                                 :class="'form-control text-right'" 
                                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                             </vue-autonumeric>
@@ -295,6 +296,25 @@
                                                                     Distribute
                                                                 </b-button>
                                                             </b-input-group-append>
+                                                        </b-input-group>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-col>
+                                            <b-col lg="4">
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <b-row>
+                                                    <b-col lg=5>
+                                                        <label class="col-form-label">Carry Over Balance :</label>
+                                                    </b-col>
+                                                    <b-col lg="7">
+                                                        <b-input-group>
+                                                            <vue-autonumeric 
+                                                                v-model="carried_advance"
+                                                                :class="'form-control text-right'" 
+                                                                readonly
+                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            </vue-autonumeric>
                                                         </b-input-group>
                                                     </b-col>
                                                 </b-row>
@@ -317,7 +337,8 @@
                                         <template slot="amount_paid" slot-scope="data">
                                             <vue-autonumeric 
                                                 v-model="data.item.amount_paid"
-                                                :class="'form-control text-right'" 
+                                                :class="'form-control text-right'"
+                                                @blur.native="computePayment"
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                             </vue-autonumeric>
                                         </template>
@@ -381,17 +402,44 @@
                                                     </b-col>
                                                 </b-row>
                                             </b-form-group>
+                                            <b-form-group>
+                                                <b-row>
+                                                    <b-col lg="4">
+                                                        <label class="col-form-label">Total Paid : </label>
+                                                    </b-col>
+                                                    <b-col lg="8">
+                                                        <vue-autonumeric 
+                                                            v-model="forms.payment.fields.amount"
+                                                            :class="'form-control text-right'" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}" 
+                                                            readonly>
+                                                        </vue-autonumeric>
+                                                    </b-col>
+                                                </b-row>
+                                            </b-form-group>
                                         </b-col>
                                     </b-row>
                                 </b-card>
                             </b-col>
                         </b-row>
-                        <b-row class="pull-right mt-2">
+                        <b-row v-if="is_check" class="pull-right mt-2">
+                            <b-col sm="12">
+                                Check all data if correct, proceed?
+                                <b-button 
+                                    :disabled="forms.payment.isSaving" 
+                                    variant="success" 
+                                    @click="onPaymentEntry, is_check=false">
+                                    Yes
+                                </b-button>
+                                <b-button variant="danger" @click="is_check=false">No</b-button>
+                            </b-col>
+                        </b-row>
+                        <b-row v-else class="pull-right mt-2">
                             <b-col sm="12">
                                 <b-button 
                                     :disabled="forms.payment.isSaving" 
                                     variant="primary" 
-                                    @click="onPaymentEntry">
+                                    @click="is_check=true">
                                     <icon v-if="forms.payment.isSaving" name="sync" spin></icon>
                                     <i class="fa fa-check"></i>
                                     Save
@@ -510,28 +558,32 @@ export default {
                     fields:[
                         {
                             key:'transaction_no',
-                            label: 'Trans No'
+                            label: 'Trans No',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'reference_no',
-                            label: 'Reference No'
+                            label: 'Reference No',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'trade_name',
-                            label: 'Tenant'
+                            label: 'Tenant',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'payment_date',
                             label: 'Payment Date',
                             formatter: (value) => {
                                 return this.moment(value, 'MMMM DD, YYYY')
-                            }
+                            },
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'discount',
                             label: 'Discount',
                             thClass: 'text-right',
-                            tdClass: 'text-right',
+                            tdClass: 'text-right align-middle',
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
@@ -540,7 +592,7 @@ export default {
                             key:'balance_paid',
                             label: 'Balance Paid',
                             thClass: 'text-right',
-                            tdClass: 'text-right',
+                            tdClass: 'text-right align-middle',
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
@@ -549,7 +601,7 @@ export default {
                             key:'amount_paid',
                             label: 'Amount Paid',
                             thClass: 'text-right',
-                            tdClass: 'text-right',
+                            tdClass: 'text-right align-middle',
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
@@ -608,7 +660,7 @@ export default {
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             formatter: (value, key, item) => {
-                                return this.formatNumber(Math.max(0, item.outstanding_balance - (item.discount + item.amount_paid)));
+                                return this.formatNumber(Math.max(0, Number(item.outstanding_balance) - (Number(item.discount) + Number(item.amount_paid))));
                             }
                         },
                     ],
@@ -628,6 +680,8 @@ export default {
                 }
             },
             payment_id: null,
+            is_check: false,
+            carried_advance: 0,
             row: []
         }
     },
@@ -683,9 +737,21 @@ export default {
                     this.tables.payment_details.items = res.data
                 })
                 .catch(error => {
-                        if (!error.response) 
-                        return console.log(error)
+                    if (!error.response) 
+                    return console.log(error)
                 })
+            
+            this.$http.get('api/payment/advance/' + tenant.tenant_id,{
+                headers:{
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            }).then((response) => {
+                const res = response.data
+                this.carried_advance = res.data[0].advance
+            }).catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
         },
         getPaymentType: function (value, data) {
             if(value == 0){
@@ -695,7 +761,7 @@ export default {
             }
         },
         distributePayment(){
-            var amount = this.forms.payment.fields.amount
+            var amount = Number(this.forms.payment.fields.amount) + Number(this.carried_advance)
             var balance_paid = 0
             var discount = 0
             this.tables.payment_details.items.forEach(billing => {
@@ -722,7 +788,15 @@ export default {
             })
             this.forms.payment.fields.discount = totalDiscount
             this.distributePayment()
-        }
+        },
+        computePayment(){
+            var totalPayment = 0
+            this.tables.payment_details.items.forEach(billing => {
+                totalPayment += Number(billing.amount_paid)
+            })
+            this.forms.payment.fields.amount = totalPayment
+            this.distributePayment()
+        },
     },
     created () {
       this.fillTableList('payments')

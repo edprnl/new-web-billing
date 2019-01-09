@@ -183,6 +183,20 @@ class PaymentsController extends Controller
         return DB::select("select GetLatePayment(".$month_id.", ".$app_year.", ".$tenant_id.") as latePayment");
     }
 
+    public function getAdvance($tenant_id){
+        $advance = PaymentInfo::select(
+                                DB::raw('MAX(advance) as advance'),
+                                DB::raw('MAX(payment_id) as payment_id')
+        )
+                                ->where('tenant_id', $tenant_id)
+                                ->where('is_canceled', 0)
+                                ->get();
+
+        return ( new Reference( $advance ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

@@ -181,6 +181,33 @@ Route::middleware('auth:api')->group(function () {
     //Delete user
     Route::put('user/delete/{id}', 'Utilities\UsersController@delete');
     // END USER
+
+    //List user groups
+    Route::get('usergroups', 'Utilities\UserGroupsController@index');
+    //List single user group
+    Route::get('usergroup/{id}', 'Utilities\UserGroupsController@show');
+    //Create new user group
+    Route::post('usergroup', 'Utilities\UserGroupsController@create');
+    //Update user group
+    Route::put('usergroup/{id}', 'Utilities\UserGroupsController@update');
+    //Delete user group
+    Route::put('usergroup/delete/{id}', 'Utilities\UserGroupsController@delete');
+    //Check if user group was used
+    Route::get('usergroupcheck/{id}', 'Utilities\UserGroupsController@checkIfUsed');
+    // END user groups
+
+    //COMPANY
+    //List company
+    Route::get('companysettings', 'Utilities\CompanySettingsController@index');
+    //List single company
+    Route::get('companysetting/{id}', 'Utilities\CompanySettingsController@show');
+    //Create new company
+    Route::post('companysetting', 'Utilities\CompanySettingsController@create');
+    //Update company
+    Route::put('companysetting/{id}', 'Utilities\CompanySettingsController@update');
+    //Delete company
+    Route::put('companysetting/delete/{id}', 'Utilities\CompanySettingsController@delete');
+    // END COMPANY
      //---------------------------------- UTILITIES ------------------------------------------------
 
      //---------------------------------- TRANSACTIONS ---------------------------------------------
@@ -232,6 +259,7 @@ Route::middleware('auth:api')->group(function () {
     //List single payment
     Route::get('payment/{id}', 'Transactions\PaymentsController@show');
     Route::get('payment/{month_id}/{app_year}/{tenant_id}', 'Transactions\PaymentsController@latePayment');
+    Route::get('payment/advance/{tenant_id}', 'Transactions\PaymentsController@getAdvance');
     //Create new payment
     Route::post('payment', 'Transactions\PaymentsController@create');
     //Update payment
@@ -263,4 +291,17 @@ Route::middleware('auth:api')->group(function () {
     // END ADJUSTMENTS
 
     //---------------------------------- TRANSACTIONS ---------------------------------------------
+
+    //---------------------------------- FILE UPLOAD ----------------------------------------------
+    Route::post('upload', function(Request $request){
+        if ($request->image->isValid()) {
+            $uploadedFile = $request->image;
+            $uploadedPath = $request->path;
+
+            $uploadedFile->move($uploadedPath, $uploadedFile->getClientOriginalName());
+            $path = $uploadedPath.'/'.$uploadedFile->getClientOriginalName();
+            return response(['status'=>'success', 'path'=>$path], 200);
+        }
+    });
 });
+

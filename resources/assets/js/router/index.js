@@ -42,6 +42,8 @@ import billingperiods from '@/views/references/BillingPeriods'
 
 //Views - Utilities
 import users from '@/views/utilities/Users'
+import usergroups from '@/views/utilities/UserGroups'
+import companysettings from '@/views/utilities/CompanySettings'
 
 //Views - Transactions
 import contracts from '@/views/transactions/Contracts'
@@ -153,6 +155,18 @@ const router = new Router({
               path: 'users',
               name: 'Users',
               component: users,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'user_groups',
+              name: 'User Groups',
+              component: usergroups,
+              meta: {requiresAuth: true}
+            },
+            {
+              path: 'company_settings',
+              name: 'Company Settings',
+              component: companysettings,
               meta: {requiresAuth: true}
             }
           ]
