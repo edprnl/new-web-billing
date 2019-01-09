@@ -767,6 +767,7 @@ export default {
     },
     methods:{
         onPaymentEntry(){
+            alert()
             this.forms.payment.fields.payment_details = this.tables.payment_details.items
 
             if(this.entryMode == 'Add'){
@@ -845,6 +846,7 @@ export default {
         },
         distributePayment(){
             var amount = Number(this.forms.payment.fields.amount) + Number(this.carried_advance)
+            //alert(this.carried_advance)
             var balance_paid = 0
             var discount = 0
             this.tables.payment_details.items.forEach(billing => {
@@ -888,7 +890,6 @@ export default {
                     this.showModalCheckType = true
                     this.forms.payment.fields.check_type_id = "null"
                 }
-               
             }
         },
         saveOption(reference){
