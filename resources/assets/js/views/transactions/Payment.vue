@@ -287,14 +287,14 @@
                                                         <b-input-group>
                                                             <vue-autonumeric 
                                                                 v-model="forms.payment.fields.amount"
-                                                                @blur.native="distributePayment"
+                                                                @blur.native="distributePayment()"
                                                                 :class="'form-control text-right'" 
                                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                             </vue-autonumeric>
                                                             <b-input-group-append>
                                                                 <b-button 
                                                                     variant="primary" 
-                                                                    @click="distributePayment">
+                                                                    @click="distributePayment()">
                                                                     <i class="fa fa-share"></i>
                                                                     Distribute
                                                                 </b-button>
@@ -331,7 +331,7 @@
                                     >
                                         <template slot="discount" slot-scope="data">
                                             <vue-autonumeric 
-                                                @input='computeDiscount'
+                                                @input='computeDiscount()'
                                                 v-model="data.item.discount"
                                                 :class="'form-control text-right'" 
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
@@ -341,7 +341,7 @@
                                             <vue-autonumeric 
                                                 v-model="data.item.amount_paid"
                                                 :class="'form-control text-right'"
-                                                @blur.native="computePayment"
+                                                @blur.native="computePayment()"
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                             </vue-autonumeric>
                                         </template>
@@ -431,7 +431,7 @@
                                 <b-button 
                                     :disabled="forms.payment.isSaving" 
                                     variant="success" 
-                                    @click="onPaymentEntry, is_check=false">
+                                    @click="onPaymentEntry(), is_check=false">
                                     Yes
                                 </b-button>
                                 <b-button variant="danger" @click="is_check=false">No</b-button>
@@ -466,7 +466,7 @@
                 Are you sure you want to cancel this payment?
             </b-col>
             <div slot="modal-footer">
-                <b-button :disabled="forms.payment.isSaving" variant="primary" @click="onPaymentDelete">
+                <b-button :disabled="forms.payment.isSaving" variant="primary" @click="onPaymentDelete()">
                     <icon v-if="forms.payment.isSaving" name="sync" spin></icon>
                     <i class="fa fa-check"></i>
                     OK
@@ -799,7 +799,8 @@ export default {
             this.showEntry=true
             this.entryMode='Edit'
         },
-        getTenantInfo: function (value, data) {
+        getTenantInfo: async function (value, data) {
+            this.forms.payment.fields.amount = 0
             if(data.length > 0){
                 var tenant = this.options.tenants.items[data[0].element.index]
                 this.forms.payment.fields.tenant_code = tenant.tenant_code
@@ -807,7 +808,7 @@ export default {
                 this.forms.payment.fields.space_code = tenant.space_code
             }
 
-            this.$http.get('api/billing/balance/' + tenant.tenant_id,{
+            await this.$http.get('api/billing/balance/' + tenant.tenant_id,{
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('token')
                     }
@@ -821,7 +822,7 @@ export default {
                     return console.log(error)
                 })
             
-            this.$http.get('api/payment/advance/' + tenant.tenant_id,{
+            await this.$http.get('api/payment/advance/' + tenant.tenant_id,{
                 headers:{
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }
@@ -832,6 +833,8 @@ export default {
                 if (!error.response) 
                 return console.log(error)
             })
+
+            this.distributePayment()
         },
         getPaymentType: function (value, data) {
             if(value == 0){
@@ -858,7 +861,7 @@ export default {
                     amount = 0
                 }
             })
-            this.forms.payment.fields.advance = Math.max(0, this.forms.payment.fields.amount - Number(balance_paid))
+            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.carried_advance)) - Number(balance_paid))
             this.forms.payment.fields.balance_paid = balance_paid
         },
         computeDiscount(){
@@ -874,6 +877,7 @@ export default {
             this.tables.payment_details.items.forEach(billing => {
                 totalPayment += Number(billing.amount_paid)
             })
+            totalPayment = Math.max(0,Number(totalPayment) - Number(this.carried_advance))
             this.forms.payment.fields.amount = totalPayment
             this.distributePayment()
         },
