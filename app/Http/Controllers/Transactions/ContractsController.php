@@ -198,6 +198,9 @@ class ContractsController extends Controller
         $contract_info->contract_approved_merch = $request->input('contract_approved_merch');
         $contract_info->contract_fixed_rent = $request->input('contract_fixed_rent');
         $contract_info->contract_discounted_rent = $request->input('contract_discounted_rent');
+        $contract_info->contract_advance_rent = $request->input('contract_advance_rent');
+        $contract_info->water_meter_deposit = $request->input('water_meter_deposit');
+        $contract_info->construction_deposit = $request->input('construction_deposit');
         $contract_info->power_meter_deposit = $request->input('power_meter_deposit');
         $contract_info->security_deposit = $request->input('security_deposit');
         $contract_info->contract_escalation_percent = $request->input('contract_escalation_percent');
@@ -371,6 +374,9 @@ class ContractsController extends Controller
         $contract_info->contract_approved_merch = $request->input('contract_approved_merch');
         $contract_info->contract_fixed_rent = $request->input('contract_fixed_rent');
         $contract_info->contract_discounted_rent = $request->input('contract_discounted_rent');
+        $contract_info->contract_advance_rent = $request->input('contract_advance_rent');
+        $contract_info->water_meter_deposit = $request->input('water_meter_deposit');
+        $contract_info->construction_deposit = $request->input('construction_deposit');
         $contract_info->power_meter_deposit = $request->input('power_meter_deposit');
         $contract_info->security_deposit = $request->input('security_deposit');
         $contract_info->contract_escalation_percent = $request->input('contract_escalation_percent');
