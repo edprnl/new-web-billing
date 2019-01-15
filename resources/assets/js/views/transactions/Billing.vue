@@ -1077,6 +1077,7 @@ export default {
                         vat_percent: 12,
                         total_vat: 0,
                         total_amount_due: 0,
+                        discounted_total_amount_due: 0,
                         total_adjusted_in: 0,
                         total_adjusted_out: 0,
                         wtax_amount: 0,
@@ -1111,6 +1112,7 @@ export default {
                         vat_percent: null,
                         total_vat: null,
                         total_amount_due: null,
+                        discounted_total_amount_due: null,
                         total_adjusted_in: null,
                         total_adjusted_out: null,
                         wtax_amount: null,
@@ -1141,6 +1143,7 @@ export default {
                         vat_percent: null,
                         total_vat: null,
                         total_amount_due: null,
+                        discounted_total_amount_due: null,
                         total_adjusted_in: null,
                         total_adjusted_out: null,
                         wtax_amount: null,
@@ -1530,7 +1533,12 @@ export default {
 
             this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
             
+            var discounted_sub_total = Number(this.forms.billing.fields.contract_discounted_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
+
             this.forms.billing.fields.total_amount_due = Number(this.forms.billing.fields.sub_total) + Number(this.getVatTotal) - Number(this.forms.billing.fields.wtax_amount) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
+
+            this.forms.billing.fields.discounted_total_amount_due = Number(discounted_sub_total) + Number(this.getDiscountedVatTotal) - Number(this.getDiscountedWithHoldingTax) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
+
             return this.forms.billing.fields.total_amount_due
         },
         getVatables : function(){
@@ -1584,9 +1592,18 @@ export default {
             return this.forms.billing.fields.total_vat
         },
 
+        getDiscountedVatTotal: function(){
+            var discounted_total_vat = this.forms.billing.fields.discounted_vatable_amount * (this.forms.billing.fields.vat_percent / 100)
+            return discounted_total_vat
+        },
+
         getWithHoldingTax: function(){
             this.forms.billing.fields.wtax_amount = this.forms.billing.fields.total_fixed_rent * (this.forms.billing.fields.wtax_percent / 100)
             return this.forms.billing.fields.wtax_amount
+        },
+        getDiscountedWithHoldingTax: function(){
+            var discounted_withholding_tax = this.forms.billing.fields.contract_discounted_rent * (this.forms.billing.fields.wtax_percent / 100)
+            return discounted_withholding_tax
         },
 
         getEndingBalance: function(){

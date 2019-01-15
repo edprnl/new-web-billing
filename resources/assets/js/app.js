@@ -35,6 +35,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import DatePicker from 'vue2-datepicker'
 import BarExample from './views/charts/BarExample'
 import LineExample from './views/charts/LineExample'
+import cSwitch from './components/Switch'
 
 Vue.use(Notifications)
 Vue.use(DatePicker)
@@ -42,6 +43,7 @@ Vue.use(DatePicker)
 Vue.component('icon', Icon)
 Vue.component('LineExample', LineExample)
 Vue.component('BarExample', BarExample)
+Vue.component('cSwitch', cSwitch)
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 const axiosConfig = {

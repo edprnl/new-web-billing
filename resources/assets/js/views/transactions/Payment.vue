@@ -12,16 +12,44 @@
                                 <small class="font-italic">List of all payments.</small></span>
                         </h5>
                         <b-row class="mb-2">
-                            <b-col  sm="4">
+                            <b-col  sm="2">
                                     <b-button variant="primary" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true, tables.payment_details.items = []">
                                             <i class="fa fa-plus-circle"></i> Create New Payment
                                     </b-button>
                             </b-col>
 
-                            <b-col  sm="4">
-                                <span></span>
+                            <b-col sm="5">
+                                <b-row>
+                                    <b-col sm="1">
+                                        <label class="col-form-label">From:</label>
+                                    </b-col>
+                                    <b-col sm="5">
+                                        <date-picker 
+                                            @input="filterPayments()"
+                                            v-model="date_from" 
+                                            lang="en" 
+                                            input-class="form-control mx-input"
+                                            format="MMMM DD, YYYY"
+                                            :clearable="false">
+                                        </date-picker>
+                                    </b-col>
+                                    <b-col sm="1">
+                                        <label class="col-form-label">To:</label>
+                                    </b-col>
+                                    <b-col sm="5">
+                                        <date-picker
+                                            @input="filterPayments()"
+                                            v-model="date_to" 
+                                            lang="en" 
+                                            input-class="form-control mx-input"
+                                            format="MMMM DD, YYYY"
+                                            :clearable="false">
+                                        </date-picker>
+                                    </b-col>
+                                </b-row>
                             </b-col>
-
+                            <b-col sm="1">
+                            </b-col>
                             <b-col  sm="4">
                                 <b-form-input 
                                             v-model="filters.payments.criteria" 
@@ -264,6 +292,21 @@
                                                         </b-col>
                                                     </b-row>
                                                 </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Amount :</label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <vue-autonumeric 
+                                                                @blur.native="computePayment()"
+                                                                v-model="forms.payment.fields.amount"
+                                                                :class="'form-control text-right'" 
+                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            </vue-autonumeric>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
                                             </b-col>
                                         </b-row>
                                     </b-form>
@@ -287,9 +330,8 @@
                                                         <b-input-group>
                                                             <vue-autonumeric 
                                                                 v-model="forms.payment.fields.amount"
-                                                                @blur.native="distributePayment()"
                                                                 :class="'form-control text-right'" 
-                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}" readonly>
                                                             </vue-autonumeric>
                                                             <b-input-group-append>
                                                                 <b-button 
@@ -329,9 +371,17 @@
                                         :items.sync="tables.payment_details.items"
                                         striped hover small bordered show-empty
                                     >
+                                        <template slot="checker" slot-scope="data">
+                                            <h3 v-if="data.item.checker == 1">
+                                                <i class="fa fa-times-circle" style="color: red;"></i>
+                                            </h3>
+                                            <h3 v-else>
+                                                <i class="fa fa-check-circle" style="color: green;"></i>
+                                            </h3>
+                                        </template>
                                         <template slot="discount" slot-scope="data">
                                             <vue-autonumeric 
-                                                @input='computeDiscount()'
+                                                @input='computePayment()'
                                                 v-model="data.item.discount"
                                                 :class="'form-control text-right'" 
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
@@ -339,11 +389,27 @@
                                         </template>
                                         <template slot="amount_paid" slot-scope="data">
                                             <vue-autonumeric 
+                                                @input='computePayment()'
                                                 v-model="data.item.amount_paid"
                                                 :class="'form-control text-right'"
-                                                @blur.native="computePayment()"
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                             </vue-autonumeric>
+                                        </template>
+                                    </b-table>
+                                    <b-table 
+                                        :fields="tables.payment_summary.fields"
+                                        :items.sync="tables.payment_summary.items">
+                                        <template slot="HEAD_outstanding_balance" slot-scope="data">
+                                            {{formatNumber(total_outstanding_balance)}}
+                                        </template>
+                                        <template slot="HEAD_discount" slot-scope="data">
+                                            {{formatNumber(forms.payment.fields.discount)}}
+                                        </template>
+                                        <template slot="HEAD_amount_paid" slot-scope="data">
+                                            {{formatNumber(forms.payment.fields.balance_paid)}}
+                                        </template>
+                                        <template slot="HEAD_remaining_balance" slot-scope="data">
+                                            {{formatNumber(total_remaining_balance)}}
                                         </template>
                                     </b-table>
                                     <b-row>
@@ -361,7 +427,7 @@
                                             </b-form-group>
                                         </b-col>
                                         <b-col lg="4">
-                                            <b-form-group>
+                                            <!-- <b-form-group>
                                                 <b-row>
                                                     <b-col lg="4">
                                                         <label class="col-form-label">Balance Paid : </label>
@@ -389,7 +455,7 @@
                                                         </vue-autonumeric>
                                                     </b-col>
                                                 </b-row>
-                                            </b-form-group>
+                                            </b-form-group> -->
                                             <b-form-group>
                                                 <b-row>
                                                     <b-col lg="4">
@@ -425,7 +491,7 @@
                                 </b-card>
                             </b-col>
                         </b-row>
-                        <b-row v-if="is_check" class="pull-right mt-2">
+                        <!-- <b-row v-if="is_check" class="pull-right mt-2">
                             <b-col sm="12">
                                 Check all data if correct, proceed?
                                 <b-button 
@@ -436,13 +502,13 @@
                                 </b-button>
                                 <b-button variant="danger" @click="is_check=false">No</b-button>
                             </b-col>
-                        </b-row>
-                        <b-row v-else class="pull-right mt-2">
+                        </b-row> -->
+                        <b-row class="pull-right mt-2">
                             <b-col sm="12">
                                 <b-button 
                                     :disabled="forms.payment.isSaving" 
                                     variant="primary" 
-                                    @click="is_check=true">
+                                    @click="onPaymentEntry()">
                                     <icon v-if="forms.payment.isSaving" name="sync" spin></icon>
                                     <i class="fa fa-check"></i>
                                     Save
@@ -701,25 +767,45 @@ export default {
                             tdClass: 'd-none'
                         },
                         {
+                            key: 'checker',
+                            label: '',
+                            thStyle: {width: '45px'},
+                            tdClass: 'text-center align-middle',
+                        },
+                        {
                             key:'billing_no',
                             label: 'Billing No.',
-                            tdClass: 'align-middle'
+                            tdClass: 'align-middle',
+                            thStyle: {width: '10%'}
                         },
                         {
                             key:'app_year',
                             label: 'App Year',
-                            tdClass: 'align-middle'
+                            tdClass: 'align-middle',
+                            thStyle: {width: '60px'}
                         },
                         {
                             key:'month_name',
                             label: 'Month',
-                            tdClass: 'align-middle'
+                            tdClass: 'align-middle',
+                            thStyle: {width: '8%'}
+                        },
+                        {
+                            key: 'bill_discount',
+                            label: 'Bill Discount',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '10%'},
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
                         },
                         {
                             key:'outstanding_balance',
                             label: 'Outstanding Balance',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'},
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
@@ -727,21 +813,86 @@ export default {
                         {
                             key:'discount',
                             label: 'Discount',
-                            thClass: 'text-right'
+                            thClass: 'text-right',
+                            thStyle: {width: '15%'},
                         },
                         {
                             key:'amount_paid',
                             label: 'Amount Paid',
-                            thClass: 'text-right'
+                            thClass: 'text-right',
+                            thStyle: {width: '15%'},
                         },
                         {
                             key:'remaining_balance',
                             label: 'Remaining Balance',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'},
                             formatter: (value, key, item) => {
                                 return this.formatNumber(Math.max(0, Number(item.outstanding_balance) - (Number(item.discount) + Number(item.amount_paid))));
                             }
+                        },
+                    ],
+                    items: []
+                },
+                payment_summary: {
+                    fields:[
+                        {
+                            key: 'a',
+                            label: '',
+                            thStyle: {width: '45px'},
+                            tdClass: 'text-center align-middle',
+                        },
+                        {
+                            key:'b',
+                            label: 'Total',
+                            tdClass: 'align-middle',
+                            thStyle: {width: '10%'}
+                        },
+                        {
+                            key:'c',
+                            label: '',
+                            tdClass: 'align-middle',
+                            thStyle: {width: '60px'}
+                        },
+                        {
+                            key:'d',
+                            label: '',
+                            tdClass: 'align-middle',
+                            thStyle: {width: '8%'}
+                        },
+                        {
+                            key: 'e',
+                            label: '',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '10%'}
+                        },
+                        {
+                            key:'outstanding_balance',
+                            label: '',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'}
+                        },
+                        {
+                            key:'discount',
+                            label: '',
+                            thClass: 'text-right',
+                            thStyle: {width: '15%'},
+                        },
+                        {
+                            key:'amount_paid',
+                            label: '',
+                            thClass: 'text-right',
+                            thStyle: {width: '15%'},
+                        },
+                        {
+                            key:'remaining_balance',
+                            label: '',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '15%'}
                         },
                     ],
                     items: []
@@ -759,21 +910,57 @@ export default {
                     perPage: 10
                 }
             },
+            total_outstanding_balance: 0,
+            total_remaining_balance: 0,
             payment_id: null,
             is_check: false,
             carried_advance: 0,
+            date_from: moment().startOf('month').format('YYYY-MM-DD'),
+            date_to: moment().endOf('month').format('YYYY-MM-DD'),
             row: []
         }
     },
     methods:{
+        validateForm(){
+            var totalAmountPaid = 0
+            this.tables.payment_details.items.forEach(billing => {
+                billing.checker = 0
+                if(Number(billing.outstanding_balance).toFixed(2) != (Number(billing.discount) + Number(billing.amount_paid))){
+                    billing.checker = 1
+                    this.$notify({
+                        type: 'error',
+                        group: 'notification',
+                        title: 'Error',
+                        text: "The payment is not equal to the balance."
+                    })
+                    return false
+                }
+                totalAmountPaid += billing.amount_paid
+            })
+            var total = (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)) - Number(this.forms.payment.fields.amount)
+            if(total > 0 && total < 0.09){
+                return true
+            }
+            else{
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error',
+                    text: "The sum of amount paid is not equal to the amount given."
+                })
+                return false
+            }
+        },
         onPaymentEntry(){
             this.forms.payment.fields.payment_details = this.tables.payment_details.items
 
-            if(this.entryMode == 'Add'){
-                this.createEntity('payment', false, 'payments')
-            }
-            else{
-                this.updateEntity('payment', 'payment_id', false, this.row)
+            if(this.validateForm()){
+                if(this.entryMode == 'Add'){
+                    this.createEntity('payment', false, 'payments')
+                }
+                else{
+                    this.updateEntity('payment', 'payment_id', false, this.row)
+                }
             }
         },
         onPaymentDelete(){
@@ -849,10 +1036,12 @@ export default {
         distributePayment(){
             var amount = Number(this.forms.payment.fields.amount) + Number(this.carried_advance)
             var balance_paid = 0
+            var total_outstanding_balance = 0
             var discount = 0
             this.tables.payment_details.items.forEach(billing => {
                 discount += Number(billing.discount)
                 amount += Number(billing.discount)
+                total_outstanding_balance += Number(billing.outstanding_balance)
                 if(amount > Number(billing.outstanding_balance)){
                     billing.amount_paid = Math.max(0, Number(billing.outstanding_balance) - Number(billing.discount))
                     balance_paid += Math.max(0, Number(billing.outstanding_balance) - Number(billing.discount))
@@ -866,23 +1055,25 @@ export default {
             })
             this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.carried_advance)) - Number(balance_paid))
             this.forms.payment.fields.balance_paid = balance_paid
-        },
-        computeDiscount(){
-            var totalDiscount = 0
-            this.tables.payment_details.items.forEach(billing => {
-                totalDiscount += Number(billing.discount)
-            })
-            this.forms.payment.fields.discount = totalDiscount
-            this.distributePayment()
+            this.total_outstanding_balance = total_outstanding_balance
         },
         computePayment(){
-            var totalPayment = 0
+            var balance = 0
+            var totalDiscount = 0
+            var totalAmount = 0
+            var remaining_balance = 0
+
             this.tables.payment_details.items.forEach(billing => {
-                totalPayment += Number(billing.amount_paid)
+                balance += Math.max(0, Number(billing.outstanding_balance) - Number(billing.discount))
+                totalDiscount += Number(billing.discount)
+                totalAmount += Number(billing.amount_paid)
+                remaining_balance += Math.max(0, Number(billing.outstanding_balance) - (Number(billing.discount) + Number(billing.amount_paid)))
             })
-            totalPayment = Math.max(0,Number(totalPayment) - Number(this.carried_advance))
-            this.forms.payment.fields.amount = totalPayment
-            this.distributePayment()
+
+            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.carried_advance)) - Number(balance))
+            this.forms.payment.fields.discount = totalDiscount
+            this.forms.payment.fields.balance_paid = totalAmount
+            this.total_remaining_balance = remaining_balance
         },
         isOptionCreating: function(value, data, reference){
             if(value == -1){
@@ -898,13 +1089,17 @@ export default {
             if(reference == 'checktype'){
                 this.createOptionsEntity('check_type', 'showModalCheckType', 'check_types', 'payment','check_type_id')
             }
-           
+        },
+        filterPayments(){
+            var from = this.moment(this.date_from, 'YYYY-MM-DD')
+            var to = this.moment(this.date_to, 'YYYY-MM-DD')
+            this.filterTableList('payments', from, to)
         }
     },
     created () {
-      this.fillTableList('payments')
-      this.fillOptionsList('tenants')
-      this.fillOptionsList('check_types')
+        this.filterTableList('payments', this.date_from, this.date_to)
+        this.fillOptionsList('tenants')
+        this.fillOptionsList('check_types')
     },
     watch: {
         showEntry: function (showEntry) {
