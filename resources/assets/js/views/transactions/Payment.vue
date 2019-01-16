@@ -17,38 +17,31 @@
                                             <i class="fa fa-plus-circle"></i> Create New Payment
                                     </b-button>
                             </b-col>
-
-                            <b-col sm="5">
-                                <b-row>
-                                    <b-col sm="1">
-                                        <label class="col-form-label">From:</label>
-                                    </b-col>
-                                    <b-col sm="5">
-                                        <date-picker 
-                                            @input="filterPayments()"
-                                            v-model="date_from" 
-                                            lang="en" 
-                                            input-class="form-control mx-input"
-                                            format="MMMM DD, YYYY"
-                                            :clearable="false">
-                                        </date-picker>
-                                    </b-col>
-                                    <b-col sm="1">
-                                        <label class="col-form-label">To:</label>
-                                    </b-col>
-                                    <b-col sm="5">
-                                        <date-picker
-                                            @input="filterPayments()"
-                                            v-model="date_to" 
-                                            lang="en" 
-                                            input-class="form-control mx-input"
-                                            format="MMMM DD, YYYY"
-                                            :clearable="false">
-                                        </date-picker>
-                                    </b-col>
-                                </b-row>
+                            <b-col sm="1">
+                                <label class="col-form-label">From:</label>
+                            </b-col>
+                            <b-col sm="2">
+                                <date-picker 
+                                    @input="filterPayments()"
+                                    v-model="date_from" 
+                                    lang="en" 
+                                    input-class="form-control mx-input"
+                                    format="MMMM DD, YYYY"
+                                    :clearable="false">
+                                </date-picker>
                             </b-col>
                             <b-col sm="1">
+                                <label class="col-form-label">To:</label>
+                            </b-col>
+                            <b-col sm="2">
+                                <date-picker
+                                    @input="filterPayments()"
+                                    v-model="date_to" 
+                                    lang="en" 
+                                    input-class="form-control mx-input"
+                                    format="MMMM DD, YYYY"
+                                    :clearable="false">
+                                </date-picker>
                             </b-col>
                             <b-col  sm="4">
                                 <b-form-input 
@@ -70,6 +63,9 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
+                                        <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data)">
+                                            <i class="fa fa-print"></i>
+                                        </b-btn>
                                         <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
@@ -754,7 +750,10 @@ export default {
                         },
                         {
                             key: 'action',
-                            label: 'Action'
+                            label: 'Action',
+                            tdClass: 'text-center align-middle',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'}
                         }
                     ],
                     items: []
@@ -1094,7 +1093,12 @@ export default {
             var from = this.moment(this.date_from, 'YYYY-MM-DD')
             var to = this.moment(this.date_to, 'YYYY-MM-DD')
             this.filterTableList('payments', from, to)
-        }
+        },
+        printAckReceipt(data){
+            let routeData = this.$router.resolve({name: 'Acknowledgement Receipt', query: {payment_id: data.item.payment_id}});
+            window.open(routeData.href, '_blank');
+            //this.$router.push({ name: 'soa' })
+        },
     },
     created () {
         this.filterTableList('payments', this.date_from, this.date_to)

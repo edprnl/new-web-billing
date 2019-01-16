@@ -53,6 +53,7 @@ import adjustment from '@/views/transactions/Adjustment'
 
 //Views - Reports
 import soa from '@/views/reports/Soa'
+import ack_receipt from '@/views/reports/AckReceipt'
 
 import store from '../store'
 
@@ -182,6 +183,12 @@ const router = new Router({
               path: 'soa',
               name: 'Soa',
               component: soa,
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'ack_receipt',
+              name: 'Acknowledgement Receipt',
+              component: ack_receipt,
               meta: { requiresAuth: true }
             }
           ]
