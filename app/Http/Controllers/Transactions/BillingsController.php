@@ -63,6 +63,7 @@ class BillingsController extends Controller
         $billing_info->total_othr_charges = $request->input('total_othr_charges');
         $billing_info->sub_total = $request->input('sub_total');
         $billing_info->vatable_amount = $request->input('vatable_amount');
+        $billing_info->discounted_vatable_amount = $request->input('discounted_vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
         $billing_info->total_amount_due = $request->input('total_amount_due');
@@ -281,6 +282,7 @@ class BillingsController extends Controller
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
         $billing_info->total_amount_due = $request->input('total_amount_due');
+        $billing_info->discounted_total_amount_due = $request->input('discounted_total_amount_due');
         $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
         $billing_info->total_adjusted_out = $request->input('total_adjusted_out');
         $billing_info->wtax_amount = $request->input('wtax_amount');
@@ -425,6 +427,8 @@ class BillingsController extends Controller
                                     'b_billing_info.month_id',
                                     'b_refmonths.month_name',
                                     DB::raw('b_billing_info.total_amount_due - (IFNULL(SUM(b_payment_details.amount_paid), 0) + IFNULL(SUM(b_payment_details.discount), 0)) as outstanding_balance'),
+                                    DB::raw('b_billing_info.total_amount_due - b_billing_info.discounted_total_amount_due as bill_discount'),
+                                    DB::raw('"0" as checker'),
                                     DB::raw('"0.00" as discount'),
                                     DB::raw('"0.00" as amount_paid')
                                 )

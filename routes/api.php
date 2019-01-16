@@ -194,6 +194,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('usergroup/delete/{id}', 'Utilities\UserGroupsController@delete');
     //Check if user group was used
     Route::get('usergroupcheck/{id}', 'Utilities\UserGroupsController@checkIfUsed');
+    Route::get('modules', 'Utilities\UserGroupsController@getModuleList');
     // END user groups
 
     //COMPANY
@@ -255,6 +256,8 @@ Route::middleware('auth:api')->group(function () {
     //PAYMENTS
     //List payments
     Route::get('payments', 'Transactions\PaymentsController@index');
+    Route::get('payments/{date_from}/{date_to}', 'Transactions\PaymentsController@index');
+
     Route::get('payments/{tenant_id}/{month_id}/{app_year}', 'Transactions\PaymentsController@getPayments');
     //List single payment
     Route::get('payment/{id}', 'Transactions\PaymentsController@show');

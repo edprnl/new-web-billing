@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Utilities;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Utilities\UserGroups;
+use App\Models\Utilities\ModuleList;
+use App\Models\Utilities\ModuleRights;
 use App\Users;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
@@ -152,5 +154,18 @@ class UserGroupsController extends Controller
             $exists = 'true';
         }
         return $exists;
+    }
+
+    public function getModuleList(){
+        $module['module_groups'] = ModuleList::select('module_group')
+                                    ->groupBy('module_group')
+                                    ->get();
+        $module['modules'] = ModuleList::get();
+
+        $module['rights'] = ModuleRights::get();
+        
+        return (new Reference( $module ) )
+                ->response()
+                ->setStatusCode(200);
     }
 }

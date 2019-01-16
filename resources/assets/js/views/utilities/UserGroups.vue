@@ -40,8 +40,13 @@
                                     :items.sync="tables.usergroups.items"
                                     :current-page="paginations.usergroups.currentPage"
                                     :per-page="paginations.usergroups.perPage"
-                                    striped hover small bordered show-empty
+                                    striped small bordered show-empty
                                 >
+                                    <template slot="row_data" slot-scope="row">
+                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails">
+                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
+                                        </b-btn>
+                                    </template>
                                     <template slot="action" slot-scope="data">
                                         <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
@@ -50,6 +55,26 @@
                                         <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
+                                    </template>
+                                    <template slot="row-details" slot-scope="row">
+                                        <b-list-group>
+                                            <b-list-group-item v-for="module_group in modules['module_groups']" :key="module_group.module_group">
+                                                {{module_group.module_group}}
+                                                <b-list-group class="mt-2">
+                                                    <b-list-group-item v-for="module in filterModules(module_group.module_group)" :key="module.module_id" v-b-toggle="module.module_id + '-' + row.item.user_group_id">
+                                                        {{module.module_name}}
+                                                        <b-collapse :id="module.module_id + '-' + row.item.user_group_id">
+                                                            <b-list-group class="mt-2">
+                                                                <b-list-group-item v-for="right in filterModuleRights(module.module_id)" :key="right.module_right_id">
+                                                                    {{right.right_desc}}
+                                                                    <c-switch type="text" variant="primary" on="1" off="Off" :pill="true" :checked="true"/>
+                                                                </b-list-group-item>
+                                                            </b-list-group>
+                                                        </b-collapse>
+                                                    </b-list-group-item>
+                                                </b-list-group>
+                                            </b-list-group-item>
+                                        </b-list-group>
                                     </template>
                                     
                                 </b-table>
@@ -164,6 +189,12 @@ export default {
                 usergroups: {
                     fields:[
                         {
+                            key:'row_data',
+                            label: '',
+                            tdClass: '',
+                            thStyle: {width: '40px'}
+                        },
+                        {
                             key:'user_group',
                             label: 'User Group',
                             tdClass: 'align-middle',
@@ -195,6 +226,7 @@ export default {
                 }
             },
             user_group_id: null,
+            modules: [],
             row: []
         }
     },
@@ -210,7 +242,16 @@ export default {
         onUserGroupDelete(){
             this.deleteEntity('usergroup', this.user_group_id, true, 'usergroups', 'user_group_id')
         },
-        setDelete(data){
+        async setDelete(data){
+            if(await this.checkIfUsed('usergroup', data.item.user_group_id) == true){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: "Unable to delete, this record is being used by other transactions."
+                })
+                return
+            }
             this.showModalDelete=true
             this.user_group_id = data.item.user_group_id
         },
@@ -221,17 +262,28 @@ export default {
             this.showModalEntry=true
             this.entryMode='Edit'
         },
-        validateRequiredFields(){
-            console.log(this.$refs)
-            for (var ref in this.$refs) {
-                if(this.$refs[ref].required == true){
-                    console.log(this.$refs[ref].$attrs)
-                } 
-            }
-        }
+        filterModules(module_group){
+            return this.modules['modules'].filter(m => m.module_group == module_group);
+        },
+        filterModuleRights(module_id){
+            return this.modules['rights'].filter(r => r.module_id == module_id);
+        },
     },
-    created () {
-        this.fillTableList('usergroups');
+    async created () {
+        await this.fillTableList('usergroups');
+        await this.$http.get('/api/modules', {
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+                const res = response.data
+                this.modules = res.data
+            })
+            .catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
     },
   }
 </script>

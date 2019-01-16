@@ -336,6 +336,9 @@ export default {
             .then((response) => {
                 const res = response.data.data
                 this.billing = res
+                if(this.billing.month_id == 1){
+                    this.billing.month_id = 13
+                }
                 var pmonth = new Date(this.billing.app_year + '-' + Number(this.billing.month_id - 1) +  '-1')
                 this.billing.prev_month = this.moment(pmonth, 'MMMM').toUpperCase()
             })

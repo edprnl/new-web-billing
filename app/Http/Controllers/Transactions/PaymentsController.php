@@ -19,11 +19,14 @@ class PaymentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($date_from = null, $date_to = null)
     {
         $payments = PaymentInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_payment_info.tenant_id')
-                            ->where('is_canceled', 0)->orderBy('payment_id', 'desc')->get();
-        return Reference::collection($payments);
+                            ->where('is_canceled', 0)->orderBy('payment_id', 'desc');
+        if($date_from != null && $date_to != null){
+            $payments->whereRaw('DATE(payment_date) BETWEEN DATE("'.$date_from.'") AND DATE("'.$date_to.'")');
+        }
+        return Reference::collection($payments->get());
     }
 
     /**
@@ -41,7 +44,7 @@ class PaymentsController extends Controller
         $payment_info->tenant_id = $request->input('tenant_id');
         $payment_info->payment_type = $request->input('payment_type');
         $payment_info->amount_paid = $request->input('amount');
-        $payment_info->payment_date = date("Y-m-d", strtotime($request->input('payment_date')));
+        $payment_info->payment_date = date("Y-m-d h:i:s ", strtotime($request->input('payment_date')));
         $payment_info->check_type_id = $request->input('check_type_id');
         $payment_info->check_no = $request->input('check_no');
         $payment_info->check_date = date("Y-m-d", strtotime($request->input('check_date')));
@@ -179,7 +182,6 @@ class PaymentsController extends Controller
     }
 
     public function latePayment($month_id, $app_year, $tenant_id){
-        // $response['balance'] = DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.")");
         return DB::select("select GetLatePayment(".$month_id.", ".$app_year.", ".$tenant_id.") as latePayment");
     }
 
