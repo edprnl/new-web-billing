@@ -100,6 +100,7 @@ class PaymentsController extends Controller
     public function show($id)
     {
         $payment = PaymentInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_payment_info.tenant_id')
+                            ->leftJoin('b_refchecktype', 'b_refchecktype.check_type_id', '=', 'b_payment_info.check_type_id')
                             ->findOrFail($id);
 
 

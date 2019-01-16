@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                             <div style="padding: 0px 50px 5px">
-                                <div style="display: inline-block; width: 25%">
+                                <div style="position: relative; top: 0; left: 0; display: inline-block; width: 25%">
                                     The Sum of Pesos (Php)
                                 </div>
                                 <div style="display: inline-block; width: 74%">
@@ -53,16 +53,16 @@
                                 </div>
                             </div>
                             <br><br>
-                            <div style="padding: 0px 50px 5px; text-align: center"><span style="float: left">Cash</span>Check<span style="float: right">Online</span></div>
+                            <div style="padding: 0px 50px 5px; text-align: center"><span style="float: left"><input type="checkbox" :checked="payments.payment_type == 0 ? true : false">Cash</span><input type="checkbox" :checked="payments.payment_type == 1 ? true : false">Check<span style="float: right"><input type="checkbox" :checked="payments.payment_type == 2 ? true : false">Online</span></div>
                         </div>
                         <br>
                         <div style="font-size: 11pt; width: 100%; font-weight: 500;">
                             <div style="display: inline-block; width: 50px"></div>
                             <div style="display: inline-block; border: 1px solid gray; width: 43%">
                                 <div style="padding: 5px">For Check Only</div>
-                                <div style="padding: 5px">Check : </div>
-                                <div style="padding: 5px"><span>Check No: </span><span>Amount :</span></div>
-                                <div style="padding: 5px">Check Date :</div>
+                                <div style="padding: 5px">Check : <span v-if="payments.payment_type==1">{{payments.check_type_desc}}</span></div>
+                                <div style="padding: 5px"><span>Check No : </span><span v-if="payments.payment_type==1">{{payments.check_no}}</span></div>
+                                <div style="padding: 5px">Check Date : <span v-if="payments.payment_type==1">{{moment(payments.check_date, 'MMMM DD, YYYY')}}</span></div>
                             </div>
                             <div style="display: inline-block; width: 42%">
                                 <div style="padding: 5px"></div>

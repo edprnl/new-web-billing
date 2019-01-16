@@ -263,6 +263,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('payment/{id}', 'Transactions\PaymentsController@show');
     Route::get('payment/{month_id}/{app_year}/{tenant_id}', 'Transactions\PaymentsController@latePayment');
     Route::get('payment/advance/{tenant_id}', 'Transactions\PaymentsController@getAdvance');
+    Route::get('payment/words/{amount}', 'Transactions\PaymentsController@convertDecimalToWords');
     //Create new payment
     Route::post('payment', 'Transactions\PaymentsController@create');
     //Update payment
