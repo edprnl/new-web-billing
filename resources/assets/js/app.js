@@ -37,6 +37,13 @@ import BarExample from './views/charts/BarExample'
 import LineExample from './views/charts/LineExample'
 import cSwitch from './components/Switch'
 
+var converter = require('number-to-words');
+
+Vue.filter('toWords', function (value) {
+  if (!value) return '';
+  return converter.toWords(value);
+})
+
 Vue.use(Notifications)
 Vue.use(DatePicker)
 
