@@ -430,8 +430,7 @@ export default {
     },
     created () {
         this.fillOptionsList('accounts')
-        this.fillEntityForm('companysetting', 1)
-        
+        this.fillEntityForm('companysetting', 1)    
     },
   }
 </script>
