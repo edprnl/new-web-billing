@@ -77,7 +77,7 @@
                                             :align="'right'"
                                             :total-rows="paginations.payments.totalRows"
                                             :per-page="paginations.payments.perPage"
-                                            v-model="paginations.payments.criteria" />
+                                            v-model="paginations.payments.currentPage" />
                             </b-col>
                         </b-row>
 

@@ -51,10 +51,10 @@
                                 </span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">
-                                        TOTAL TENANTS
+                                        <h6>TOTAL TENANTS</h6>
                                     </span>
                                     <div class="info-box-number">
-                                        0
+                                        <h3>{{no_of_tenants}}</h3>
                                     </div>
                                 </div>
                             </div>  
@@ -62,16 +62,14 @@
                         <b-col sm="3">
                             <div class="info-box bg-success">
                                 <span class="info-box-icon">
-                                    <i>
-
-                                    </i>
+                                    <i class="fa fa-paperclip"></i>
                                 </span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">
-                                        TOTAL CONTRACTS
+                                        <h6>TOTAL CONTRACTS</h6>
                                     </span>
                                     <div class="info-box-number">
-                                        0
+                                        <h3>{{no_of_contracts}}</h3>
                                     </div>
                                 </div>
                             </div>  
@@ -85,10 +83,10 @@
                                 </span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">
-                                        NEW CONTRACTS
+                                        <h6>NEW CONTRACTS</h6>
                                     </span>
                                     <div class="info-box-number">
-                                       0
+                                        <h3>0</h3>
                                     </div>
                                 </div>
                             </div>  
@@ -102,10 +100,10 @@
                                 </span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">
-                                        EXPIRING CONTRACTS
+                                        <h6>EXPIRING CONTRACTS</h6>
                                     </span>
                                     <div class="info-box-number">
-                                        0
+                                        <h3>0</h3>
                                     </div>
                                 </div>
                             </div>  
@@ -113,32 +111,76 @@
                     </b-row>
                     <b-row sm="12">
                         <b-col sm="6">
-                            <!-- <b-card>
-                                <h5 slot="header">  table header
-                                    <span class="text-primary">
-                                        <i class="fa fa-bars"></i> 
-                                        Charge List
-                                        <small class="font-italic">List of all registered charges.</small></span>
-                                </h5>
-                            </b-card> -->
-                            <b-card header="Bar Graph">
-                                <div class="chart-wrapper">
-                                    <bar-example/>
-                                </div>
+                            <b-card header="Payments" style="min-height: 420px;">
+                                <b-row class="mb-2">
+                                    <b-col sm="4">
+                                        <date-picker 
+                                            @input="filterPayments()"
+                                            v-model="date_from" 
+                                            lang="en" 
+                                            input-class="form-control mx-input"
+                                            format="MMMM DD, YYYY"
+                                            :clearable="false">
+                                        </date-picker>
+                                    </b-col>
+                                    <b-col sm="1">
+                                        <label class="col-form-label">to</label>
+                                    </b-col>
+                                    <b-col sm="4">
+                                        <date-picker
+                                            @input="filterPayments()"
+                                            v-model="date_to" 
+                                            lang="en" 
+                                            input-class="form-control mx-input"
+                                            format="MMMM DD, YYYY"
+                                            :clearable="false">
+                                        </date-picker>
+                                    </b-col>
+                                    <b-col  sm="3">
+                                        <b-form-input 
+                                                    v-model="filters.payments.criteria" 
+                                                    type="text" 
+                                                    placeholder="Search">
+                                        </b-form-input>
+                                    </b-col>
+                                </b-row>
+                                <b-table 
+                                    :filter="filters.payments.criteria"
+                                    :fields="tables.payments.fields"
+                                    :items.sync="tables.payments.items"
+                                    :current-page="paginations.payments.currentPage"
+                                    :per-page="paginations.payments.perPage"
+                                    striped hover small bordered show-empty
+                                >
+                                    <template slot="action" slot-scope="data">
+                                        <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data.item.payment_id)">
+                                            <i class="fa fa-print"></i>
+                                        </b-btn>
+                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                            <i class="fa fa-trash"></i>
+                                        </b-btn>
+                                    </template>
+                                    
+                                </b-table>
+                                <b-pagination
+                                            :align="'right'"
+                                            :total-rows="paginations.payments.totalRows"
+                                            :per-page="paginations.payments.perPage"
+                                            v-model="paginations.payments.currentPage" />
                             </b-card>
                         </b-col>
                         <b-col sm="6">
-                            <!-- <b-card>
-                                <h5 slot="header">  table header
-                                    <span class="text-primary">
-                                        <i class="fa fa-bars"></i> 
-                                        Charge List
-                                        <small class="font-italic">List of all registered charges.</small></span>
-                                </h5>
-                            </b-card> -->
-                            <b-card header="Line Chart">
+                            <b-card header="Line Chart" style="min-height: 420px;">
+                                <b-row class="justify-content-md-center">
+                                    <b-form-radio-group v-model="payment_type">
+                                        <b-form-radio value="-1" id="all"><label class="col-form-label" for="all">All</label></b-form-radio>
+                                        <b-form-radio value="0" id="cash"><label class="col-form-label" for="cash">Cash</label></b-form-radio>
+                                        <b-form-radio value="1" id="check"><label class="col-form-label" for="check">Check</label></b-form-radio>
+                                        <b-form-radio value="2" id="online"><label class="col-form-label" for="online">Online</label></b-form-radio>
+                                    </b-form-radio-group>
+                                </b-row>
                                 <div class="chart-wrapper">
-                                    <line-example/>
+                                    <line-example :data="line_data" :label="'Monthly Collection (' + moment(new Date, 'YYYY') + ')'" :height="250"/>
                                 </div>
                             </b-card>
                         </b-col>
@@ -149,3 +191,102 @@
     </div>
     
 </template>
+<script>
+export default {
+    name: 'dashboard',
+    data () {
+      return {
+            payment_type: -1,
+            tables: {
+                payments: {
+                    fields:[
+                        {
+                            key:'transaction_no',
+                            label: 'Trans No',
+                            tdClass: 'align-middle',
+                        },
+                        {
+                            key:'reference_no',
+                            label: 'Reference No',
+                            tdClass: 'align-middle',
+                        },
+                        {
+                            key:'trade_name',
+                            label: 'Tenant',
+                            tdClass: 'align-middle',
+                        },
+                        {
+                            key:'payment_date',
+                            label: 'Payment Date',
+                            formatter: (value) => {
+                                return this.moment(value, 'MMMM DD, YYYY')
+                            },
+                            tdClass: 'align-middle',
+                        },
+                        {
+                            key:'amount_paid',
+                            label: 'Amount Paid',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
+                        }
+                    ],
+                    items: []
+                }
+            },
+            filters: {
+                payments: {
+                    criteria: null
+                }
+            },
+            paginations: {
+                payments: {
+                    totalRows: 0,
+                    currentPage: 1,
+                    perPage: 8
+                }
+            },
+            date_from: moment().startOf('month').format('YYYY-MM-DD'),
+            date_to: moment().endOf('month').format('YYYY-MM-DD'),
+            line_data: [],
+            no_of_tenants: 0,
+            no_of_contracts: 0,
+        }
+    },
+    methods: {
+        filterPayments(){
+            var from = this.moment(this.date_from, 'YYYY-MM-DD')
+            var to = this.moment(this.date_to, 'YYYY-MM-DD')
+            this.filterTableList('payments', from, to)
+        },
+    },
+    created () {
+        this.filterTableList('payments', this.date_from, this.date_to)
+        this.$http.get('api/dashboard/index/'+this.payment_type,{
+            headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+        })
+        .then((response) => {  
+            var data = response.data
+            this.no_of_tenants = data.tenants[0].no_of_tenants
+            this.no_of_contracts = data.contracts[0].no_of_contracts
+            var dArray = []
+            data.payment_line.forEach(element => {
+                dArray.push(element.amount)
+            });
+            this.line_data = dArray
+        }).catch(error => {
+            this.forms.payment.isSaving = false
+            if (!error.response) return
+                const errors = error.response.data.errors
+            for (var key in errors) {
+                this.forms.payment.states[key] = false
+                this.forms.payment.errors[key] =  errors[key]
+            }
+        })
+    }
+}
+</script>

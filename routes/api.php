@@ -33,6 +33,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('auth:api')->group(function () {
 
    //---------------------------------- REFERENCES -----------------------------------------------
+   //DASHBOARD
+   Route::get('dashboard/index/{payment_type}', 'References\DashboardController@index');
+   //END DASHBOARD
    // List of Charges
    Route::get('charges', 'References\ChargesController@index');
    // List of Account

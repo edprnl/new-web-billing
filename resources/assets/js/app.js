@@ -36,7 +36,7 @@ import DatePicker from 'vue2-datepicker'
 import BarExample from './views/charts/BarExample'
 import LineExample from './views/charts/LineExample'
 import cSwitch from './components/Switch'
-
+import { Line } from 'vue-chartjs'
 
 Vue.use(Notifications)
 Vue.use(DatePicker)
