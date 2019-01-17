@@ -3,7 +3,7 @@
 
 <template>
     <!--<b-animated fade-in>  main container -->
-    <div>
+    <div hidden>
         <div class="animated fadeIn" ref="ackReceipt">
             <b-row>
                 <b-col sm="12">
@@ -19,8 +19,33 @@
                             <div style="font-weight: 500;"><span style="float: left">Reference No : {{ payments.reference_no }}</span><span style="float: right">Txn Date : {{moment(payments.payment_date, 'MMMM DD, YYYY')}}</span></div>
                             <br><br>
                         </div>
+                        <table style="width: 100%;" >
+                            <tbody>
+                                <tr>
+                                    <td style="width: 23%">Receive From</td>
+                                    <td style="width: 2%">:</td>
+                                    <td style="width: 75%">{{payments.trade_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Address</td>
+                                    <td>:</td>
+                                    <td>{{payments.head_office_address}}</td>
+                                </tr>
+                                <tr>
+                                    <td>The Sum of Pesos (Php)</td>
+                                    <td>:</td>
+                                    <td :style="amount_paid_words.length > 92 ? 'font-size: 9pt!important;': ''">{{amount_paid_words}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Amount</td>
+                                    <td>:</td>
+                                    <td>{{formatNumber(payments.amount_paid)}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br><br>
                         <div style="font-size: 11pt; width: 100%; font-weight: 500;">
-                            <div style="padding: 0px 50px 5px;">
+                            <!-- <div style="padding: 0px 50px 5px;">
                                 <div style="display: inline-block; width: 25%">
                                     Receive From
                                 </div>
@@ -51,8 +76,8 @@
                                 <div style="display: inline-block; width: 74%">
                                     : &nbsp;&nbsp;&nbsp;{{formatNumber(payments.amount_paid)}}
                                 </div>
-                            </div>
-                            <br><br>
+                            </div> -->
+                            <!-- <br><br> -->
                             <div style="padding: 0px 50px 5px; text-align: center"><span style="float: left"><input type="checkbox" :checked="payments.payment_type == 0 ? true : false">Cash</span><input type="checkbox" :checked="payments.payment_type == 1 ? true : false">Check<span style="float: right"><input type="checkbox" :checked="payments.payment_type == 2 ? true : false">Online</span></div>
                         </div>
                         <br>
@@ -90,14 +115,18 @@ export default {
         return {
             payment_id: null,
             payments: [],
-            amount_paid_words: null,
+            amount_paid_words: '',
             cssText: `
                 body{
                     font-family: Calibri;
                     font-size: 8pt!important;
                 }
                 table {
-                    font-size: 8pt!important;
+                    font-size: 11pt!important;
+                    border-collapse: collapse;
+                }
+                th, td:last-child {
+                    border-bottom: 1px solid gray;
                 }
                 tr td:first-child {
                     padding-left: 10px;

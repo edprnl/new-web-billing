@@ -29,7 +29,6 @@
             else{
               this.showEntry = false
             }
-
           }).catch(error => {
             this.forms[entity].isSaving = false
             if (!error.response) return

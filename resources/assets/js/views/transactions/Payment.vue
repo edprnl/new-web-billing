@@ -63,7 +63,7 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data)">
+                                        <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data.item.payment_id)">
                                             <i class="fa fa-print"></i>
                                         </b-btn>
                                         <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
@@ -501,6 +501,7 @@
                         </b-row> -->
                         <b-row class="pull-right mt-2">
                             <b-col sm="12">
+                                <input type="checkbox" v-model="is_print"> Print Acknowledgement Receipt?
                                 <b-button 
                                     :disabled="forms.payment.isSaving" 
                                     variant="primary" 
@@ -909,6 +910,8 @@ export default {
                     perPage: 10
                 }
             },
+            is_print: 0,
+            print_payment_id: 0,
             total_outstanding_balance: 0,
             total_remaining_balance: 0,
             payment_id: null,
@@ -950,12 +953,45 @@ export default {
                 return false
             }
         },
-        onPaymentEntry(){
+        async onPaymentEntry(){
             this.forms.payment.fields.payment_details = this.tables.payment_details.items
 
             if(this.validateForm()){
                 if(this.entryMode == 'Add'){
-                    this.createEntity('payment', false, 'payments')
+                    this.forms.payment.isSaving = true
+                    this.resetFieldStates('payment')
+                    await this.$http.post('api/payment', this.forms.payment.fields,{
+                        headers: {
+                                Authorization: 'Bearer ' + localStorage.getItem('token')
+                            }
+                    })
+                    .then((response) => {  
+                        this.forms.payment.isSaving = false
+                        this.clearFields('payment')
+                        this.$notify({
+                            type: 'success',
+                            group: 'notification',
+                            title: 'Success!',
+                            text: 'The record has been successfully created.'
+                        })
+
+                        this.tables.payments.items.unshift(response.data.data)
+                        this.print_payment_id = response.data.data.payment_id
+                        this.paginations.payments.totalRows++
+
+                        this.showEntry = false
+                    }).catch(error => {
+                        this.forms.payment.isSaving = false
+                        if (!error.response) return
+                            const errors = error.response.data.errors
+                        for (var key in errors) {
+                            this.forms.payment.states[key] = false
+                            this.forms.payment.errors[key] =  errors[key]
+                        }
+                    })
+                    if(this.is_print){
+                        await this.printAckReceipt(this.print_payment_id)
+                    }
                 }
                 else{
                     this.updateEntity('payment', 'payment_id', false, this.row)
@@ -1094,8 +1130,8 @@ export default {
             var to = this.moment(this.date_to, 'YYYY-MM-DD')
             this.filterTableList('payments', from, to)
         },
-        printAckReceipt(data){
-            let routeData = this.$router.resolve({name: 'Acknowledgement Receipt', query: {payment_id: data.item.payment_id}});
+        printAckReceipt(payment_id){
+            let routeData = this.$router.resolve({name: 'Acknowledgement Receipt', query: {payment_id: payment_id}});
             window.open(routeData.href, '_blank');
             //this.$router.push({ name: 'soa' })
         },
