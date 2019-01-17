@@ -86,6 +86,17 @@ class CompanySettingsController extends Controller
         $company->mobile_number = $request->input('mobile_number');
         $company->landline = $request->input('landline');
         $company->logo = $request->input('logo');
+        $company->basic_rental_account_id = $request->input('basic_rental_account_id');
+        $company->advance_rental_account_id = $request->input('advance_rental_account_id');
+        $company->security_deposit_account_id = $request->input('security_deposit_account_id');
+        $company->electric_meter_deposit_account_id = $request->input('electric_meter_deposit_account_id');
+        $company->water_meter_deposit_account_id = $request->input('water_meter_deposit_account_id');
+        $company->construction_deposit_account_id = $request->input('construction_deposit_account_id');
+        $company->withholding_tax_account_id = $request->input('withholding_tax_account_id');
+        $company->vat_account_id = $request->input('vat_account_id');
+        $company->adjustment_in_account_id = $request->input('adjustment_in_account_id');
+        $company->adjustment_out_account_id = $request->input('adjustment_out_account_id');
+        $company->discount_account_id = $request->input('discount_account_id');
 
         //update  based on the http json body that is sent
         $company->update();

@@ -5,6 +5,7 @@
         <div class="animated fadeIn">
             <b-row>
                 <b-col sm="12">
+                    
                     <b-card >
                         <h5 slot="header">
                             <span class="text-primary">
@@ -13,118 +14,321 @@
                                 <!-- <small class="font-italic">List of all registered user.</small> -->
                             </span>
                         </h5>
-                        <b-form autocomplete="off">
-                            <b-row>
-                                <b-col sm="3">
-                                </b-col>
-                                <b-col sm="6">
-                                    <b-form-group>
+
+                        <b-row>
+                            <b-col lg=12>
+                                <b-tabs>
+                                    <b-tab title="General Settings">
+                                        <b-form autocomplete="off">
+                                            <b-row>
+                                                <b-col sm="3">
+                                                </b-col>
+                                                <b-col sm="6">
+                                                    <b-form-group>
+                                                        <b-row>
+                                                            <b-col lg=3>
+                                                                <label class="col-form-label">* Company Name :</label>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <b-form-input
+                                                                    ref="company_name"
+                                                                    id="company_name"
+                                                                    v-model="forms.companysetting.fields.company_name"
+                                                                    type="text"
+                                                                    placeholder="Company Name">
+                                                                </b-form-input>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-form-group>
+                                                    <b-form-group>
+                                                        <b-row>
+                                                            <b-col lg=3>
+                                                                <label class="col-form-label">* Company Address :</label>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <b-form-textarea
+                                                                    id="company_address"
+                                                                    v-model="forms.companysetting.fields.company_address"
+                                                                    type="text"
+                                                                    :rows="2"
+                                                                    placeholder="Company Address">
+                                                                </b-form-textarea>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-form-group>
+                                                    <b-form-group>
+                                                        <b-row>
+                                                            <b-col lg=3>
+                                                                <label class="col-form-label">* Email Address :</label>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <b-form-input
+                                                                    id="email_address"
+                                                                    v-model="forms.companysetting.fields.email_address"
+                                                                    type="text"
+                                                                    placeholder="Email Address">
+                                                                </b-form-input>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-form-group>
+                                                    <b-form-group>
+                                                        <b-row>
+                                                            <b-col lg=3>
+                                                                <label class="col-form-label">Mobile Number :</label>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <b-form-input
+                                                                    id="mobile_number"
+                                                                    v-model="forms.companysetting.fields.mobile_number"
+                                                                    type="text"
+                                                                    placeholder="Mobile Number">
+                                                                </b-form-input>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-form-group>
+                                                    <b-form-group>
+                                                        <b-row>
+                                                            <b-col lg=3>
+                                                                <label class="col-form-label">Landline :</label>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <b-form-input
+                                                                    id="landline"
+                                                                    v-model="forms.companysetting.fields.landline"
+                                                                    type="text"
+                                                                    placeholder="Mobile Number">
+                                                                </b-form-input>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-form-group>
+                                                    <b-form-group>
+                                                        <b-row>
+                                                            <b-col lg=3>
+                                                                <label class="col-form-label">Logo :</label>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <div class="border" style="height: 150px; width: 200px;">
+                                                                    <b-img :src="forms.companysetting.fields.logo" width="200" height="150px"/>
+                                                                </div>
+                                                            </b-col>
+                                                        </b-row>
+                                                        <b-row class="mt-2">
+                                                            <b-col lg=3>
+                                                            </b-col>
+                                                            <b-col lg=9>
+                                                                <b-form-file @change="fieldChange" ref="file" accept=".jpg, .png, .gif" plain style="display: none;"></b-form-file>
+                                                                <b-btn variant="success" @click="$refs.file.$el.click()">
+                                                                    <i class="fa fa-file-image-o"></i> Browse
+                                                                </b-btn>
+                                                                <b-btn variant="danger" @click="$refs.file.reset(), forms.companysetting.fields.logo = null">
+                                                                    <i class="fa fa-times"></i> Remove
+                                                                </b-btn>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-form-group>
+                                                </b-col>
+                                                <b-col sm="3">
+                                                </b-col>
+                                            </b-row>
+                                        </b-form>
+                                    </b-tab >
+                                        
+                                    <b-tab title="Advance Settings">
                                         <b-row>
-                                            <b-col lg=3>
-                                                <label class="col-form-label">* Company Name :</label>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <b-form-input
-                                                    ref="company_name"
-                                                    id="company_name"
-                                                    v-model="forms.companysetting.fields.company_name"
-                                                    type="text"
-                                                    placeholder="Company Name">
-                                                </b-form-input>
+                                            <b-col sm=12>
+                                                <b-row>
+                                                    <b-col sm=1></b-col>
+                                                    <b-col sm=5>
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Rental Account </label>
+                                                                    <select2
+                                                                        ref="basic_rental_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.basic_rental_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Advance Rental Account </label>
+                                                                    <select2
+                                                                        ref="advance_rental_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.advance_rental_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Security Deposit Account </label>
+                                                                    <select2
+                                                                        ref="security_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.security_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Electric Meter Deposit Account </label>
+                                                                    <select2
+                                                                        ref="electric_meter_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.electric_meter_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Water Meter Deposit Account </label>
+                                                                    <select2
+                                                                        ref="water_meter_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.water_meter_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Construction Deposit Account </label>
+                                                                    <select2
+                                                                        ref="construction_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.construction_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         
+                                                    </b-col>
+                                                    <b-col sm=5>
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Withholding Tax Account </label>
+                                                                    <select2
+                                                                        ref="withholding_tax_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.withholding_tax_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* VAT Account </label>
+                                                                    <select2
+                                                                        ref="vat_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.vat_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Adjustment In Account </label>
+                                                                    <select2
+                                                                        ref="adjustment_in_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.adjustment_in_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Adjustment Out Account </label>
+                                                                    <select2
+                                                                        ref="adjustment_out_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.adjustment_out_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                         <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Discount Account </label>
+                                                                    <select2
+                                                                        ref="discount_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.discount_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+                                                    </b-col>
+                                                    <b-col sm=1></b-col>
+                                                    
+                                                </b-row>
                                             </b-col>
                                         </b-row>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <b-row>
-                                            <b-col lg=3>
-                                                <label class="col-form-label">* Company Address :</label>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <b-form-textarea
-                                                    id="company_address"
-                                                    v-model="forms.companysetting.fields.company_address"
-                                                    type="text"
-                                                    :rows="2"
-                                                    placeholder="Company Address">
-                                                </b-form-textarea>
-                                            </b-col>
-                                        </b-row>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <b-row>
-                                            <b-col lg=3>
-                                                <label class="col-form-label">* Email Address :</label>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <b-form-input
-                                                    id="email_address"
-                                                    v-model="forms.companysetting.fields.email_address"
-                                                    type="text"
-                                                    placeholder="Email Address">
-                                                </b-form-input>
-                                            </b-col>
-                                        </b-row>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <b-row>
-                                            <b-col lg=3>
-                                                <label class="col-form-label">Mobile Number :</label>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <b-form-input
-                                                    id="mobile_number"
-                                                    v-model="forms.companysetting.fields.mobile_number"
-                                                    type="text"
-                                                    placeholder="Mobile Number">
-                                                </b-form-input>
-                                            </b-col>
-                                        </b-row>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <b-row>
-                                            <b-col lg=3>
-                                                <label class="col-form-label">Landline :</label>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <b-form-input
-                                                    id="landline"
-                                                    v-model="forms.companysetting.fields.landline"
-                                                    type="text"
-                                                    placeholder="Mobile Number">
-                                                </b-form-input>
-                                            </b-col>
-                                        </b-row>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <b-row>
-                                            <b-col lg=3>
-                                                <label class="col-form-label">Logo :</label>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <div class="border" style="height: 150px; width: 200px;">
-                                                    <b-img :src="forms.companysetting.fields.logo" width="200" height="150px"/>
-                                                </div>
-                                            </b-col>
-                                        </b-row>
-                                        <b-row class="mt-2">
-                                            <b-col lg=3>
-                                            </b-col>
-                                            <b-col lg=9>
-                                                <b-form-file @change="fieldChange" ref="file" accept=".jpg, .png, .gif" plain style="display: none;"></b-form-file>
-                                                <b-btn variant="success" @click="$refs.file.$el.click()">
-                                                    <i class="fa fa-file-image-o"></i> Browse
-                                                </b-btn>
-                                                <b-btn variant="danger" @click="$refs.file.reset(), forms.companysetting.fields.logo = null">
-                                                    <i class="fa fa-times"></i> Remove
-                                                </b-btn>
-                                            </b-col>
-                                        </b-row>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col sm="3">
-                                </b-col>
-                            </b-row>
-                        </b-form>
+                                    </b-tab>
+                                </b-tabs>
+                            </b-col>
+                            
+                        </b-row>
+
+                       
                         <hr>
                         <b-row class="pull-right mt-2">
                             <b-col sm="12">
@@ -153,6 +357,11 @@ export default {
             entryMode: 'Edit',
             showModalEntry: false, //if true show modal
             showModalDelete: false,
+            options: {
+                accounts: {
+                    items: []
+                },
+            },
             forms: {
                 companysetting : {
                     isSaving: false,
@@ -163,7 +372,17 @@ export default {
                         email_address: null,
                         mobile_number: null,
                         landline: null,
-                        logo: null
+                        logo: null,
+                        advance_rental_account_id: 0,
+                        security_deposit_account_id: 0,
+                        electric_meter_deposit_account_id: 0,
+                        water_meter_deposit_account_id: 0,
+                        construction_deposit_account_id: 0,
+                        withholding_tax_account_id: 0,
+                        vat_account_id: 0,
+                        adjustment_in_account_id: 0,
+                        adjustment_out_account_id: 0,
+                        discount_account_id: 0
                     },
                 }
             },
@@ -210,7 +429,9 @@ export default {
         }
     },
     created () {
+        this.fillOptionsList('accounts')
         this.fillEntityForm('companysetting', 1)
+        
     },
   }
 </script>
