@@ -83,32 +83,19 @@
                             ref="category_code"
                             id="category_code"
                             v-model="forms.category.fields.category_code"
-                            :state="forms.category.states.category_code"
                             type="text"
                             placeholder="Category Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.category.errors.category_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Category Desc</label>
                         <b-form-input
+                            ref="category_desc"
                             id="category_desc"
                             v-model="forms.category.fields.category_desc"
-                            :state="forms.category.states.category_desc"
                             type="text"
                             placeholder="Category Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.category.errors.category_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col>
@@ -157,14 +144,6 @@ export default {
                     isSaving: false,
                     fields: {
                         category_id: null,
-                        category_code: null,
-                        category_desc: null
-                    },
-                    states: {
-                        category_code: null,
-                        category_desc: null
-                    },
-                    errors: {
                         category_code: null,
                         category_desc: null
                     }

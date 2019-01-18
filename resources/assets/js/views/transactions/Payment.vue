@@ -1146,7 +1146,7 @@ export default {
             if(showEntry){
                 let self = this
                 Vue.nextTick(function(){
-                    self.focusElement('reference_no', true)
+                    self.focusElement('reference_no')
                 })
             }
         },

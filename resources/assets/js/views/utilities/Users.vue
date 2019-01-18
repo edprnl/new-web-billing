@@ -70,6 +70,7 @@
             v-model="showModalEntry"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
+            @shown="focusElement('username')"
         >
             <div slot="modal-title">
                 User Entry - {{entryMode}}
@@ -81,66 +82,42 @@
                             <b-form-group>
                                 <label for="user_code">* Username</label>
                                 <b-form-input
+                                    ref="username"
                                     id="username"
                                     v-model="forms.user.fields.username"
-                                    :state="forms.user.states.username"
                                     type="text"
                                     placeholder="Username">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.username">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group>
                                 <label>* Password</label>
                                 <b-form-input
+                                    ref="password"
                                     id="password"
                                     v-model="forms.user.fields.password"
-                                    :state="forms.user.states.password"
                                     type="password"
                                     placeholder="Password">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.password">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group>
                                 <label>* Confirm Password</label>
                                 <b-form-input
+                                    ref="confirm_password"
                                     id="confirm_password"
                                     v-model="forms.user.fields.password_confirmation"
-                                    :state="forms.user.states.confirm_password"
                                     type="password"
                                     placeholder="Confirm Password">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.confirm_password">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group>
                                 <label for="user_code">* Email</label>
                                 <b-form-input
+                                    ref="email"
                                     id="email"
                                     v-model="forms.user.fields.email"
-                                    :state="forms.user.states.email"
                                     type="text"
                                     placeholder="Email">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.email">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                         </b-col>
                         <b-col sm="6">
@@ -149,48 +126,27 @@
                                 <b-form-input
                                     id="firstname"
                                     v-model="forms.user.fields.firstname"
-                                    :state="forms.user.states.firstname"
                                     type="text"
                                     placeholder="Firstname">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.firstname">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group>
                                 <label>Middlename</label>
                                 <b-form-input
                                     id="middlename"
                                     v-model="forms.user.fields.middlename"
-                                    :state="forms.user.states.middlename"
                                     type="text"
                                     placeholder="Middlename">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.middlename">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                             <b-form-group>
                                 <label>Lastname</label>
                                 <b-form-input
                                     id="lastname"
                                     v-model="forms.user.fields.lastname"
-                                    :state="forms.user.states.lastname"
                                     type="text"
                                     placeholder="Lastname">
                                 </b-form-input>
-                                <b-form-invalid-feedback>
-                                    <i class="fa fa-exclamation-triangle text-danger"></i>
-                                    <span v-for="itemError in forms.user.errors.lastname">
-                                        {{itemError}}
-                                    </span>
-                                </b-form-invalid-feedback>
                             </b-form-group>
                         </b-col>
                     </b-row>
@@ -241,24 +197,6 @@ export default {
                     isSaving: false,
                     fields: {
                         user_id: null,
-                        username: null,
-                        firstname: null,
-                        middlename: null,
-                        lastname: null,
-                        email: null,
-                        password: null,
-                        password_confirmation: null,
-                    },
-                    states: {
-                        username: null,
-                        firstname: null,
-                        middlename: null,
-                        lastname: null,
-                        email: null,
-                        password: null,
-                        password_confirmation: null,
-                    },
-                    errors: {
                         username: null,
                         firstname: null,
                         middlename: null,

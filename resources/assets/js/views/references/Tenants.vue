@@ -99,98 +99,61 @@
                                             ref="trade_name"
                                             id="trade_name"
                                             v-model="forms.tenant.fields.trade_name"
-                                            :state="forms.tenant.states.trade_name"
                                             type="text"
                                             placeholder="Trade Name">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.trade_name">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Company Name</label>
                                         <b-form-input
+                                            ref="company_name"
                                             id="company_name"
                                             v-model="forms.tenant.fields.company_name"
-                                            :state="forms.tenant.states.company_name"
                                             type="text"
                                             placeholder="Company Name">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.company_name">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Space Code</label>
                                         <b-form-input
+                                            ref="space_code"
                                             id="space_code"
                                             v-model="forms.tenant.fields.space_code"
-                                            :state="forms.tenant.states.space_code"
                                             type="text"
                                             placeholder="Space Code">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.space_code">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Business Concept</label>
                                         <b-form-input
+                                            ref="business_concept"
                                             id="business_concept"
                                             v-model="forms.tenant.fields.business_concept"
-                                            :state="forms.tenant.states.business_concept"
                                             type="text"
                                             placeholder="Business Concept">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.business_concept">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Head Office Address</label>
                                         <b-form-textarea
+                                            ref="head_office_address"
                                             id="head_office_address"
                                             v-model="forms.tenant.fields.head_office_address"
-                                            :state="forms.tenant.states.head_office_address"
                                             type="text"
                                             :rows="2"
                                             placeholder="Head Office Address">
                                         </b-form-textarea>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.head_office_address">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Billing Address</label>
                                         <b-form-textarea
+                                            ref="billing_address"
                                             id="billing_address"
                                             v-model="forms.tenant.fields.billing_address"
-                                            :state="forms.tenant.states.billing_address"
                                             type="text"
                                             :rows="2"
                                             placeholder="Billing Address">
                                         </b-form-textarea>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.billing_address">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                 </b-col>
                                 <b-col sm="4">
@@ -201,82 +164,52 @@
                                     <b-form-group>
                                         <label>* Contact Person</label>
                                         <b-form-input
+                                            ref="contact_person"
                                             id="contact_person"
                                             v-model="forms.tenant.fields.contact_person"
-                                            :state="forms.tenant.states.contact_person"
                                             type="text"
                                             placeholder="Contact Person">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.contact_person">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Designation</label>
                                         <b-form-input
+                                            ref="designation"
                                             id="designation"
                                             v-model="forms.tenant.fields.designation"
-                                            :state="forms.tenant.states.designation"
                                             type="text"
                                             placeholder="Designation">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.designation">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Contact Number</label>
                                         <b-form-input
+                                            ref="contact_number"
                                             id="contact_number"
                                             v-model="forms.tenant.fields.contact_number"
-                                            :state="forms.tenant.states.contact_number"
                                             type="text"
                                             placeholder="Contact Person">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.contact_number">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* Email Address</label>
                                         <b-form-input
+                                            ref="email_address"
                                             id="email_address"
                                             v-model="forms.tenant.fields.email_address"
-                                            :state="forms.tenant.states.email_address"
                                             type="text"
                                             placeholder="Email Address">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.email_address">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>* TIN</label>
                                         <b-form-input
+                                            ref="tin_number"
                                             id="tin_number"
                                             v-model="forms.tenant.fields.tin_number"
-                                            :state="forms.tenant.states.tin_number"
                                             type="text"
                                             placeholder="TIN">
                                         </b-form-input>
-                                        <b-form-invalid-feedback>
-                                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                                            <span v-for="itemError in forms.tenant.errors.tin_number">
-                                                {{itemError}}
-                                            </span>
-                                        </b-form-invalid-feedback>
                                     </b-form-group>
                                     <b-form-group>
                                         <label>Auto Penalty Previous Balance</label>
@@ -456,56 +389,6 @@ export default {
                         others: 0,
                         others_specify: null
                     },
-                    states: {
-                        tenant_id: null,
-                        tenant_code: null,
-                        trade_name: null,
-                        company_name: null,
-                        space_code: null,
-                        business_concept: null,
-                        head_office_address: null,
-                        billing_address: null,
-                        contact_person: null,
-                        designation: null,
-                        contact_number: null,
-                        email_address: null,
-                        tin_number: null,
-                        is_auto: null,
-                        business_permit: null,
-                        tenant_information_sheet: null,
-                        valid_id: null,
-                        tin_cor: null,
-                        dti_sec: null,
-                        notarized_contract: null,
-                        proof_of_billing: null,
-                        others: null,
-                        others_specify: null
-                    },
-                    errors: {
-                        tenant_id: null,
-                        tenant_code: null,
-                        trade_name: null,
-                        company_name: null,
-                        space_code: null,
-                        business_concept: null,
-                        head_office_address: null,
-                        billing_address: null,
-                        contact_person: null,
-                        designation: null,
-                        contact_number: null,
-                        email_address: null,
-                        tin_number: null,
-                        is_auto: null,
-                        business_permit: null,
-                        tenant_information_sheet: null,
-                        valid_id: null,
-                        tin_cor: null,
-                        dti_sec: null,
-                        notarized_contract: null,
-                        proof_of_billing: null,
-                        others: null,
-                        others_specify: null
-                    }
                 }
             },
             tables: {

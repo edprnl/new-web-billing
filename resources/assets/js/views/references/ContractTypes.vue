@@ -90,32 +90,19 @@
                                 ref="contract_type_code"
                                 id="contract_type_code"
                                 v-model="forms.contracttype.fields.contract_type_code"
-                                :state="forms.contracttype.states.contract_type_code"
                                 type="text"
                                 placeholder="Contract Type Code">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.contracttype.errors.contract_type_code">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group>
                             <label>* Contract Type Desc</label>
                             <b-form-input
+                                ref="contract_type_desc"
                                 id="contract_type_desc"
                                 v-model="forms.contracttype.fields.contract_type_desc"
-                                :state="forms.contracttype.states.contract_type_desc"
                                 type="text"
                                 placeholder="Contract Type Description">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.contracttype.errors.contract_type_desc">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-form>
                 </b-col> <!-- modal body -->
@@ -170,14 +157,6 @@ export default {
                 isSaving: false,
                 fields: {
                     contract_type_id: null,
-                    contract_type_code: null,
-                    contract_type_desc: null
-                },
-                states: {
-                    contract_type_code: null,
-                    contract_type_desc: null
-                },
-                errors: {
                     contract_type_code: null,
                     contract_type_desc: null
                 }

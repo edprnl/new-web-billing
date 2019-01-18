@@ -21,69 +21,7 @@ class DashboardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index($payment_type)
-    {
-        $payment_line = DB::select(
-                                "SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 1
-                                UNION ALL 
-                                SELECT
-                                    IFNULL(SUM(amount_paid), 0) as amount
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 2
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 3
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 4
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 5
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 6
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 7
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 8
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 9
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 10
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 11
-                                UNION ALL 
-                                SELECT 
-                                    IFNULL(SUM(amount_paid), 0) as amount_paid
-                                FROM b_payment_info 
-                                WHERE MONTH(payment_date) = 12"
-        );
-
+    {   
         $tenants = Tenants::select(DB::raw('count(*) as no_of_tenants'))
                             ->where('is_deleted', 0)
                             ->get();
@@ -91,11 +29,30 @@ class DashboardController extends Controller
         $contracts = ContractInfo::select(DB::raw('count(*) as no_of_contracts'))
                             ->where('is_deleted', 0)
                             ->get();
-        $dashboard['payment_line'] = $month;
+        $dashboard['payment_line'] = $this->getPaymentLine($payment_type, true);
         $dashboard['tenants'] = Reference::collection($tenants);
         $dashboard['contracts'] = Reference::collection($contracts);
 
-        return $month;
+        return $dashboard;
+    }
+
+    public function getPaymentLine($payment_type, $is_string = true)
+    {
+        $query = '';
+        for($i=1; $i <= 12; $i++)
+        {
+            $query = $query."SELECT
+                                IFNULL(SUM(amount_paid), 0) as amount
+                            FROM b_payment_info 
+                            WHERE MONTH(payment_date) = $i AND IF($payment_type = -1, 0=0, payment_type = $payment_type)";
+            if($i != 12)
+            {
+                $query = $query." UNION ALL ";
+            }
+        }
+
+        $payment_line = DB::select($query);
+        return $payment_line;
     }
 
     /**

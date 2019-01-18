@@ -15,7 +15,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
-                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, counter = 0 ">
+                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, computeDates(true),counter = 0 ">
                                             <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
                             </b-col>
@@ -144,6 +144,7 @@
                                                     <b-form-group>
                                                         <label>* Department </label>
                                                         <select2
+                                                            ref="department_id"
                                                             :allowClear="false"
                                                             :placeholder="'Select Department'"
                                                             v-model="forms.contract.fields.department_id"
@@ -157,6 +158,7 @@
                                                     <b-form-group>
                                                         <label>* Nature of Business </label>
                                                         <select2
+                                                            ref="nature_of_business_id"
                                                             :allowClear="false" 
                                                             :placeholder="'Select Nature of Business'"
                                                             v-model="forms.contract.fields.nature_of_business_id"
@@ -180,6 +182,7 @@
                                                     <b-form-group>
                                                         <label>* Location </label>
                                                         <select2
+                                                            ref="location_id"
                                                             :allowClear="false"
                                                             :placeholder="'Select Location'"
                                                             v-model="forms.contract.fields.location_id"
@@ -193,6 +196,7 @@
                                                     <b-form-group>
                                                         <label>* Contract Types </label>
                                                         <select2
+                                                            ref="contract_type_id"
                                                             :allowClear="false"
                                                             :placeholder="'Select Contract Type'"
                                                             v-model="forms.contract.fields.contract_type_id"
@@ -206,6 +210,7 @@
                                                     <b-form-group>
                                                         <label>* Category </label>
                                                         <select2
+                                                            ref="category_id"
                                                             :allowClear="false"
                                                             :placeholder="'Select Category'"
                                                             v-model="forms.contract.fields.category_id"
@@ -218,10 +223,12 @@
                                                     </b-form-group>
                                                     <b-form-group>
                                                         <label>* Terms </label>
-                                                        <vue-autonumeric 
+                                                        <vue-autonumeric
+                                                            ref="contract_terms"
+                                                            @input="computeDates(true)"
                                                             v-model="forms.contract.fields.contract_terms"
                                                             :class="'form-control text-right'" 
-                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 1, decimalPlaces: 0}">
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, decimalPlaces: 0, emptyInputBehavior: 1}">
                                                         </vue-autonumeric>
                                                     </b-form-group>
                                                     <b-form-group>
@@ -229,6 +236,8 @@
                                                             <b-col lg="6">
                                                                 <label>* Commencement Date</label>
                                                                 <date-picker 
+                                                                    ref="commencement_date"
+                                                                    @input="computeDates(true)"
                                                                     v-model="forms.contract.fields.commencement_date" 
                                                                     lang="en" 
                                                                     input-class="form-control mx-input"
@@ -239,6 +248,8 @@
                                                             <b-col lg="6">
                                                                 <label>* Termination Date</label>
                                                                 <date-picker 
+                                                                    ref="termination_date"
+                                                                    @input="computeDates(false)"
                                                                     v-model="forms.contract.fields.termination_date" 
                                                                     lang="en" 
                                                                     input-class="form-control mx-input"
@@ -251,6 +262,7 @@
                                                     <b-form-group>
                                                         <label>* Start Billing Date </label>
                                                         <date-picker 
+                                                            ref="start_billing_date"
                                                             v-model="forms.contract.fields.start_billing_date" 
                                                             lang="en" 
                                                             input-class="form-control mx-input"
@@ -263,6 +275,7 @@
                                                         <b-row>
                                                             <b-col lg="6">
                                                                 <vue-autonumeric 
+                                                                    ref="contract_floor_area"
                                                                     :class="'form-control text-right'" 
                                                                     v-model="forms.contract.fields.contract_floor_area" 
                                                                     :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
@@ -276,6 +289,7 @@
                                                     <b-form-group>
                                                         <label>* Basic Rental </label>
                                                         <vue-autonumeric 
+                                                            ref="contract_fixed_rent"
                                                             id="fixed_rent"
                                                             :class="'form-control text-right'" 
                                                             v-model="forms.contract.fields.contract_fixed_rent" 
@@ -356,6 +370,8 @@
                                                 </b-col>
                                             </b-row>
                                             <b-table 
+                                                tab="1"
+                                                ref="schedules"
                                                 small bordered
                                                 :fields="tables.schedules.fields"
                                                 :items.sync="tables.schedules.items"
@@ -705,33 +721,20 @@
                         <b-form-input
                             id="department_code"
                             v-model="forms.department.fields.department_code"
-                            :state="forms.department.states.department_code"
                             type="text"
                             placeholder="Department Code"
                             ref="department_code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.department.errors.department_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Department Desc</label>
                         <b-form-input
+                            ref="department_desc"
                             id="department_desc"
                             v-model="forms.department.fields.department_desc"
-                            :state="forms.department.states.department_desc"
                             type="text"
                             placeholder="Department Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.department.errors.department_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col> <!-- modal body -->
@@ -769,32 +772,19 @@
                             ref="nature_of_business_code"
                             id="nature_of_business_code"
                             v-model="forms.natureofbusiness.fields.nature_of_business_code"
-                            :state="forms.natureofbusiness.states.nature_of_business_code"
                             type="text"
                             placeholder="Nature Of Business Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.natureofbusiness.errors.nature_of_business_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Nature Of Business Desc</label>
                         <b-form-input
+                            ref="nature_of_business_desc"
                             id="nature_of_business_desc"
                             v-model="forms.natureofbusiness.fields.nature_of_business_desc"
-                            :state="forms.natureofbusiness.states.nature_of_business_desc"
                             type="text"
                             placeholder="Nature Of Business Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.natureofbusiness.errors.nature_of_business_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col> <!-- modal body -->
@@ -827,32 +817,19 @@
                             ref="category_code"
                             id="category_code"
                             v-model="forms.category.fields.category_code"
-                            :state="forms.category.states.category_code"
                             type="text"
                             placeholder="Category Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.category.errors.category_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Category Desc</label>
                         <b-form-input
+                            ref="category_desc"
                             id="category_desc"
                             v-model="forms.category.fields.category_desc"
-                            :state="forms.category.states.category_desc"
                             type="text"
                             placeholder="Category Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.category.errors.category_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col>
@@ -886,32 +863,19 @@
                             ref="contract_type_code"
                             id="contract_type_code"
                             v-model="forms.contracttype.fields.contract_type_code"
-                            :state="forms.contracttype.states.contract_type_code"
                             type="text"
                             placeholder="Contract Type Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.contracttype.errors.contract_type_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Contract Type Desc</label>
                         <b-form-input
+                            ref="contract_type_desc"
                             id="contract_type_desc"
                             v-model="forms.contracttype.fields.contract_type_desc"
-                            :state="forms.contracttype.states.contract_type_desc"
                             type="text"
                             placeholder="Contract Type Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.contracttype.errors.contract_type_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col> <!-- modal body -->
@@ -946,32 +910,19 @@
                             ref="location_code"
                             id="location_code"
                             v-model="forms.location.fields.location_code"
-                            :state="forms.location.states.location_code"
                             type="text"
                             placeholder="Location Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.location.errors.location_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Location Desc</label>
                         <b-form-input
+                            ref="location_desc"
                             id="location_desc"
                             v-model="forms.location.fields.location_desc"
-                            :state="forms.location.states.location_desc"
                             type="text"
                             placeholder="Location Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.location.errors.location_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col> <!-- modal body -->
@@ -1043,7 +994,7 @@ export default {
                         location_id: null,
                         contract_type_id: null,
                         category_id: null,
-                        contract_terms: 1,
+                        contract_terms: null,
                         commencement_date: new Date(),
                         termination_date: new Date(),
                         start_billing_date: new Date(),
@@ -1060,60 +1011,6 @@ export default {
                         utilities: [],
                         miscellaneous: [],
                         other: [],
-                    },
-                    states: {
-                        contract_id: null,
-                        contract_no: null,
-                        tenant_code: null,
-                        tenant_id: null,
-                        contract_signatory: null,
-                        contract_billing_address: null,
-                        department_id: null,
-                        nature_of_business_id: null,
-                        contract_approved_merch: null,
-                        location_id: null,
-                        contract_type_id: null,
-                        category_id: null,
-                        contract_terms: null,
-                        commencement_date: null,
-                        termination_date: null,
-                        start_billing_date: null,
-                        contract_floor_area: null,
-                        contract_fixed_rent: null,
-                        contract_discounted_rent: null,
-                        contract_advance_rent: null,
-                        contract_escalation_percent: null,
-                        security_deposit: null,
-                        power_meter_deposit: null,
-                        water_meter_deposit: null,
-                        construction_deposit: null
-                    },
-                    errors: {
-                        contract_id: null,
-                        contract_no: null,
-                        tenant_code: null,
-                        tenant_id: null,
-                        contract_signatory: null,
-                        contract_billing_address: null,
-                        department_id: null,
-                        nature_of_business_id: null,
-                        contract_approved_merch: null,
-                        location_id: null,
-                        contract_type_id: null,
-                        category_id: null,
-                        contract_terms: null,
-                        commencement_date: null,
-                        termination_date: null,
-                        start_billing_date: null,
-                        contract_floor_area: null,
-                        contract_fixed_rent: null,
-                        contract_discounted_rent: null,
-                        contract_advance_rent: null,
-                        contract_escalation_percent: null,
-                        security_deposit: null,
-                        power_meter_deposit: null,
-                        water_meter_deposit: null,
-                        construction_deposit: null
                     }
                 },
                 department : {
@@ -1121,14 +1018,6 @@ export default {
                     isDeleting: false,
                     fields: {
                         department_id: null,
-                        department_code: null,
-                        department_desc: null
-                    },
-                    states: {
-                        department_code: null,
-                        department_desc: null
-                    },
-                    errors: {
                         department_code: null,
                         department_desc: null
                     }
@@ -1139,28 +1028,12 @@ export default {
                         nature_of_business_id: null,
                         nature_of_business_code: null,
                         nature_of_business_desc: null
-                    },
-                    states: {
-                        nature_of_business_code: null,
-                        nature_of_business_desc: null
-                    },
-                    errors: {
-                        nature_of_business_code: null,
-                        nature_of_business_desc: null
                     }
                 },
                 contracttype : {
                     isSaving: false,
                     fields: {
                         contract_type_id: null,
-                        contract_type_code: null,
-                        contract_type_desc: null
-                    },
-                    states: {
-                        contract_type_code: null,
-                        contract_type_desc: null
-                    },
-                    errors: {
                         contract_type_code: null,
                         contract_type_desc: null
                     }
@@ -1171,28 +1044,12 @@ export default {
                         category_id: null,
                         category_code: null,
                         category_desc: null
-                    },
-                    states: {
-                        category_code: null,
-                        category_desc: null
-                    },
-                    errors: {
-                        category_code: null,
-                        category_desc: null
                     }
                 },
                 location : {
                     isSaving: false,
                     fields: {
                         location_id: null,
-                        location_code: null,
-                        location_desc: null
-                    },
-                    states: {
-                        location_code: null,
-                        location_desc: null
-                    },
-                    errors: {
                         location_code: null,
                         location_desc: null
                     }
@@ -1521,10 +1378,10 @@ export default {
             this.forms.contract.fields.other = this.tables.other.items
 
             if(this.entryMode == 'Add'){
-                this.createEntity('contract', false, 'contracts')
+                this.createEntity('contract', false, 'contracts', true)
             }
             else{
-                this.updateEntity('contract', 'contract_id', false, this.row)
+                this.updateEntity('contract', 'contract_id', false, this.row, true)
             }
         },
         onContractDelete(){
@@ -1722,6 +1579,15 @@ export default {
             else if (reference == 'location'){
                 this.createOptionsEntity('location', 'showModalLocation', 'locations','contract','location_id')
             }
+        },
+        computeDates(is_commencement){
+            if(is_commencement){
+                this.forms.contract.fields.termination_date = moment(this.forms.contract.fields.commencement_date).add(this.forms.contract.fields.contract_terms, 'months').format('MMMM DD, YYYY')
+            }
+            else{
+                this.forms.contract.fields.commencement_date = moment(this.forms.contract.fields.termination_date).subtract(this.forms.contract.fields.contract_terms, 'months').format('MMMM DD, YYYY')
+            }
+            
         }
     },
     created () {
@@ -1740,7 +1606,7 @@ export default {
             if(showEntry){
                 let self = this
                 Vue.nextTick(function(){
-                    self.focusElement('tenant_id', true)
+                    self.focusElement('tenant_id')
                 })
             }
         },

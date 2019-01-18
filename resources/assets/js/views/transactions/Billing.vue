@@ -570,7 +570,7 @@
             v-model="showModalPeriod"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
-            @shown="focusElement('period_id', true)"
+            @shown="focusElement('period_id')"
         >
             <div slot="modal-title">
                 Billing Period
@@ -1623,7 +1623,7 @@ export default {
             if(showEntry){
                 let self = this
                 Vue.nextTick(function(){
-                    self.focusElement('tenant_id', true)
+                    self.focusElement('tenant_id')
                 })
             }
         },

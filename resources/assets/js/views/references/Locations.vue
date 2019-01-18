@@ -90,32 +90,19 @@
                                 ref="location_code"
                                 id="location_code"
                                 v-model="forms.location.fields.location_code"
-                                :state="forms.location.states.location_code"
                                 type="text"
                                 placeholder="Location Code">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.location.errors.location_code">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group>
                             <label>* Location Desc</label>
                             <b-form-input
+                                ref="location_desc"
                                 id="location_desc"
                                 v-model="forms.location.fields.location_desc"
-                                :state="forms.location.states.location_desc"
                                 type="text"
                                 placeholder="Location Description">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.location.errors.location_desc">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-form>
                 </b-col> <!-- modal body -->
@@ -170,14 +157,6 @@ export default {
                 isSaving: false,
                 fields: {
                     location_id: null,
-                    location_code: null,
-                    location_desc: null
-                },
-                states: {
-                    location_code: null,
-                    location_desc: null
-                },
-                errors: {
                     location_code: null,
                     location_desc: null
                 }

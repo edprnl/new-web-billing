@@ -2,7 +2,7 @@
     export default {
       methods: {
         // 2nd parameter are callback functions pass as object
-        createEntity (entity, isModal, entity_table) {
+        createEntity (entity, isModal, entity_table, is_tab = false) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
           this.$http.post('api/' + entity, this.forms[entity].fields,{
@@ -33,10 +33,22 @@
             this.forms[entity].isSaving = false
             if (!error.response) return
             const errors = error.response.data.errors
-            for (var key in errors) {
-              this.forms[entity].states[key] = false
-              this.forms[entity].errors[key] =  errors[key]
-            }
+            var a = 0
+              for (var key in errors) {
+                // this.forms[entity].states[key] = false
+                // this.forms[entity].errors[key] =  errors[key]
+                if(a == 0){
+                  this.focusElement(key, is_tab)
+                  this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: errors[key][0]
+                  })
+                }
+                  
+                a++
+              }
           })
         },
 
@@ -70,15 +82,28 @@
             this.forms[entity].isSaving = false
             if (!error.response) return
             const errors = error.response.data.errors
+            var a = 0
             for (var key in errors) {
-              this.forms[entity].states[key] = false
-              this.forms[entity].errors[key] =  errors[key]
+              // this.forms[entity].states[key] = false
+              // this.forms[entity].errors[key] =  errors[key]
+              
+              if(a == 0){
+                this.focusElement(key)
+                this.$notify({
+                  type: 'error',
+                  group: 'notification',
+                  title: 'Error!',
+                  text: errors[key][0]
+                })
+              }
+                  
+              a++
             }
           })
         },
 
 
-        updateEntity (entity, entity_id, isModal, row) {
+        updateEntity (entity, entity_id, isModal, row, is_tab = false) {
           this.forms[entity].isSaving = true
           this.resetFieldStates(entity)
 
@@ -111,9 +136,21 @@
               this.forms[entity].isSaving = false
               if (!error.response) return
               const errors = error.response.data.errors
+              var a = 0
               for (var key in errors) {
-                this.forms[entity].states[key] = false
-                this.forms[entity].errors[key] =  errors[key]
+                // this.forms[entity].states[key] = false
+                // this.forms[entity].errors[key] =  errors[key]
+                if(a == 0){
+                  this.focusElement(key, is_tab)
+                  this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error!',
+                    text: errors[key][0]
+                  })
+                }
+                  
+                a++
               }
               // this.forms[entity].isSaving = false
               // if (!error.response) return
@@ -311,13 +348,14 @@
             return moment(date).format(format);
         },
         // focus element using refs
-        focusElement(e, is_el = false){
-            if(is_el){
+        focusElement(e, is_tab = false){
+            if(is_tab){
+              this.tabIndex = Number(this.$refs[e].$attrs['tab'])
+            }
+            setTimeout(function (){
+              if(typeof this.$refs[e] !== 'undefined')
               this.$refs[e].$el.focus()
-            }
-            else{
-              this.$refs[e].focus()
-            }
+            }.bind(this), 1)
         }
       }
     }

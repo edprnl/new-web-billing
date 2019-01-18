@@ -90,50 +90,31 @@
                                 ref="charge_code"
                                 id="charge_code"
                                 v-model="forms.charge.fields.charge_code"
-                                :state="forms.charge.states.charge_code"
                                 type="text"
                                 placeholder="Charge Code">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.charge.errors.charge_code">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group>
                             <label>* Charge Desc</label>
                             <b-form-input
+                                ref="charge_desc"
                                 id="charge_desc"
                                 v-model="forms.charge.fields.charge_desc"
-                                :state="forms.charge.states.charge_desc"
                                 type="text"
                                 placeholder="Charge Description">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.charge.errors.charge_desc">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group>
                             <label>Account Title</label>
                             <select2
-                                id="account_title"
+                                ref="account_id"
+                                id="account_id"
                                 :allowClear="false"
                                 :placeholder="'Select Account Title'"
                                 v-model="forms.charge.fields.account_id"
-                                :state="forms.charge.states.account_id"
                             >
                                 <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
                             </select2>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.charge.errors.account_id">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-form>
                 </b-col> <!-- modal body -->
@@ -195,17 +176,7 @@ export default {
                     charge_id: null,
                     charge_code: null,
                     charge_desc: null,
-                    account_id: null
-                },
-                states: {
-                    charge_code: null,
-                    charge_desc: null,
-                    account_id: null
-                },
-                errors: {
-                    charge_code: null,
-                    charge_desc: null,
-                    account_id: null
+                    account_id: 0
                 }
             }
         },

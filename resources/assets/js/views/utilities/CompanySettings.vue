@@ -17,7 +17,7 @@
 
                         <b-row>
                             <b-col lg=12>
-                                <b-tabs>
+                                <b-tabs v-model="tabIndex" >
                                     <b-tab title="General Settings">
                                         <b-form autocomplete="off">
                                             <b-row>
@@ -31,6 +31,8 @@
                                                             </b-col>
                                                             <b-col lg=9>
                                                                 <b-form-input
+                                                                    tab="0"
+                                                                    :style="forms.companysetting.states.company_name == false ? 'border-color:red' : ''"
                                                                     ref="company_name"
                                                                     id="company_name"
                                                                     v-model="forms.companysetting.fields.company_name"
@@ -43,10 +45,13 @@
                                                     <b-form-group>
                                                         <b-row>
                                                             <b-col lg=3>
-                                                                <label class="col-form-label">* Company Address :</label>
+                                                                <label class="col-form-label">* Company Address:</label>
                                                             </b-col>
                                                             <b-col lg=9>
                                                                 <b-form-textarea
+                                                                    tab="0"
+                                                                    :style="forms.companysetting.states.company_address == false ? 'border-color:red' : ''"
+                                                                    ref="company_address"
                                                                     id="company_address"
                                                                     v-model="forms.companysetting.fields.company_address"
                                                                     type="text"
@@ -63,6 +68,8 @@
                                                             </b-col>
                                                             <b-col lg=9>
                                                                 <b-form-input
+                                                                    tab="0"
+                                                                    ref="email_address"
                                                                     id="email_address"
                                                                     v-model="forms.companysetting.fields.email_address"
                                                                     type="text"
@@ -78,6 +85,8 @@
                                                             </b-col>
                                                             <b-col lg=9>
                                                                 <b-form-input
+                                                                    tab="0"
+                                                                    ref="mobile_number"
                                                                     id="mobile_number"
                                                                     v-model="forms.companysetting.fields.mobile_number"
                                                                     type="text"
@@ -93,6 +102,8 @@
                                                             </b-col>
                                                             <b-col lg=9>
                                                                 <b-form-input
+                                                                    tab="0"
+                                                                    ref="landline"
                                                                     id="landline"
                                                                     v-model="forms.companysetting.fields.landline"
                                                                     type="text"
@@ -144,6 +155,8 @@
                                                                 <b-form-group>
                                                                     <label>* Rental Account </label>
                                                                     <select2
+                                                                        tab="1"
+                                                                        :style="forms.companysetting.states.company_address == false ? 'border-color:red' : ''"
                                                                         ref="basic_rental_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -159,6 +172,7 @@
                                                                 <b-form-group>
                                                                     <label>* Advance Rental Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="advance_rental_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -175,6 +189,7 @@
                                                                 <b-form-group>
                                                                     <label>* Security Deposit Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="security_deposit_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -191,6 +206,7 @@
                                                                 <b-form-group>
                                                                     <label>* Electric Meter Deposit Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="electric_meter_deposit_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -207,6 +223,7 @@
                                                                 <b-form-group>
                                                                     <label>* Water Meter Deposit Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="water_meter_deposit_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -223,6 +240,7 @@
                                                                 <b-form-group>
                                                                     <label>* Construction Deposit Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="construction_deposit_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -242,6 +260,7 @@
                                                                 <b-form-group>
                                                                     <label>* Withholding Tax Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="withholding_tax_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -258,6 +277,7 @@
                                                                 <b-form-group>
                                                                     <label>* VAT Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="vat_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -274,6 +294,7 @@
                                                                 <b-form-group>
                                                                     <label>* Adjustment In Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="adjustment_in_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -290,6 +311,7 @@
                                                                 <b-form-group>
                                                                     <label>* Adjustment Out Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="adjustment_out_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -306,6 +328,7 @@
                                                                 <b-form-group>
                                                                     <label>* Discount Account </label>
                                                                     <select2
+                                                                        tab="1"
                                                                         ref="discount_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -357,6 +380,7 @@ export default {
             entryMode: 'Edit',
             showModalEntry: false, //if true show modal
             showModalDelete: false,
+            tabIndex: 0,
             options: {
                 accounts: {
                     items: []
@@ -384,6 +408,25 @@ export default {
                         adjustment_out_account_id: 0,
                         discount_account_id: 0
                     },
+                    states: {
+                        company_id: null,
+                        company_name: null,
+                        company_address: null,
+                        email_address: null,
+                        mobile_number: null,
+                        landline: null,
+                        logo: null,
+                        advance_rental_account_id: null,
+                        security_deposit_account_id: null,
+                        electric_meter_deposit_account_id: null,
+                        water_meter_deposit_account_id: null,
+                        construction_deposit_account_id: null,
+                        withholding_tax_account_id: null,
+                        vat_account_id: null,
+                        adjustment_in_account_id: null,
+                        adjustment_out_account_id: null,
+                        discount_account_id: null
+                    },
                 }
             },
             image: new FormData,
@@ -396,7 +439,7 @@ export default {
                 this.createEntity('user', true, 'users')
             }
             else{
-                this.updateEntity('companysetting', 'company_id', true, this.row)
+                this.updateEntity('companysetting', 'company_id', true, this.row, true)
             }
         },
         onUserDelete(){
@@ -428,10 +471,9 @@ export default {
             })
         }
     },
-    created () {
-        this.fillOptionsList('accounts')
-        this.fillEntityForm('companysetting', 1)
-        
+    async created () {
+        await this.fillOptionsList('accounts')
+        await this.fillEntityForm('companysetting', 1);
     },
   }
 </script>

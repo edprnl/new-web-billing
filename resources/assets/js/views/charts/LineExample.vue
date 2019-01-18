@@ -17,6 +17,7 @@ export default Line.extend({
   },
   watch: {
     data: function (data) {
+      this._chart.destroy()
       this.renderChart({
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [

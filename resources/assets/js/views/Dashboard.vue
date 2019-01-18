@@ -172,7 +172,7 @@
                         <b-col sm="6">
                             <b-card header="Line Chart" style="min-height: 420px;">
                                 <b-row class="justify-content-md-center">
-                                    <b-form-radio-group v-model="payment_type">
+                                    <b-form-radio-group @input="filterPaymentLine()" v-model="payment_type">
                                         <b-form-radio value="-1" id="all"><label class="col-form-label" for="all">All</label></b-form-radio>
                                         <b-form-radio value="0" id="cash"><label class="col-form-label" for="cash">Cash</label></b-form-radio>
                                         <b-form-radio value="1" id="check"><label class="col-form-label" for="check">Check</label></b-form-radio>
@@ -180,7 +180,7 @@
                                     </b-form-radio-group>
                                 </b-row>
                                 <div class="chart-wrapper">
-                                    <line-example :data="line_data" :label="'Monthly Collection (' + moment(new Date, 'YYYY') + ')'" :height="250"/>
+                                    <line-example :data="line_data" :label="'Monthly Collection ' + moment(new Date, 'YYYY')" :height="250"/>
                                 </div>
                             </b-card>
                         </b-col>
@@ -261,6 +261,30 @@ export default {
             var to = this.moment(this.date_to, 'YYYY-MM-DD')
             this.filterTableList('payments', from, to)
         },
+        filterPaymentLine(){
+            this.$http.get('api/dashboard/payment/'+this.payment_type+'/'+false,{
+            headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then((response) => {  
+                var data = response.data
+                console.log(response)
+                var dArray = []
+                data.forEach(element => {
+                    dArray.push(element.amount)
+                });
+                this.line_data = dArray
+            }).catch(error => {
+                this.forms.payment.isSaving = false
+                if (!error.response) return
+                    const errors = error.response.data.errors
+                for (var key in errors) {
+                    this.forms.payment.states[key] = false
+                    this.forms.payment.errors[key] =  errors[key]
+                }
+            })
+        }
     },
     created () {
         this.filterTableList('payments', this.date_from, this.date_to)

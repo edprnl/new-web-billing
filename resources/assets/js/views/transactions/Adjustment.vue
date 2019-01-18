@@ -71,7 +71,7 @@
             v-model="showModalPeriod"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
-            @shown="focusElement('period_id', true)"
+            @shown="focusElement('period_id')"
         >
             <div slot="modal-title">
                 Billing Period

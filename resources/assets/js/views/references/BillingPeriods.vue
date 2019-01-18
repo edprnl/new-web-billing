@@ -75,6 +75,7 @@
                 v-model="showModalEntry"
                 :noCloseOnEsc="true"
                 :noCloseOnBackdrop="true"
+                @shown="focusElement('period_start_date')"
             >
                 
                 <div slot="modal-title"> <!-- modal title -->
@@ -86,46 +87,33 @@
                         <b-form-group>
                             <label for="period_start_date">* Period Start Date</label>
                             <date-picker 
+                                ref="period_start_date"
                                 id="period_start_date"
                                 v-model="forms.period.fields.period_start_date"
-                                :state="forms.period.states.period_start_date"
                                 lang="en" 
                                 input-class="form-control mx-input"
                                 format="MMMM DD, YYYY"
                                 :clearable="false">
                             </date-picker>
-                                                            
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.period.errors.period_start_date">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
 
                         <b-form-group>
                             <label for="period_end_date">* Period End Date</label>
                             <date-picker 
+                                ref="period_end_date"
                                 id="period_end_date"
                                 v-model="forms.period.fields.period_end_date"
-                                :state="forms.period.states.period_end_date"
                                 lang="en" 
                                 input-class="form-control mx-input"
                                 format="MMMM DD, YYYY"
                                 :clearable="false">
                             </date-picker>
-                                                            
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.period.errors.period_end_date">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
 
                         <b-form-group>
                             <label>* Applicable Month </label>
                             <select2
+                                ref="month_id"
                                 :allowClear="false"
                                 :placeholder="'Select Applicable Month'"
                                 v-model="forms.period.fields.month_id"
@@ -137,22 +125,15 @@
                         <b-form-group>
                             <label for="app_year">* Applicable Year</label>
                             <date-picker 
+                                ref="app_year"
                                 id="app_year"
                                 v-model="year"
-                                :state="forms.period.states.app_year"
                                 lang="en" 
                                 input-class="form-control mx-input"
                                 format="YYYY"
                                 type="year"
                                 :clearable="false">
                             </date-picker>
-                                                            
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.period.errors.app_year">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
 
                         <b-form-group>
@@ -160,19 +141,11 @@
                             <date-picker 
                                 id="period_due_date"
                                 v-model="forms.period.fields.period_due_date"
-                                :state="forms.period.states.period_due_date"
                                 lang="en" 
                                 input-class="form-control mx-input"
                                 format="MMMM DD, YYYY"
                                 :clearable="false">
                             </date-picker>
-                                                            
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.period.errors.period_due_date">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
 
                     </b-form>
@@ -232,22 +205,6 @@ export default {
             period : {
                 isSaving: false,
                 fields: {
-                    period_id: null,
-                    period_start_date: null,
-                    period_end_date: null,
-                    month_id: null,
-                    app_year: null,
-                    period_due_date: null
-                },
-                states: {
-                    period_id: null,
-                    period_start_date: null,
-                    period_end_date: null,
-                    month_id: null,
-                    app_year: null,
-                    period_due_date: null
-                },
-                errors: {
                     period_id: null,
                     period_start_date: null,
                     period_end_date: null,
