@@ -45,6 +45,16 @@ class BillingsController extends Controller
      */
     public function create(Request $request)
     {
+        Validator::make($request->all(),
+            [
+                'tenant_id' => 'required|not_in:0',
+                'contract_id' => 'required|not_in:0',
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'tenant',
+            'contract_id' => 'contract']
+        )->validate();
+
         $billing_info = new BillingInfo;
         $billing_util_charges = new BillingUtilCharges;
         $billing_misc_charges = new BillingMiscCharges;
@@ -261,6 +271,16 @@ class BillingsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Validator::make($request->all(),
+            [
+                'tenant_id' => 'required|not_in:0',
+                'contract_id' => 'required|not_in:0',
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'tenant',
+            'contract_id' => 'contract']
+        )->validate();
+        
         $billing_info = BillingInfo::findOrFail($request->input('billing_id'));
         $billing_util_charges = new BillingUtilCharges;
         $billing_misc_charges = new BillingMiscCharges;

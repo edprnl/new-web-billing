@@ -36,6 +36,31 @@ class PaymentsController extends Controller
      */
     public function create(Request $request)
     {
+        Validator::make($request->all(),
+            [
+                'reference_no' => 'required',
+                'tenant_id' => 'required|not_in:0',
+                'payment_type' => 'required',
+                'amount' => 'required|not_in:0'
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'tenant',
+            'contract_id' => 'contract']
+        )->validate();
+
+        if($request->input('payment_type') == 1)
+        {
+            Validator::make($request->all(),
+                [
+                    'check_type_id' => 'required|not_in:0',
+                    'check_no' => 'required',
+                    'check_date' => 'required'
+                ],  ['not_in' => 'The :attribute field is required.']
+            )->setAttributeNames([
+                'check_type_id' => 'check type']
+            )->validate();
+        }
+
         $payment_info = new PaymentInfo;
         $payment_details = new PaymentDetails;
 
