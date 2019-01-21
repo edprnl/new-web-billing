@@ -22,6 +22,7 @@ class PaymentsController extends Controller
     public function index($date_from = null, $date_to = null)
     {
         $payments = PaymentInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_payment_info.tenant_id')
+                            ->leftJoin('b_refchecktype', 'b_refchecktype.check_type_id', '=', 'b_payment_info.check_type_id')
                             ->where('is_canceled', 0)->orderBy('payment_id', 'desc');
         if($date_from != null && $date_to != null){
             $payments->whereRaw('DATE(payment_date) BETWEEN DATE("'.$date_from.'") AND DATE("'.$date_to.'")');

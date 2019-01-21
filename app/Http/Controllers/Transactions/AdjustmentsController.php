@@ -233,4 +233,19 @@ class AdjustmentsController extends Controller
     {
         //
     }
+
+    public function checkIfUsed($id)
+    {
+        $exists = 'false';
+
+        // if(BillingPeriod::leftJoin('b_billing_info', 'b_billing_info.period_id', '=', 'b_refbillingperiod.period_id')
+        //     ->where('b_billing_info.billing_id', '=', $id)
+        //     ->where('b_billing_info.is_deleted', 0)
+        //     ->where('b_refbillingperiod.is_closed', 1)
+        //     ->exists()) {
+        //     $exists = 'true';
+        // }
+        
+        return $exists;
+    }
 }

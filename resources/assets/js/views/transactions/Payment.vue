@@ -62,6 +62,39 @@
                                     :per-page="paginations.payments.perPage"
                                     striped hover small bordered show-empty
                                 >
+                                    <template slot="row_data" slot-scope="row">
+                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails">
+                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
+                                        </b-btn>
+                                    </template>
+                                    <template slot="row-details" slot-scope="row">
+                                        <b-card>
+                                            <h5 slot="header">
+                                                Payment Info ({{row.item.transaction_no}})
+                                            </h5>
+                                            <b-row>
+                                                <b-col lg="4">
+                                                    <p>Reference No : {{row.item.reference_no}}</p>
+                                                    <p>Transaction Date : {{moment(row.item.payment_date, 'MMMM DD, YYYY')}}</p>
+                                                    <p>Tenant : {{row.item.trade_name}}</p>
+                                                    <p>Tenant Code : {{row.item.tenant_code}}</p>
+                                                    <p>Contact Person : {{row.item.contact_person}}</p>
+                                                    <p>Space Code : {{row.item.space_code}}</p>
+                                                </b-col>
+                                                <b-col lg="4">
+                                                    <p>Payment Type : {{row.item.payment_type == 0 ? 'Cash' : row.item.payment_type == 1 ? 'Check' : 'Online'}}</p>
+                                                    <p>Discount : {{formatNumber(row.item.discount)}}</p>
+                                                    <p>Balance Paid : {{formatNumber(row.item.balance_paid)}}</p>
+                                                    <p>Amount Paid : {{formatNumber(row.item.amount_paid)}}</p>
+                                                </b-col>
+                                                <b-col lg="4" v-if="row.item.payment_type == 1">
+                                                    <p>Check Type : {{row.item.check_type_desc}}</p>
+                                                    <p>Check No : {{row.item.check_no}}</p>
+                                                    <p>Check Date : {{moment(row.item.check_date, 'MMMM DD, YYYY')}}</p>
+                                                </b-col>
+                                            </b-row>
+                                        </b-card>
+                                    </template>
                                     <template slot="action" slot-scope="data">
                                         <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data.item.payment_id)">
                                             <i class="fa fa-print"></i>
@@ -645,6 +678,12 @@ export default {
             tables: {
                 payments: {
                     fields:[
+                        {
+                            key:'row_data',
+                            label: '',
+                            tdClass: '',
+                            thStyle: {width: '40px'}
+                        },
                         {
                             key:'transaction_no',
                             label: 'Trans No',
