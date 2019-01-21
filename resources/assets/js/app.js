@@ -26,17 +26,18 @@ import router from './router'
 import FormMixin from './mixins/FormMixin'
 import axios from 'axios'
 import Notifications from 'vue-notification'
+import NProgress from 'nprogress';
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
 import store from './store'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'nprogress/nprogress.css'
 import DatePicker from 'vue2-datepicker'
 import BarExample from './views/charts/BarExample'
 import LineExample from './views/charts/LineExample'
 import cSwitch from './components/Switch'
-import { Line } from 'vue-chartjs'
 
 Vue.use(Notifications)
 Vue.use(DatePicker)
@@ -60,6 +61,20 @@ window.$ = window.jQuery = require('jquery')
 Vue.use(BootstrapVue)
 
 Vue.prototype.$http = axios.create(axiosConfig)
+// before a request is made start the nprogress
+Vue.prototype.$http.interceptors.request.use(config => {
+  NProgress.start()
+  return config
+})
+
+// before a response is returned stop nprogress
+Vue.prototype.$http.interceptors.response.use(response => {
+  NProgress.done()
+  return response
+}, error => {
+  NProgress.done()
+  return error
+})
 Vue.mixin(FormMixin)
 
 /* eslint-disable no-new */

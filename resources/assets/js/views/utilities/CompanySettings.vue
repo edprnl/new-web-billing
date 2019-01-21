@@ -471,9 +471,11 @@ export default {
             })
         }
     },
-    async created () {
-        await this.fillOptionsList('accounts')
-        await this.fillEntityForm('companysetting', 1);
+    created () {
+        this.fillOptionsList('accounts')
+        setTimeout(function(){
+            this.fillEntityForm('companysetting', 1);
+        }.bind(this), 1)
     },
   }
 </script>

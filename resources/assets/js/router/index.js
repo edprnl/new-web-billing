@@ -56,7 +56,7 @@ import soa from '@/views/reports/Soa'
 import ack_receipt from '@/views/reports/AckReceipt'
 
 import store from '../store'
-
+import NProgress from 'nprogress';
 Vue.use(Router)
 
 const router = new Router({
