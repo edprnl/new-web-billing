@@ -73,7 +73,7 @@ Vue.prototype.$http.interceptors.response.use(response => {
   return response
 }, error => {
   NProgress.done()
-  return error
+  return Promise.reject(error)
 })
 Vue.mixin(FormMixin)
 

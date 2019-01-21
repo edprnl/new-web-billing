@@ -873,20 +873,20 @@ export default {
             var totalAmountPaid = 0
             this.tables.payment_details.items.forEach(billing => {
                 billing.checker = 0
-                if(Number(billing.outstanding_balance).toFixed(2) != (Number(billing.discount) + Number(billing.amount_paid))){
+                if(Number(billing.outstanding_balance).toFixed(2) < (Number(billing.discount) + Number(billing.amount_paid))){
                     billing.checker = 1
                     this.$notify({
                         type: 'error',
                         group: 'notification',
                         title: 'Error',
-                        text: "The payment is not equal to the balance."
+                        text: "The payment is greater to the balance."
                     })
                     return false
                 }
                 totalAmountPaid += billing.amount_paid
             })
             var total = (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)) - Number(this.forms.payment.fields.amount)
-            if(total > 0 && total < 0.09){
+            if(total >= 0 && total <= 0.09){
                 return true
             }
             else{
