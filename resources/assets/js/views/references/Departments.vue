@@ -91,33 +91,20 @@
                         <b-form-input
                             id="department_code"
                             v-model="forms.department.fields.department_code"
-                            :state="forms.department.states.department_code"
                             type="text"
                             placeholder="Department Code"
                             ref="department_code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.department.errors.department_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Department Desc</label>
                         <b-form-input
+                            ref="department_desc"
                             id="department_desc"
                             v-model="forms.department.fields.department_desc"
-                            :state="forms.department.states.department_desc"
                             type="text"
                             placeholder="Department Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.department.errors.department_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col> <!-- modal body -->
@@ -173,14 +160,6 @@ export default {
                 isDeleting: false,
                 fields: {
                     department_id: null,
-                    department_code: null,
-                    department_desc: null
-                },
-                states: {
-                    department_code: null,
-                    department_desc: null
-                },
-                errors: {
                     department_code: null,
                     department_desc: null
                 }

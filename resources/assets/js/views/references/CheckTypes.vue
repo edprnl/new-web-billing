@@ -83,32 +83,19 @@
                             ref="check_type_code"
                             id="check_type_code"
                             v-model="forms.check_type.fields.check_type_code"
-                            :state="forms.check_type.states.check_type_code"
                             type="text"
                             placeholder="Check Type Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.check_type.errors.check_type_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Check Type Desc</label>
                         <b-form-input
+                            ref="check_type_desc"
                             id="check_type_desc"
                             v-model="forms.check_type.fields.check_type_desc"
-                            :state="forms.check_type.states.check_type_desc"
                             type="text"
                             placeholder="Check Type Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.check_type.errors.check_type_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col>
@@ -157,14 +144,6 @@ export default {
                     isSaving: false,
                     fields: {
                         check_type_id: null,
-                        check_type_code: null,
-                        check_type_desc: null
-                    },
-                    states: {
-                        check_type_code: null,
-                        check_type_desc: null
-                    },
-                    errors: {
                         check_type_code: null,
                         check_type_desc: null
                     }

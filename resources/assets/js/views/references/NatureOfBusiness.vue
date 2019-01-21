@@ -90,32 +90,19 @@
                                 ref="nature_of_business_code"
                                 id="nature_of_business_code"
                                 v-model="forms.natureofbusiness.fields.nature_of_business_code"
-                                :state="forms.natureofbusiness.states.nature_of_business_code"
                                 type="text"
                                 placeholder="Nature Of Business Code">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.natureofbusiness.errors.nature_of_business_code">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                         <b-form-group>
                             <label>* Nature Of Business Desc</label>
                             <b-form-input
+                                ref="nature_of_business_desc"
                                 id="nature_of_business_desc"
                                 v-model="forms.natureofbusiness.fields.nature_of_business_desc"
-                                :state="forms.natureofbusiness.states.nature_of_business_desc"
                                 type="text"
                                 placeholder="Nature Of Business Description">
                             </b-form-input>
-                            <b-form-invalid-feedback>
-                                <i class="fa fa-exclamation-triangle text-danger"></i>
-                                <span v-for="itemError in forms.natureofbusiness.errors.nature_of_business_desc">
-                                    {{itemError}}
-                                </span>
-                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-form>
                 </b-col> <!-- modal body -->
@@ -170,14 +157,6 @@ export default {
                 isSaving: false,
                 fields: {
                     nature_of_business_id: null,
-                    nature_of_business_code: null,
-                    nature_of_business_desc: null
-                },
-                states: {
-                    nature_of_business_code: null,
-                    nature_of_business_desc: null
-                },
-                errors: {
                     nature_of_business_code: null,
                     nature_of_business_desc: null
                 }

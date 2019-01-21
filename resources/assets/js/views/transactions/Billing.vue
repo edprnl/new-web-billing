@@ -145,6 +145,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <select2
+                                                                ref="contract_id"
                                                                 @input="getContractInfo"
                                                                 :allowClear="false"
                                                                 :placeholder="'Select Contracts'"
@@ -570,7 +571,7 @@
             v-model="showModalPeriod"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
-            @shown="focusElement('period_id', true)"
+            @shown="focusElement('period_id')"
         >
             <div slot="modal-title">
                 Billing Period
@@ -1086,68 +1087,6 @@ export default {
                         utilities: [],
                         miscellaneous: [],
                         other: []
-                    },
-                    states: {
-                        billing_id: null,
-                        billing_no: null,
-                        tenant_id: null,
-                        tenant_code: null,
-                        period_id: null,
-                        app_year: null,
-                        month_id: null,
-                        contract_id: null,
-                        contract_no: null,
-                        contract_discounted_rent: null,
-                        commencement_date: null,
-                        termination_date: null,
-                        contract_fixed_rent: null,
-                        due_date: null,
-                        total_fixed_rent: null,
-                        total_util_charges: null,
-                        total_misc_charges: null,
-                        total_othr_charges: null,
-                        sub_total: null,
-                        vatable_amount: null,
-                        discounted_vatable_amount: null,
-                        vat_percent: null,
-                        total_vat: null,
-                        total_amount_due: null,
-                        discounted_total_amount_due: null,
-                        total_adjusted_in: null,
-                        total_adjusted_out: null,
-                        wtax_amount: null,
-                        wtax_percent: null
-                    },
-                    errors: {
-                        billing_id: null,
-                        billing_no: null,
-                        tenant_id: null,
-                        tenant_code: null,
-                        period_id: null,
-                        app_year: null,
-                        month_id: null,
-                        contract_id: null,
-                        contract_no: null,
-                        contract_discounted_rent: null,
-                        commencement_date: null,
-                        termination_date: null,
-                        contract_fixed_rent: null,
-                        due_date: null,
-                        total_fixed_rent: null,
-                        total_util_charges: null,
-                        total_misc_charges: null,
-                        total_othr_charges: null,
-                        sub_total: null,
-                        vatable_amount: null,
-                        discounted_vatable_amount: null,
-                        vat_percent: null,
-                        total_vat: null,
-                        total_amount_due: null,
-                        discounted_total_amount_due: null,
-                        total_adjusted_in: null,
-                        total_adjusted_out: null,
-                        wtax_amount: null,
-                        wtax_percent: null
                     }
                 },
                 period: {
@@ -1623,7 +1562,7 @@ export default {
             if(showEntry){
                 let self = this
                 Vue.nextTick(function(){
-                    self.focusElement('tenant_id', true)
+                    self.focusElement('tenant_id')
                 })
             }
         },

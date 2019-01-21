@@ -71,7 +71,7 @@
             v-model="showModalPeriod"
             :noCloseOnEsc="true"
             :noCloseOnBackdrop="true"
-            @shown="focusElement('period_id', true)"
+            @shown="focusElement('period_id')"
         >
             <div slot="modal-title">
                 Billing Period
@@ -172,6 +172,7 @@
                     <b-form-group>
                         <label>* Amount </label>
                         <vue-autonumeric 
+                            ref="amount"
                             v-model="forms.adjustment.fields.amount"
                             :class="'form-control text-right'" 
                             :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
@@ -180,6 +181,7 @@
                     <b-form-group>
                         <label>* Adjustment Type</label>
                         <b-form-radio-group 
+                            ref="adjustment_type"
                             id="is_auto"
                             v-model="forms.adjustment.fields.adjustment_type">
                             <b-form-radio value="0">In</b-form-radio>
@@ -190,7 +192,6 @@
                         <label>Notes</label>
                         <b-form-textarea
                             v-model="forms.adjustment.fields.notes"
-                            :state="forms.adjustment.states.notes"
                             type="text"
                             :rows="3"
                             placeholder="Notes">
@@ -335,28 +336,6 @@ export default {
                         month_id: null,
                         adjustment_type: null,
                         amount: 0,
-                        notes: null
-                    },
-                    states: {
-                        adjustment_id: null,
-                        adjustment_no: null,
-                        tenant_id: null,
-                        period_id: null,
-                        app_year: null,
-                        month_id: null,
-                        adjustment_type: null,
-                        amount: null,
-                        notes: null
-                    },
-                    errors: {
-                        adjustment_id: null,
-                        adjustment_no: null,
-                        tenant_id: null,
-                        period_id: null,
-                        app_year: null,
-                        month_id: null,
-                        adjustment_type: null,
-                        amount: null,
                         notes: null
                     }
                 },

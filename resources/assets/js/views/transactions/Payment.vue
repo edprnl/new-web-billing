@@ -77,7 +77,7 @@
                                             :align="'right'"
                                             :total-rows="paginations.payments.totalRows"
                                             :per-page="paginations.payments.perPage"
-                                            v-model="paginations.payments.criteria" />
+                                            v-model="paginations.payments.currentPage" />
                             </b-col>
                         </b-row>
 
@@ -141,6 +141,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <select2
+                                                                ref="tenant_id"
                                                                 @input="getTenantInfo"
                                                                 :allowClear="false"
                                                                 :placeholder="'Select Tenants'"
@@ -205,6 +206,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <select2
+                                                                ref="payment_type"
                                                                 @input="getPaymentType"
                                                                 :allowClear="false"
                                                                 :placeholder="'Select Payment Type'"
@@ -243,6 +245,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <select2
+                                                                ref="check_type_id"
                                                                 :allowClear="false"
                                                                 :placeholder="'Select Check Type'"
                                                                 v-model="forms.payment.fields.check_type_id"
@@ -263,6 +266,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <b-form-input
+                                                                ref="check_no"
                                                                 type="text"
                                                                 placeholder="Check No." 
                                                                 v-model="forms.payment.fields.check_no"
@@ -278,6 +282,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <date-picker 
+                                                                ref="check_date"
                                                                 v-model="forms.payment.fields.check_date" 
                                                                 lang="en" 
                                                                 input-class="form-control mx-input"
@@ -295,6 +300,7 @@
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <vue-autonumeric 
+                                                                ref="amount"
                                                                 @blur.native="computePayment()"
                                                                 v-model="forms.payment.fields.amount"
                                                                 :class="'form-control text-right'" 
@@ -415,7 +421,6 @@
                                                 <b-form-textarea
                                                     id="remarks"
                                                     v-model="forms.payment.fields.remarks"
-                                                    :state="forms.payment.states.remarks"
                                                     type="text"
                                                     :rows="7"
                                                     placeholder="Remarks">
@@ -557,32 +562,19 @@
                             ref="check_type_code"
                             id="check_type_code"
                             v-model="forms.check_type.fields.check_type_code"
-                            :state="forms.check_type.states.check_type_code"
                             type="text"
                             placeholder="Check Type Code">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.check_type.errors.check_type_code">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-group>
                         <label>* Check Type Desc</label>
                         <b-form-input
+                            ref="check_type_desc"
                             id="check_type_desc"
                             v-model="forms.check_type.fields.check_type_desc"
-                            :state="forms.check_type.states.check_type_desc"
                             type="text"
                             placeholder="Check Type Description">
                         </b-form-input>
-                        <b-form-invalid-feedback>
-                            <i class="fa fa-exclamation-triangle text-danger"></i>
-                            <span v-for="itemError in forms.check_type.errors.check_type_desc">
-                                {{itemError}}
-                            </span>
-                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-form>
             </b-col>
@@ -631,65 +623,19 @@ export default {
                         payment_type: null,
                         amount: 0.00,
                         payment_date: new Date(),
-                        check_type_id: null,
+                        check_type_id: 0,
                         check_no: null,
                         check_date: null,
                         remarks: null,
                         balance_paid: 0.00,
                         advance: 0.00,
                         discount: 0.00,
-                    },
-                    states: {
-                        payment_id: null,
-                        transaction_no: null,
-                        reference_no: null,
-                        tenant_id: null,
-                        tenant_code: null,
-                        contact_person: null,
-                        space_code: null,
-                        payment_type: null,
-                        amount: null,
-                        payment_date: null,
-                        check_type_id: null,
-                        check_no: null,
-                        check_date: null,
-                        remarks: null,
-                        balance_paid: null,
-                        advance: null,
-                        discount: null,
-                    },
-                    errors: {
-                        payment_id: null,
-                        transaction_no: null,
-                        reference_no: null,
-                        tenant_id: null,
-                        tenant_code: null,
-                        contact_person: null,
-                        space_code: null,
-                        payment_type: null,
-                        amount: null,
-                        payment_date: null,
-                        check_type_id: null,
-                        check_no: null,
-                        check_date: null,
-                        remarks: null,
-                        balance_paid: null,
-                        advance: null,
-                        discount: null,
                     }
                 },
                 check_type : {
                     isSaving: false,
                     fields: {
-                        check_type_id: null,
-                        check_type_code: null,
-                        check_type_desc: null
-                    },
-                    states: {
-                        check_type_code: null,
-                        check_type_desc: null
-                    },
-                    errors: {
+                        check_type_id: 0,
                         check_type_code: null,
                         check_type_desc: null
                     }
@@ -984,9 +930,22 @@ export default {
                         this.forms.payment.isSaving = false
                         if (!error.response) return
                             const errors = error.response.data.errors
+                        var a = 0
                         for (var key in errors) {
-                            this.forms.payment.states[key] = false
-                            this.forms.payment.errors[key] =  errors[key]
+                            console.log(key)
+                            // this.forms[entity].states[key] = false
+                            // this.forms[entity].errors[key] =  errors[key]
+                            if(a == 0){
+                                this.focusElement(key)
+                                this.$notify({
+                                    type: 'error',
+                                    group: 'notification',
+                                    title: 'Error!',
+                                    text: errors[key][0]
+                                })
+                            }
+                            
+                            a++
                         }
                     })
                     if(this.is_print){
@@ -1146,7 +1105,7 @@ export default {
             if(showEntry){
                 let self = this
                 Vue.nextTick(function(){
-                    self.focusElement('reference_no', true)
+                    self.focusElement('reference_no')
                 })
             }
         },

@@ -36,6 +36,16 @@ class AdjustmentsController extends Controller
      */
     public function create(Request $request)
     {
+        Validator::make($request->all(),
+            [
+                'tenant_id' => 'required|not_in:0',
+                'amount' => 'required|not_in:0',
+                'adjustment_type' => 'required',
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'tenant']
+        )->validate();
+
         $adjustment = new Adjustment;
         $adjustment->adjustment_no = DB::select("select CreateAdjustmentNo() as adjustment_no")[0]->adjustment_no;
         $adjustment->tenant_id = $request->input('tenant_id');
@@ -106,6 +116,16 @@ class AdjustmentsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Validator::make($request->all(),
+            [
+                'tenant_id' => 'required|not_in:0',
+                'amount' => 'required|not_in:0',
+                'adjustment_type' => 'required',
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'tenant']
+        )->validate();
+        
         $adjustment = Adjustment::findOrFail($id);
         $adjustment->tenant_id = $request->input('tenant_id');
         $adjustment->period_id = $request->input('period_id');

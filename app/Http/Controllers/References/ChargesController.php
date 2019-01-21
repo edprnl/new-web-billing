@@ -40,8 +40,11 @@ class ChargesController extends Controller
         Validator::make($request->all(),
             [
                 'charge_code' => 'required',
-                'charge_desc' => 'required'
-            ]
+                'charge_desc' => 'required',
+                'account_id' => 'required|not_in:0'
+            ], ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+                'account_id' => 'account title']
         )->validate();
 
         $charge = new Charges();
@@ -108,10 +111,13 @@ class ChargesController extends Controller
     public function update(Request $request, $id)
     {
         Validator::make($request->all(),
-            [
-                'charge_code' => 'required',
-                'charge_desc' => 'required'
-            ]
+        [
+            'charge_code' => 'required',
+            'charge_desc' => 'required',
+            'account_id' => 'required|not_in:0'
+        ], ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+                'account_id' => 'account title']
         )->validate();
 
         $charge = Charges::findOrFail($id);

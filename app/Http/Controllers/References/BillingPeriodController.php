@@ -41,6 +41,10 @@ class BillingPeriodController extends Controller
             'app_year' => 'required',
             'period_due_date' => 'required'
         ]
+        )->setAttributeNames([
+            'app_year' => 'applicable year',
+            'month_id' => 'applicable month'
+        ]
         )->validate();
 
         $period = new BillingPeriod();

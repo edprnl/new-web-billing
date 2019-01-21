@@ -78,6 +78,37 @@ class CompanySettingsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Validator::make($request->all(),
+            [
+                'company_name' => 'required',
+                'company_address' => 'required',
+                'email_address' => 'required|string|email|max:255',
+                'basic_rental_account_id' => 'required|not_in:0',
+                'advance_rental_account_id' => 'required|not_in:0',
+                'security_deposit_account_id' => 'required|not_in:0',
+                'electric_meter_deposit_account_id' => 'required|not_in:0',
+                'water_meter_deposit_account_id' => 'required|not_in:0',
+                'construction_deposit_account_id' => 'required|not_in:0',
+                'withholding_tax_account_id' => 'required|not_in:0',
+                'vat_account_id' => 'required|not_in:0',
+                'adjustment_in_account_id' => 'required|not_in:0',
+                'adjustment_out_account_id' => 'required|not_in:0',
+                'discount_account_id' => 'required|not_in:0'
+            ], ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'basic_rental_account_id' => 'rental account',
+            'advance_rental_account_id' => 'advance rental account',
+            'security_deposit_account_id' => 'security deposit',
+            'electric_meter_deposit_account_id' => 'electric meter deposit',
+            'water_meter_deposit_account_id' => 'rental account',
+            'construction_deposit_account_id' => 'rental account',
+            'withholding_tax_account_id' => 'rental account',
+            'vat_account_id' => 'rental account',
+            'adjustment_in_account_id' => 'rental account',
+            'adjustment_out_account_id' => 'rental account',
+            'discount_account_id' => 'rental account'
+        ])->validate();
+        
         $company = CompanySettings::findOrFail($id);
         
         $company->company_name = $request->input('company_name');

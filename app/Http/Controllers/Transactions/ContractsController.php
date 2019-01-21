@@ -159,24 +159,33 @@ class ContractsController extends Controller
      */
     public function create(Request $request)
     {
-        // Validator::make($request->all(),
-        //     [
-        //         'tenant_id' => 'required',
-        //         'contract_billing_address' => 'required',
-        //         'contract_type_id' => 'required',
-        //         'category_id' => 'required',
-        //         'commencement_date' => 'required',
-        //         'termination_date' => 'required',
-        //         'location_id' => 'required',
-        //         'contract_signatory' => 'required',
-        //         'contract_terms' => 'required|not_in:0|numeric',
-        //         'contract_fixed_rent' => 'required|not_in:0|numeric',
-        //         'tin_number' => 'required',
-        //         'contract_floor_area' => 'required|not_in:0|numeric',
-        //         'department_id' => 'required',
-        //         'nature_of_business_id' => 'required'
-        //     ]
-        // )->validate();
+        Validator::make($request->all(),
+            [
+                'tenant_id' => 'required|not_in:0',
+                'department_id' => 'required|not_in:0',
+                'nature_of_business_id' => 'required|not_in:0',
+                'location_id' => 'required|not_in:0',
+                'contract_type_id' => 'required|not_in:0',
+                'category_id' => 'required|not_in:0',
+                'contract_terms' => 'required|not_in:0|numeric',
+                'commencement_date' => 'required',
+                'termination_date' => 'required',
+                'start_billing_date' => 'required',
+                'contract_floor_area' => 'required|not_in:0|numeric',
+                'contract_fixed_rent' => 'required|not_in:0|numeric',
+                'schedules' => 'required'
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'lessee/tenant',
+            'department_id' => 'department',
+            'nature_of_business_id' => 'nature of business',
+            'location_id' => 'location',
+            'contract_type_id' => 'contract type',
+            'category_id' => 'category',
+            'contract_floor_area' => 'app floor area',
+            'contract_fixed_rent' => 'basic rental',
+            'schedules' => 'schedule of payment']
+        )->validate();
 
         $contract_info = new ContractInfo;
         $contract_schedule = new ContractSchedule;
@@ -336,24 +345,33 @@ class ContractsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validator::make($request->all(),
-        //     [
-        //         'tenant_id' => 'required',
-        //         'contract_billing_address' => 'required',
-        //         'contract_type_id' => 'required',
-        //         'category_id' => 'required',
-        //         'commencement_date' => 'required',
-        //         'termination_date' => 'required',
-        //         'location_id' => 'required',
-        //         'contract_signatory' => 'required',
-        //         'contract_terms' => 'required|not_in:0|numeric',
-        //         'contract_fixed_rent' => 'required|not_in:0|numeric',
-        //         'tin_number' => 'required',
-        //         'contract_floor_area' => 'required|not_in:0|numeric',
-        //         'department_id' => 'required',
-        //         'nature_of_business_id' => 'required'
-        //     ]
-        // )->validate();
+        Validator::make($request->all(),
+            [
+                'tenant_id' => 'required|not_in:0',
+                'department_id' => 'required|not_in:0',
+                'nature_of_business_id' => 'required|not_in:0',
+                'location_id' => 'required|not_in:0',
+                'contract_type_id' => 'required|not_in:0',
+                'category_id' => 'required|not_in:0',
+                'contract_terms' => 'required|not_in:0|numeric',
+                'commencement_date' => 'required',
+                'termination_date' => 'required',
+                'start_billing_date' => 'required',
+                'contract_floor_area' => 'required|not_in:0|numeric',
+                'contract_fixed_rent' => 'required|not_in:0|numeric',
+                'schedules' => 'required'
+            ],  ['not_in' => 'The :attribute field is required.']
+        )->setAttributeNames([
+            'tenant_id' => 'lessee/tenant',
+            'department_id' => 'department',
+            'nature_of_business_id' => 'nature of business',
+            'location_id' => 'location',
+            'contract_type_id' => 'contract type',
+            'category_id' => 'category',
+            'contract_floor_area' => 'app floor area',
+            'contract_fixed_rent' => 'basic rental',
+            'schedules' => 'schedule of payment']
+        )->validate();
 
         $contract_info = ContractInfo::findOrFail($request->input('contract_id'));
         $contract_schedule = new ContractSchedule;
