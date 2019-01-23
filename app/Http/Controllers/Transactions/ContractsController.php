@@ -233,8 +233,10 @@ class ContractsController extends Controller
                     'contract_id' => $contract_id,
                     'month_id' => $schedule['month_id'],
                     'app_year' => $schedule['app_year'],
+                    'discounted_rent' => $schedule['discounted_rent'],
                     'fixed_rent' => $schedule['fixed_rent'],
                     'escalation_percent' => $schedule['escalation_percent'],
+                    'discounted_amount_due' => $schedule['discounted_amount_due'],
                     'amount_due' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],
                     'contract_schedule_notes' => $schedule['contract_schedule_notes']
@@ -430,8 +432,10 @@ class ContractsController extends Controller
                     'contract_id' => $contract_id,
                     'month_id' => $schedule['month_id'],
                     'app_year' => $schedule['app_year'],
+                    'discounted_rent' => $schedule['discounted_rent'],
                     'fixed_rent' => $schedule['fixed_rent'],
                     'escalation_percent' => $schedule['escalation_percent'],
+                    'discounted_amount_due' => $schedule['discounted_amount_due'],
                     'amount_due' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],
                     'contract_schedule_notes' => $schedule['contract_schedule_notes']

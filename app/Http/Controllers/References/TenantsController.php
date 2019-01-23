@@ -44,7 +44,6 @@ class TenantsController extends Controller
                 'contact_person' => 'required',
                 'designation' => 'required',
                 'contact_number' => 'required',
-                'email_address' => 'required',
                 'tin_number' => 'required',
             ]
         )->validate();
@@ -140,7 +139,6 @@ class TenantsController extends Controller
                 'contact_person' => 'required',
                 'designation' => 'required',
                 'contact_number' => 'required',
-                'email_address' => 'required',
                 'tin_number' => 'required',
             ]
         )->validate();

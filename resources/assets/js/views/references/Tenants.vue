@@ -192,7 +192,7 @@
                                         </b-form-input>
                                     </b-form-group>
                                     <b-form-group>
-                                        <label>* Email Address</label>
+                                        <label>Email Address</label>
                                         <b-form-input
                                             ref="email_address"
                                             id="email_address"

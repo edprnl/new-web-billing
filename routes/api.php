@@ -303,8 +303,8 @@ Route::middleware('auth:api')->group(function () {
 
     //---------------------------------- FILE UPLOAD ----------------------------------------------
     Route::post('upload', function(Request $request){
-        if ($request->image->isValid()) {
-            $uploadedFile = $request->image;
+        if ($request->file->isValid()) {
+            $uploadedFile = $request->file;
             $uploadedPath = $request->path;
 
             $uploadedFile->move($uploadedPath, $uploadedFile->getClientOriginalName());

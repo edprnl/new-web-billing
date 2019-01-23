@@ -453,7 +453,7 @@ export default {
             let attachment = e.target.files[0]
             let path = 'uploads/logo'
 
-            this.image.append('image', attachment)
+            this.image.append('file', attachment)
             this.image.append('path', path)
 
             this.$http.post('/api/upload', this.image, {

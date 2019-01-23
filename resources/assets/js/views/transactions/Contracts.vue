@@ -376,6 +376,13 @@
                                                 :fields="tables.schedules.fields"
                                                 :items.sync="tables.schedules.items"
                                                 show-empty>
+                                                <template slot="discounted_rent" slot-scope="data">
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'"
+                                                        v-model="data.item.discounted_rent" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric>
+                                                </template>
                                                 <template slot="fixed_rent" slot-scope="data">
                                                     <vue-autonumeric 
                                                         :class="'form-control text-right'"
@@ -1143,25 +1150,44 @@ export default {
                             thStyle: {width: '5%'},
                         },
                         {
+                            key: 'discounted_rent',
+                            label: 'Disc Rent',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '12%'}
+                        },
+                        {
                             key: 'fixed_rent',
                             label: 'Basic Rent',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'}
+                            thStyle: {width: '12%'}
                         },
                         {
                             key: 'escalation_percent',
                             label: 'Escalation %',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'}
+                            thStyle: {width: '10%'}
+                        },
+                        {
+                            key: 'discounted_amount_due',
+                            label: 'Disc Amount Due',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '12%'},
+                            formatter: (value, key, item) => {
+                                item.discounted_amount_due = Number(item.discounted_rent) + (Number(item.discounted_rent) * (Number(item.escalation_percent)/100))
+                                return this.formatNumber(item.discounted_amount_due)
+                                
+                            }
                         },
                         {
                             key: 'amount_due',
                             label: 'Amount Due',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'},
+                            thStyle: {width: '12%'},
                             formatter: (value, key, item) => {
                                 item.amount_due = Number(item.fixed_rent) + (Number(item.fixed_rent) * (Number(item.escalation_percent)/100))
                                 return this.formatNumber(item.amount_due)
@@ -1172,7 +1198,8 @@ export default {
                             key: 'is_vatted',
                             label: 'Is Vatted?',
                             thClass: 'text-center',
-                            tdClass: 'text-center align-middle'
+                            tdClass: 'text-center align-middle',
+                            thStyle: {width: '7%'},
                         },
                         {
                             key: 'contract_schedule_notes',
@@ -1426,20 +1453,24 @@ export default {
             try {
                 if(this.forms.contract.fields.contract_terms >= this.counter){
                     var fixed_rent = 0
+                    var discounted_rent = 0
                     var start = new Date(this.forms.contract.fields.start_billing_date)
                     if(this.counter == 0){
                         this.app_year = start.getFullYear()
                         fixed_rent = this.forms.contract.fields.contract_fixed_rent
+                        discounted_rent = this.forms.contract.fields.contract_discounted_rent
                     }
                     else{
                         var prev_schedule = this.tables.schedules.items.find(s => s.count == this.counter)
                         fixed_rent = prev_schedule.amount_due
+                        discounted_rent = prev_schedule.discounted_amount_due
                     }
                     var month;
                     var month_value = start.getMonth() + 1
                     var add_year = false
                     var escalation_percent = 0
                     var month_id = (month_value + this.counter) % 12
+                    var discounted_amount_due = discounted_rent
                     var amount_due = fixed_rent
 
                     if(month_id == 0){
@@ -1462,8 +1493,10 @@ export default {
                         month_name:month.month_name,
                         month_id:month.month_id,
                         app_year:this.app_year,
+                        discounted_rent:discounted_rent,
                         fixed_rent:fixed_rent,
                         escalation_percent:escalation_percent,
+                        discounted_amount_due:discounted_amount_due,
                         amount_due:amount_due,
                         is_vatted:1,
                         contract_schedule_notes:''

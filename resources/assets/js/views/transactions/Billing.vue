@@ -9,8 +9,9 @@
                             <span class="text-primary">
                                 <i class="fa fa-bars"></i> 
                                 Billing List
-                                <small>( {{ forms.period.fields.month_name + ' ' + forms.period.fields.app_year }} )</small>
+                                <small>( {{ month_name + ' ' + app_year }} )</small>
                                 <small class="font-italic">List of all billings.</small></span>
+                                <span class="float-right"><b-btn @click="showModalPeriod = true" variant="primary"><i class="fa fa-refresh"></i></b-btn></span>
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
@@ -257,11 +258,18 @@
                                                             <option v-for="month in options.months.items" :key="month.month_id" :value="month.month_id">{{month.month_name}}</option>
                                                         </select2>
                                                     </template>
-                                                    <template slot="escalation_percent" slot-scope="data">
+                                                    <template slot="discounted_amount_due" slot-scope="data">
                                                         <vue-autonumeric 
                                                             :class="'form-control text-right'"
-                                                            v-model="data.item.escalation_percent" 
-                                                            :options="{minimumValue: 0, maximumValue: 100,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            v-model="data.item.discounted_amount_due" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                        </vue-autonumeric>
+                                                    </template>
+                                                    <template slot="amount_due" slot-scope="data">
+                                                        <vue-autonumeric 
+                                                            :class="'form-control text-right'"
+                                                            v-model="data.item.amount_due" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                         </vue-autonumeric>
                                                     </template>
                                                     <template slot="is_vatted" slot-scope="data">
@@ -723,6 +731,8 @@ export default {
             showModalDelete: false,
             showModalCharges: false,
             showModalPeriod: true,
+            month_name: '',
+            app_year: '',
             options: {
                 periods: {
                     items: []
@@ -835,11 +845,22 @@ export default {
                             thStyle: {width: '5%'},
                         },
                         {
+                            key: 'discounted_amount_due',
+                            label: 'Disc Amount Due',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '17%'},
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                                
+                            }
+                        },
+                        {
                             key: 'amount_due',
                             label: 'Amount Due',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'},
+                            thStyle: {width: '17%'},
                             formatter: (value) => {
                                 return this.formatNumber(value)
                                 
@@ -1068,6 +1089,7 @@ export default {
                         termination_date: null,
                         contract_fixed_rent: null,
                         due_date: null,
+                        total_discounted_rent: 0,
                         total_fixed_rent: 0,
                         total_util_charges: 0,
                         total_misc_charges: 0,
@@ -1195,11 +1217,16 @@ export default {
         },
         addSchedule(){
             try {
-                var fixed_rent = this.forms.billing.fields.contract_fixed_rent
-                
+                var amount_due = 0
+                var discounted_amount_due = 0
+                if(this.tables.schedules.items.length > 0){
+                    var default_rent = this.tables.schedules.items[0]
+                    amount_due = default_rent.amount_due
+                    discounted_amount_due = default_rent.discounted_amount_due
+                }
+
                 var month;
-                var escalation_percent = 0;
-                var amount_due = fixed_rent;
+                
 
                 this.counter++;
 
@@ -1207,8 +1234,8 @@ export default {
                     count: this.counter, 
                     month_id: this.forms.period.fields.month_id, 
                     app_year: this.forms.period.fields.app_year, 
-                    // fixed_rent: fixed_rent, 
-                    // escalation_percent: escalation_percent, 
+                    // fixed_rent: fixed_rent,
+                    discounted_amount_due: discounted_amount_due,
                     amount_due: amount_due, 
                     is_vatted: 1, 
                     contract_schedule_notes: ''
@@ -1327,7 +1354,7 @@ export default {
                     this.forms.billing.fields.commencement_date = moment(contract.commencement_date).format('MMMM DD, YYYY')
                     this.forms.billing.fields.termination_date = moment(contract.termination_date).format('MMMM DD, YYYY')
                     this.forms.billing.fields.contract_fixed_rent = contract.contract_fixed_rent
-                    this.forms.billing.fields.contract_discounted_rent = contract.contract_discounted_rent
+
                     var nmonth_id = Number(this.forms.period.fields.month_id + 1)
                     var nyear = this.forms.period.fields.app_year
                     if(nmonth_id == 13){
@@ -1376,6 +1403,8 @@ export default {
             }
         },
         showBillingList(){
+            this.month_name = this.forms.period.fields.month_name
+            this.app_year = this.forms.period.fields.app_year
             if(this.forms.period.fields.period_id != null && this.forms.period.fields.department_id != null){
                 this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
                 this.showList = true
@@ -1421,6 +1450,7 @@ export default {
         },
         getTotalDue: function(){
             var schedTotal = 0
+            var discSchedTotal = 0
             var utilTotal = 0
             var miscTotal = 0
             var othrTotal = 0
@@ -1431,6 +1461,7 @@ export default {
             this.tables.schedules.items.forEach(schedule => {
                 if(schedule != null){
                     schedTotal += Number(schedule.amount_due)
+                    discSchedTotal += Number(schedule.discounted_amount_due)
                 }        
             })
 
@@ -1462,6 +1493,7 @@ export default {
             })
 
             this.forms.billing.fields.total_fixed_rent = schedTotal
+            this.forms.billing.fields.total_discounted_rent = discSchedTotal
             this.forms.billing.fields.total_util_charges = utilTotal
             this.forms.billing.fields.total_misc_charges = miscTotal
             this.forms.billing.fields.total_othr_charges = othrTotal
@@ -1472,7 +1504,7 @@ export default {
 
             this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
             
-            var discounted_sub_total = Number(this.forms.billing.fields.contract_discounted_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
+            var discounted_sub_total = Number(this.forms.billing.fields.total_discounted_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
 
             this.forms.billing.fields.total_amount_due = Number(this.forms.billing.fields.sub_total) + Number(this.getVatTotal) - Number(this.forms.billing.fields.wtax_amount) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
@@ -1490,8 +1522,8 @@ export default {
             this.tables.schedules.items.forEach(schedule => {
                 if(schedule != null){
                     if(schedule.is_vatted == 1){
-                        schedVat += schedule.amount_due
-                        dSchedVat += this.forms.billing.fields.contract_discounted_rent
+                        schedVat += Number(schedule.amount_due)
+                        dSchedVat += Number(schedule.discounted_amount_due)
                     }
                 }
             })
@@ -1541,7 +1573,7 @@ export default {
             return this.forms.billing.fields.wtax_amount
         },
         getDiscountedWithHoldingTax: function(){
-            var discounted_withholding_tax = this.forms.billing.fields.contract_discounted_rent * (this.forms.billing.fields.wtax_percent / 100)
+            var discounted_withholding_tax = this.forms.billing.fields.total_discounted_rent * (this.forms.billing.fields.wtax_percent / 100)
             return discounted_withholding_tax
         },
 

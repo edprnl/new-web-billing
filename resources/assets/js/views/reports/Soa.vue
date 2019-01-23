@@ -174,7 +174,7 @@
                                     <td style="text-align: right">-{{ formatNumber(billing.wtax_percent) }}%</td>
                                     <td></td>
                                     <td style="text-align: right">({{ formatNumber(billing.wtax_amount) }})</td>
-                                    <td style="text-align: right">({{ formatNumber(billing.contract_discounted_rent * (billing.wtax_percent / 100)) }})</td>
+                                    <td style="text-align: right">({{ formatNumber(billing.total_discounted_rent * (billing.wtax_percent / 100)) }})</td>
                                 </tr>
                                  <tr>
                                     <td></td>
@@ -463,7 +463,7 @@ export default {
             //fixed rental
             this.total_fixed_charges = Number(this.billing.total_amount_due)
             //discounted rental
-            this.total_discounted_charges = Number(this.billing.contract_discounted_rent) + Number(this.billing.total_util_charges) + Number(this.billing.total_misc_charges) + Number(this.billing.total_othr_charges) + Number(this.billing.discounted_vatable_amount * (this.billing.vat_percent / 100)) - Number(this.billing.contract_discounted_rent * (this.billing.wtax_percent / 100)) + Number(this.total_adjustment_in) - Number(this.total_adjustment_out)
+            this.total_discounted_charges = Number(this.billing.discounted_total_amount_due)
 
             //total amount due
             //fixed rental
