@@ -466,7 +466,7 @@ class BillingsController extends Controller
                                 ->where('is_deleted', 0)
                                 // ->where('b_payment_info.is_canceled', 0)
                                 ->groupBy('billing_id')
-                                ->havingRaw('outstanding_balance != 0')
+                                ->havingRaw('outstanding_balance >= 0.9')
                                 ->get();
 
         return ( new Reference( $billings) )

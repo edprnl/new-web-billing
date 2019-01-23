@@ -912,6 +912,7 @@ export default {
             var totalAmountPaid = 0
             this.tables.payment_details.items.forEach(billing => {
                 billing.checker = 0
+                
                 if(Number(billing.outstanding_balance).toFixed(2) < (Number(billing.discount) + Number(billing.amount_paid))){
                     billing.checker = 1
                     this.$notify({
@@ -924,7 +925,14 @@ export default {
                 }
                 totalAmountPaid += billing.amount_paid
             })
-            var total = (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)) - Number(this.forms.payment.fields.amount)
+            // console.log(totalAmountPaid)
+            // console.log(this.carried_advance)
+            // console.log(this.forms.payment.fields.advance)
+            // console.log(this.forms.payment.fields.amount)
+
+            var total = Number(this.forms.payment.fields.amount) - 
+            (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)) 
+
             if(total >= 0 && total <= 0.09){
                 return true
             }
