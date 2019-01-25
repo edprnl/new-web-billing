@@ -274,19 +274,19 @@
                                                 <b-form-group>
                                                     <b-row>
                                                         <b-col lg=4>
-                                                            <label class="col-form-label">Check Type : </label>
+                                                            <label class="col-form-label">Bank : </label>
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <select2
                                                                 ref="check_type_id"
                                                                 :allowClear="false"
-                                                                :placeholder="'Select Check Type'"
+                                                                :placeholder="'Select Bank'"
                                                                 v-model="forms.payment.fields.check_type_id"
                                                                 :disabled="forms.payment.fields.payment_type == 1 ? false : true"
                                                                 :reference="'checktype'"
                                                                 @input="isOptionCreating"
                                                             >
-                                                                <option value="-1">Create New Check Type</option>
+                                                                <option value="-1">Create New Bank</option>
                                                                 <option v-for="check in options.check_types.items" :key="check.check_type_id" :value="check.check_type_id">{{check.check_type_desc}}</option>
                                                             </select2>
                                                         </b-col>

@@ -22,7 +22,7 @@
                         <table style="width: 100%;" >
                             <tbody>
                                 <tr>
-                                    <td style="width: 23%">Receive From</td>
+                                    <td style="width: 23%">Received From</td>
                                     <td style="width: 2%">:</td>
                                     <td style="width: 75%">{{payments.trade_name}}</td>
                                 </tr>
@@ -85,7 +85,7 @@
                             <div style="display: inline-block; width: 50px"></div>
                             <div style="display: inline-block; border: 1px solid gray; width: 43%">
                                 <div style="padding: 5px">For Check Only</div>
-                                <div style="padding: 5px">Check : <span v-if="payments.payment_type==1">{{payments.check_type_desc}}</span></div>
+                                <div style="padding: 5px">Bank : <span v-if="payments.payment_type==1">{{payments.check_type_desc}}</span></div>
                                 <div style="padding: 5px"><span>Check No : </span><span v-if="payments.payment_type==1">{{payments.check_no}}</span></div>
                                 <div style="padding: 5px">Check Date : <span v-if="payments.payment_type==1">{{moment(payments.check_date, 'MMMM DD, YYYY')}}</span></div>
                             </div>

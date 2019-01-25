@@ -186,10 +186,15 @@ class PaymentsController extends Controller
         $payments = PaymentInfo::select(
                                 'transaction_no',
                                 'reference_no',
+                                'payment_type',
                                 'amount_paid as payment',
                                 DB::raw('"Payment" as trans_type'),
-                                'payment_date'
+                                'payment_date',
+                                'ct.check_type_desc',
+                                'check_no',
+                                'check_date'
         )
+                                ->leftJoin('b_refchecktype as ct','ct.check_type_id', '=', 'b_payment_info.check_type_id')
                                 ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-9", INTERVAL -1 MONTH)) AND  DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-28", INTERVAL -1 MONTH))')
                                 ->where('is_canceled', 0)
                                 ->where('tenant_id', $tenant_id)
@@ -198,10 +203,15 @@ class PaymentsController extends Controller
         $discounts = PaymentInfo::select(
                                 'transaction_no',
                                 'reference_no',
+                                'payment_type',
                                 'discount as payment',
                                 DB::raw('"Discount" as trans_type'),
-                                'payment_date'
+                                'payment_date',
+                                'ct.check_type_desc',
+                                'check_no',
+                                'check_date'
         )
+                                ->leftJoin('b_refchecktype as ct','ct.check_type_id', '=', 'b_payment_info.check_type_id')
                                 ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-9", INTERVAL -1 MONTH)) AND  DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-28", INTERVAL -1 MONTH))')
                                 ->where('is_canceled', 0)
                                 ->where('tenant_id', $tenant_id)

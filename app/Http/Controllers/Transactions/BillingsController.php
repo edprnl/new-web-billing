@@ -76,6 +76,12 @@ class BillingsController extends Controller
         $billing_info->discounted_vatable_amount = $request->input('discounted_vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
+        $billing_info->interested_amount = $request->input('interested_amount');
+        $billing_info->interest_percent = $request->input('interest_percent');
+        $billing_info->interest_total = $request->input('interest_total');
+        $billing_info->penaltied_amount = $request->input('penaltied_amount');
+        $billing_info->penalty_percent = $request->input('penalty_percent');
+        $billing_info->penalty_total = $request->input('penalty_total');
         $billing_info->discounted_total_amount_due = $request->input('discounted_total_amount_due');
         $billing_info->total_amount_due = $request->input('total_amount_due');
         $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
@@ -305,6 +311,12 @@ class BillingsController extends Controller
         $billing_info->discounted_vatable_amount = $request->input('discounted_vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
+        $billing_info->interested_amount = $request->input('interested_amount');
+        $billing_info->interest_percent = $request->input('interest_percent');
+        $billing_info->interest_total = $request->input('interest_total');
+        $billing_info->penaltied_amount = $request->input('penaltied_amount');
+        $billing_info->penalty_percent = $request->input('penalty_percent');
+        $billing_info->penalty_total = $request->input('penalty_total');
         $billing_info->total_amount_due = $request->input('total_amount_due');
         $billing_info->discounted_total_amount_due = $request->input('discounted_total_amount_due');
         $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
