@@ -1205,8 +1205,10 @@ export default {
             counter: 0,
             charge_type: null,
             previous_balance: 0,
+            previous_sub_total: 0,
             prev_previous_balance: 0,
             late_payment: 0,
+            payment_interest: 0,
             billing_id: null,
             is_check_all: 0,
             row: []
@@ -1249,6 +1251,7 @@ export default {
         async setUpdate(data){
             this.row = data.item
             this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
+            this.getPrevSubTotal(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.getPrevPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.filterOptionsList('contracts', data.item.tenant_id)
             await this.$http.get('/api/billingSC/sc/'+ data.item.billing_id,{
@@ -1352,6 +1355,21 @@ export default {
                 return console.log(error)
             })
         },
+        getPrevSubTotal(month_id, app_year, tenant_id){
+            this.$http.get('api/billing/sub_total/'+month_id+'/'+app_year+'/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.previous_sub_total = res[0]['subTotal'];
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
         getPrevPrevBalance(month_id, app_year, tenant_id){
             if(month_id == 1){
                 month_id = 13
@@ -1365,6 +1383,21 @@ export default {
             .then((response) => {
                 const res = response.data
                 this.prev_previous_balance = res[0]['prevBalance'];
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
+        getPaymentInterest(month_id, app_year, tenant_id){
+            this.$http.get('api/payment/interest/'+month_id+'/'+app_year+'/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.payment_interest = res.data[0].payment
             })
             .catch(error => {
                 if (!error.response) 
@@ -1420,8 +1453,10 @@ export default {
                 this.forms.billing.fields.tenant_code = tenant.tenant_code
                 this.filterOptionsList('contracts', tenant.tenant_id)
                 this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
+                this.getPrevSubTotal(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getPrevPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getLatePayment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
+                this.getPaymentInterest(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getAdjustment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
             }
         },
@@ -1451,13 +1486,16 @@ export default {
                         this.tables.miscellaneous.items = res.misc_charges
                         this.tables.other.items = res.othr_charges
 
-                        if(this.prev_previous_balance > 0){
-                            this.forms.billing.fields.interested_amount = this.prev_previous_balance
-                        }
-                        var penalty_amount = Number(this.late_payment) + (Number(this.previous_balance)- Number(this.prev_previous_balance))
-
-                        if(penalty_amount > 0){
-                            this.forms.billing.fields.penaltied_amount = penalty_amount
+                        var balance = Number(this.previous_balance) + Number(this.late_payment)
+                        if(balance > 0){
+                            console.log(balance)
+                            if(balance > this.previous_sub_total){
+                                this.forms.billing.fields.penaltied_amount = this.previous_sub_total
+                            }
+                            else{
+                                this.forms.billing.fields.penaltied_amount = balance
+                            }
+                            this.forms.billing.fields.interested_amount = Math.max(0, (Number(this.prev_previous_balance)) - Number(this.payment_interest))
                         }
                         this.counter = this.tables.schedules.items.length
                     })
@@ -1629,12 +1667,12 @@ export default {
         },
 
         getInterestTotal: function(){
-            this.forms.billing.fields.interest_total = this.forms.billing.fields.interested_amount * (this.forms.billing.fields.interest_percent / 100)
+            this.forms.billing.fields.interest_total = Number(this.forms.billing.fields.interested_amount * (this.forms.billing.fields.interest_percent / 100)).toFixed(2)
             return this.forms.billing.fields.interest_total
         },
 
         getPenaltyTotal: function(){
-            this.forms.billing.fields.penalty_total = this.forms.billing.fields.penaltied_amount * (this.forms.billing.fields.penalty_percent / 100)
+            this.forms.billing.fields.penalty_total = Number(this.forms.billing.fields.penaltied_amount * (this.forms.billing.fields.penalty_percent / 100)).toFixed(2)
             return this.forms.billing.fields.penalty_total
         },
 

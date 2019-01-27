@@ -346,6 +346,37 @@
                                             </b-col>
                                         </b-row>
                                     </b-tab>
+                                    <b-tab title="SOA Notes">
+                                        <b-row>
+                                            <b-col  sm="12">
+                                                <b-button class="float-right mb-2" variant="primary" v-if="this.tables.notes.items.length == 0" @click="addNotes()">
+                                                        <i class="fa fa-plus-circle"></i> Add Notes
+                                                </b-button>
+                                            </b-col>
+                                        </b-row>
+                                        <b-table 
+                                            small bordered
+                                            :fields="tables.notes.fields"
+                                            :items.sync="tables.notes.items"
+                                            show-empty>
+                                            <template slot="notes" slot-scope="data">
+                                                <b-form-input 
+                                                    id="notes"
+                                                    placeholder="Notes"
+                                                    v-model="data.item.notes">
+                                                </b-form-input>
+                                            </template>
+                                            <template slot="action" slot-scope="data">
+                                                <b-btn :size="'sm'" variant="primary" @click="addNotes()">
+                                                    <i class="fa fa-plus-circle"></i>
+                                                </b-btn>
+
+                                                <b-btn :size="'sm'" variant="danger" @click="removeNotes(data.index)">
+                                                    <i class="fa fa-times-circle"></i>
+                                                </b-btn>
+                                            </template>
+                                        </b-table>
+                                    </b-tab>
                                 </b-tabs>
                             </b-col>
                             
@@ -429,18 +460,53 @@ export default {
                     },
                 }
             },
+            tables: {
+                notes: {
+                    fields: [
+                        {
+                            key: 'notes',
+                            label: 'Notes'
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                        }
+                    ],
+                    items: []
+                },
+            },
             image: new FormData,
             row: []
         }
     },
     methods:{
+        addNotes(){
+            this.tables.notes.items.push({
+                contract_schedule_notes:''
+            })
+        },
+        removeNotes(index){
+            this.tables.notes.items.splice(index, 1)
+        },
         onCompanySettingEntry () {
-            if(this.entryMode == 'Add'){
-                this.createEntity('user', true, 'users')
-            }
-            else{
-                this.updateEntity('companysetting', 'company_id', true, this.row, true)
-            }
+            this.updateEntity('companysetting', 'company_id', true, this.row, true)
+            this.insertNotes()
+        },
+        insertNotes(){
+            this.$http.post('/api/companysetting/notes', this.tables.notes, {
+                headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token'),
+                  }
+            })
+            .then((response) => {
+                return response
+            })
+            .catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
         },
         onUserDelete(){
             this.deleteEntity('user', this.id, true, 'users', 'id')
@@ -475,6 +541,18 @@ export default {
         this.fillOptionsList('accounts')
         setTimeout(function(){
             this.fillEntityForm('companysetting', 1);
+            this.$http.get('/api/companysettingnotes', {
+                headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token'),
+                  }
+            })
+            .then((response) => {
+                this.tables.notes.items = response.data.data
+            })
+            .catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
         }.bind(this), 1)
     },
   }

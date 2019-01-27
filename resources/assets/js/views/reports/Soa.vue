@@ -252,8 +252,9 @@
                         <div style="width: 100%">
                             * NOTE
                             <ol>
-                                <li>Have cheque payment be addressed to SMCT Realty & Holding Co., Inc.</li>
-                                <li>Payments shall be made at the Mall Administration Office without demand.</li>
+                                <li v-for="note in notes">
+                                    {{note.notes}}
+                                </li>
                             </ol> 
                         </div>
                         <table style="width: 100%">
@@ -312,6 +313,7 @@ export default {
             previous_balance: null,
             as_of_balance: null,
             company_info: [],
+            notes: [],
             options: {
                 months: {
                     items: []
@@ -354,6 +356,20 @@ export default {
         .then((response) => {
             const res = response.data
             this.company_info = res.data
+        })
+        .catch(error => {
+            if (!error.response) return
+            console.log(error)
+        })
+
+        await this.$http.get('/api/companysettingnotes', {
+            headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+        })
+        .then((response) => {
+            const res = response.data
+            this.notes = res.data
         })
         .catch(error => {
             if (!error.response) return
@@ -484,7 +500,7 @@ export default {
             //total amount due
             //fixed rental
             this.total_outstanding_balance = Number(this.previous_balance) + Number(this.billing.interest_total) + Number(this.billing.penalty_total)
-            this.total_fixed_amount_due = Number(this.total_outstanding_balance) + Number(this.total_fixed_charges)
+            this.total_fixed_amount_due = Number(this.previous_balance) + Number(this.total_fixed_charges)
             //discounted rental
             this.total_discounted_amounted_due = Number(this.previous_balance) + Number(this.total_discounted_charges)
         }

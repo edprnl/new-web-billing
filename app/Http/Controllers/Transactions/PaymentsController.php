@@ -224,11 +224,27 @@ class PaymentsController extends Controller
             ->setStatusCode(200);
     }
 
-    public function latePayment($month_id, $app_year, $tenant_id){
+    public function latePayment($month_id, $app_year, $tenant_id)
+    {
         return DB::select("select GetLatePayment(".$month_id.", ".$app_year.", ".$tenant_id.") as latePayment");
     }
 
-    public function getAdvance($tenant_id){
+    public function getPaymentsForInterest($month_id, $app_year, $tenant_id)
+    {
+        $payments = PaymentInfo::select(
+                                DB::raw('IFNULL(SUM(amount_paid), 0) + IFNULL(SUM(discount), 0) as payment')
+                    )
+                                ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-9", INTERVAL -1 MONTH)) AND  DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-28", INTERVAL -1 MONTH))')
+                                ->where('is_canceled', 0)
+                                ->where('tenant_id', $tenant_id)
+                                ->get();
+        return ( new Reference( $payments ) )
+                    ->response()
+                    ->setStatusCode(200);
+    }
+
+    public function getAdvance($tenant_id)
+    {
         $advance = PaymentInfo::where('tenant_id', $tenant_id)
                                 ->where('is_canceled', 0)
                                 ->orderBy('payment_date', 'desc')

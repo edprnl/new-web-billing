@@ -31,7 +31,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 }); 
 Route::middleware('auth:api')->group(function () {
-
    //---------------------------------- REFERENCES -----------------------------------------------
    //DASHBOARD
    Route::get('dashboard/index/{payment_type}', 'References\DashboardController@index');
@@ -204,8 +203,10 @@ Route::middleware('auth:api')->group(function () {
     //COMPANY
     //List company
     Route::get('companysettings', 'Utilities\CompanySettingsController@index');
+    Route::post('companysetting/notes', 'Utilities\CompanySettingsController@insertNotes');
     //List single company
     Route::get('companysetting/{id}', 'Utilities\CompanySettingsController@show');
+    Route::get('companysettingnotes', 'Utilities\CompanySettingsController@showNotes');
     //Create new company
     Route::post('companysetting', 'Utilities\CompanySettingsController@create');
     //Update company
@@ -246,6 +247,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('billing/{id}', 'Transactions\BillingsController@show');
     Route::get('billing/{id}/{soa}', 'Transactions\BillingsController@show');
     Route::get('billing/{month_id}/{app_year}/{tenant_id}', 'Transactions\BillingsController@prevBalance');
+    Route::get('billing/sub_total/{month_id}/{app_year}/{tenant_id}', 'Transactions\BillingsController@prevSubTotal');
     Route::get('billing/as_of/{month_id}/{app_year}/{tenant_id}', 'Transactions\BillingsController@asOfBalance');
     //Create new contract
     Route::post('billing', 'Transactions\BillingsController@create');
@@ -263,6 +265,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('payments/{date_from}/{date_to}', 'Transactions\PaymentsController@index');
 
     Route::get('payments/{tenant_id}/{month_id}/{app_year}', 'Transactions\PaymentsController@getPayments');
+    Route::get('payment/interest/{tenant_id}/{month_id}/{app_year}', 'Transactions\PaymentsController@getPaymentsForInterest');
     //List single payment
     Route::get('payment/{id}', 'Transactions\PaymentsController@show');
     Route::get('payment/words/{amount}', 'Transactions\PaymentsController@convertDecimalToWords');
