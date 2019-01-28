@@ -54,9 +54,9 @@ import adjustment from '@/views/transactions/Adjustment'
 //Views - Reports
 import soa from '@/views/reports/Soa'
 import ack_receipt from '@/views/reports/AckReceipt'
+import tenant_per_sqm_rate from '@/views/reports/TenantsPerSqmRate'
 
 import store from '../store'
-import NProgress from 'nprogress';
 Vue.use(Router)
 
 const router = new Router({
@@ -189,6 +189,12 @@ const router = new Router({
               path: 'ack_receipt',
               name: 'Acknowledgement Receipt',
               component: ack_receipt,
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'tenant_per_sqm_rate',
+              name: 'Tenant Per Sqm Rate',
+              component: tenant_per_sqm_rate,
               meta: { requiresAuth: true }
             }
           ]

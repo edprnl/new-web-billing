@@ -304,6 +304,9 @@ Route::middleware('auth:api')->group(function () {
 
     //---------------------------------- TRANSACTIONS ---------------------------------------------
 
+    //---------------------------------- REPORTS --------------------------------------------------
+    Route::get('reports/tenantspersqmrate/{id}', 'Reports\ReportsController@tenantsPerSquareMeter');
+    //---------------------------------- REPORTS --------------------------------------------------
     //---------------------------------- FILE UPLOAD ----------------------------------------------
     Route::post('upload', function(Request $request){
         if ($request->file->isValid()) {
