@@ -101,7 +101,6 @@
                 <label class="text-uppercase">Username</label>
                 <b-form-input 
                   v-model="login.username"
-                  :state="login.success"
                   type="text" 
                   placeholder="Username">
                 </b-form-input>
@@ -116,14 +115,16 @@
                 <label for="exampleInputPassword1" class="text-uppercase">Password</label>
                 <b-form-input 
                   v-model="login.password"
-                  :state="login.success"
                   type="password" 
                   placeholder="Password">
                 </b-form-input>
               </b-form-group>
               <b-row>
                 <b-col>
-                  <b-btn type="submit" class="float-right" variant="primary" px-4>Login</b-btn>
+                  <b-btn :disabled="login.is_saving" type="submit" class="float-right" variant="primary" px-4>
+                    <icon v-if="login.is_saving" name="sync" spin></icon>
+                    Login
+                  </b-btn>
                 </b-col>
               </b-row>
             </b-form>
@@ -142,13 +143,14 @@ export default {
       login: {
         username: null,
         password: null,
-        success: null,
+        is_saving: false
       }
     }
   },
   methods: {
     authLogin(){
-       this.$http.post('api/auth/login', { 
+      this.login.is_saving = true
+      this.$http.post('api/auth/login', { 
                     username: this.login.username,
                     password: this.login.password
                 }).then(response => {
@@ -164,10 +166,15 @@ export default {
                     setTimeout(function(){
                       this.$router.push({ name: 'Dashboard' })
                     }.bind(this), 1000)
-                    
+                    this.login.is_saving = false
        }).catch(err => {
-            console.log(err)
-            this.login.success = false
+            this.$notify({
+              type: 'error',
+              group: 'notification',
+              title: 'Error!',
+              text: 'Incorrect username or password.'
+            })
+            this.login.is_saving = false
        });
     }
   },

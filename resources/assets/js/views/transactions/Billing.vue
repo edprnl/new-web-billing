@@ -1488,14 +1488,13 @@ export default {
 
                         var balance = Number(this.previous_balance) + Number(this.late_payment)
                         if(balance > 0){
-                            console.log(balance)
                             if(balance > this.previous_sub_total){
                                 this.forms.billing.fields.penaltied_amount = this.previous_sub_total
                             }
                             else{
                                 this.forms.billing.fields.penaltied_amount = balance
                             }
-                            this.forms.billing.fields.interested_amount = Math.max(0, (Number(this.prev_previous_balance)) - Number(this.payment_interest))
+                            this.forms.billing.fields.interested_amount = Math.max(0, (Number(this.prev_previous_balance)) - (Number(this.payment_interest)) - Number(this.late_payment))
                         }
                         this.counter = this.tables.schedules.items.length
                     })
