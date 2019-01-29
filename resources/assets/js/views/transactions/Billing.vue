@@ -1346,15 +1346,15 @@ export default {
                         this.tables.miscellaneous.items = res.misc_charges
                         this.tables.other.items = res.othr_charges
 
-                        if(this.previous_balance > 0){
-                            this.tables.other.items.push({
-                                charge_id: 1,
-                                charge_desc: 'Interest 3%',
-                                contract_rate: 0.03,
-                                contract_default_reading: this.previous_balance,
-                                contract_is_vatted: 0,
-                                contract_notes:''
-                            })
+                        var balance = Number(this.previous_balance) + Number(this.late_payment)
+                        if(balance > 0){
+                            if(balance > this.previous_sub_total){
+                                this.forms.billing.fields.penaltied_amount = this.previous_sub_total
+                            }
+                            else{
+                                this.forms.billing.fields.penaltied_amount = balance
+                            }
+                            this.forms.billing.fields.interested_amount = Math.max(0, (Number(this.prev_previous_balance)) - (Number(this.payment_interest)) - Number(this.late_payment))
                         }
                         if(this.late_payment > 0){
                             this.tables.other.items.push({
