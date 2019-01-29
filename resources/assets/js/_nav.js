@@ -110,18 +110,18 @@ export default {
         }
       ]
     },
-    {
-      name: 'Reports',
-      url: '/reports',
-      icon: 'icon-star',
-      children:[
-        {
-          name: 'Tenant Per Sqm Rate',
-          url: '/reports/tenant_per_sqm_rate',
-          //icon: 'fa-building'
-        },
-      ]
-    },
+    // {
+    //   name: 'Reports',
+    //   url: '/reports',
+    //   icon: 'icon-star',
+    //   children:[
+    //     {
+    //       name: 'Tenant Per Sqm Rate',
+    //       url: '/reports/tenant_per_sqm_rate',
+    //       //icon: 'fa-building'
+    //     },
+    //   ]
+    // },
     // {
     //   name: 'Components',
     //   url: '/components/buttons',
