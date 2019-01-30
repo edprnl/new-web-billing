@@ -539,7 +539,7 @@
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Interest :</label>
                                         </b-row>
-                                        <b-row>
+                                        <b-row class="mb-1"> 
                                             <label class="col-sm-5 text-right"></label>
                                             <b-col sm="7">
                                                 <vue-autonumeric 
@@ -566,7 +566,7 @@
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Penalty :</label>
                                         </b-row>
-                                        <b-row>
+                                        <b-row class="mb-1">
                                             <label class="col-sm-5 text-right"></label>
                                             <b-col sm="7">
                                                 <vue-autonumeric 

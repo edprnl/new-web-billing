@@ -287,70 +287,103 @@
                                                 </b-col>
                                                 <b-col lg="4">
                                                     <b-form-group>
-                                                        <label>* Basic Rental </label>
-                                                        <vue-autonumeric 
-                                                            ref="contract_fixed_rent"
-                                                            id="fixed_rent"
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.contract_fixed_rent" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
+                                                        <b-row>
+                                                            <b-col lg="6">
+                                                                <label>* Basic Rental </label>
+                                                                <vue-autonumeric 
+                                                                    ref="contract_fixed_rent"
+                                                                    id="fixed_rent"
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.contract_fixed_rent" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                            <b-col lg="6">
+                                                                <label>Discounted Rental </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.contract_discounted_rent" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                        </b-row>
                                                     </b-form-group>
                                                     <b-form-group>
-                                                        <label>Discounted Rental </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.contract_discounted_rent" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
+                                                        <b-row>
+                                                            <b-col lg="6">
+                                                                <label>Advance Rental </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.contract_advance_rent" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                            <b-col lg="6">
+                                                                <label>Security Deposit </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.security_deposit" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                        </b-row>
                                                     </b-form-group>
                                                     <b-form-group>
-                                                        <label>Advance Rental </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.contract_advance_rent" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
+                                                        <b-row>
+                                                            <b-col lg="6">
+                                                                <label>Electric Meter Deposit </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.power_meter_deposit" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                            <b-col lg="6">
+                                                                <label>Water Meter Deposit </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.water_meter_deposit" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                        </b-row>
                                                     </b-form-group>
                                                     <b-form-group>
-                                                        <label>Security Deposit </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.security_deposit" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
+                                                        <b-row>
+                                                            <b-col lg="6">
+                                                                <label>Construction Deposit </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.construction_deposit" 
+                                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric> 
+                                                            </b-col>
+                                                            <b-col lg="6">
+                                                                <label>Escalation % </label>
+                                                                <vue-autonumeric 
+                                                                    :class="'form-control text-right'" 
+                                                                    v-model="forms.contract.fields.contract_escalation_percent" 
+                                                                    :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                                </vue-autonumeric>
+                                                            </b-col>
+                                                        </b-row>
                                                     </b-form-group>
                                                     <b-form-group>
-                                                        <label>Electric Meter Deposit </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.power_meter_deposit" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
+                                                        <label>Escalation Notes </label>
+                                                        <b-form-input
+                                                            v-model="forms.contract.fields.escalation_notes"
+                                                            type="text"
+                                                            placeholder="Escalation Notes">
+                                                        </b-form-input>
                                                     </b-form-group>
                                                     <b-form-group>
-                                                        <label>Water Meter Deposit </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.water_meter_deposit" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
-                                                    </b-form-group>
-                                                    <b-form-group>
-                                                        <label>Construction Deposit </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.construction_deposit" 
-                                                            :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric> 
-                                                    </b-form-group>
-                                                    <b-form-group>
-                                                        <label>Escalation % </label>
-                                                        <vue-autonumeric 
-                                                            :class="'form-control text-right'" 
-                                                            v-model="forms.contract.fields.contract_escalation_percent" 
-                                                            :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                        </vue-autonumeric>
+                                                        <label>Remarks </label>
+                                                        <b-form-textarea
+                                                            v-model="forms.contract.fields.contract_remarks"
+                                                            type="text"
+                                                            :rows="2"
+                                                            placeholder="Remarks">
+                                                        </b-form-textarea>
                                                     </b-form-group>
                                                 </b-col>
                                             </b-row>
@@ -1014,6 +1047,8 @@ export default {
                         power_meter_deposit: 0,
                         water_meter_deposit: 0,
                         construction_deposit: 0,
+                        escalation_notes: null,
+                        contract_remarks: null,
                         schedules: [],
                         utilities: [],
                         miscellaneous: [],

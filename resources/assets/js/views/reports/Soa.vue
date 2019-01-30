@@ -485,9 +485,9 @@ export default {
         this.d = new Printd()
 
         const { contentWindow } = this.d.getIFrame()
-        // contentWindow.addEventListener(
-        //     'afterprint', () => window.close()
-        // )
+        contentWindow.addEventListener(
+            'afterprint', () => window.close()
+        )
     },
     methods: {
         computeAll(){

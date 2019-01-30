@@ -1,4 +1,4 @@
-<style >
+<style>
     .info-box {
         display: block;
         min-height: 90px;

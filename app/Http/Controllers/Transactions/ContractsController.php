@@ -211,6 +211,8 @@ class ContractsController extends Controller
         $contract_info->water_meter_deposit = $request->input('water_meter_deposit');
         $contract_info->construction_deposit = $request->input('construction_deposit');
         $contract_info->power_meter_deposit = $request->input('power_meter_deposit');
+        $contract_info->escalation_notes = $request->input('escalation_notes');
+        $contract_info->contract_remarks = $request->input('contract_remarks');
         $contract_info->security_deposit = $request->input('security_deposit');
         $contract_info->contract_escalation_percent = $request->input('contract_escalation_percent');
         $contract_info->contract_floor_area = $request->input('contract_floor_area');
@@ -398,6 +400,8 @@ class ContractsController extends Controller
         $contract_info->water_meter_deposit = $request->input('water_meter_deposit');
         $contract_info->construction_deposit = $request->input('construction_deposit');
         $contract_info->power_meter_deposit = $request->input('power_meter_deposit');
+        $contract_info->escalation_notes = $request->input('escalation_notes');
+        $contract_info->contract_remarks = $request->input('contract_remarks');
         $contract_info->security_deposit = $request->input('security_deposit');
         $contract_info->contract_escalation_percent = $request->input('contract_escalation_percent');
         $contract_info->contract_floor_area = $request->input('contract_floor_area');

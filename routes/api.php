@@ -306,6 +306,7 @@ Route::middleware('auth:api')->group(function () {
 
     //---------------------------------- REPORTS --------------------------------------------------
     Route::get('reports/tenantspersqmrate/{id}', 'Reports\ReportsController@tenantsPerSquareMeter');
+    Route::get('reports/contractsmasterlist/{id}/{type}', 'Reports\ReportsController@contractsMasterList');
     //---------------------------------- REPORTS --------------------------------------------------
     //---------------------------------- FILE UPLOAD ----------------------------------------------
     Route::post('upload', function(Request $request){

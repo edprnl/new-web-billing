@@ -55,6 +55,7 @@ import adjustment from '@/views/transactions/Adjustment'
 import soa from '@/views/reports/Soa'
 import ack_receipt from '@/views/reports/AckReceipt'
 import tenant_per_sqm_rate from '@/views/reports/TenantsPerSqmRate'
+import contracts_master_list from '@/views/reports/ContractsMasterList'
 
 import store from '../store'
 Vue.use(Router)
@@ -195,6 +196,12 @@ const router = new Router({
               path: 'tenant_per_sqm_rate',
               name: 'Tenant Per Sqm Rate',
               component: tenant_per_sqm_rate,
+              meta: { requiresAuth: true }
+            },
+            {
+              path: 'contracts_master_list',
+              name: 'Contracts Master List',
+              component: contracts_master_list,
               meta: { requiresAuth: true }
             }
           ]

@@ -12,4 +12,9 @@ class ReportsController extends Controller
     {
         return DB::select('CALL tenants_per_sqm_rate('.$location_id.')');
     }
+
+    public function contractsMasterList($order_by, $order_type)
+    {
+        return DB::select('CALL contracts_master_list("'.$order_by.'","'.$order_type.'")');
+    }
 }

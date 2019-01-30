@@ -59,15 +59,16 @@
                                     <template slot="row-details" slot-scope="row">
                                         <b-list-group>
                                             <b-list-group-item v-for="module_group in modules['module_groups']" :key="module_group.module_group">
-                                                {{module_group.module_group}}
-                                                <b-list-group class="mt-2">
-                                                    <b-list-group-item v-for="module in filterModules(module_group.module_group)" :key="module.module_id" v-b-toggle="module.module_id + '-' + row.item.user_group_id">
-                                                        {{module.module_name}}
-                                                        <b-collapse :id="module.module_id + '-' + row.item.user_group_id">
+                                                <h4>{{module_group.module_group}}</h4>
+                                                <b-list-group class="mt-2 pl-5 pr-5">
+                                                    <b-list-group-item v-for="module in filterModules(module_group.module_group)" :key="module.module_id">
+                                                        <h5 v-b-toggle="module.module_id + '-' + row.item.user_group_id">{{module.module_name}}</h5>
+                                                        <b-collapse :id="module.module_id + '-' + row.item.user_group_id" accordion="my-accordion" role="tabpanel">
                                                             <b-list-group class="mt-2">
                                                                 <b-list-group-item v-for="right in filterModuleRights(module.module_id)" :key="right.module_right_id">
-                                                                    {{right.right_desc}}
-                                                                    <c-switch type="text" variant="primary" on="1" off="Off" :pill="true" :checked="true"/>
+                                                                    <h6>{{right.right_desc}}
+                                                                    <span class="float-right"><c-switch type="text" variant="primary" on="On" off="Off" :pill="true" :checked="false"/></span>
+                                                                    </h6>
                                                                 </b-list-group-item>
                                                             </b-list-group>
                                                         </b-collapse>
