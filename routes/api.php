@@ -17,11 +17,11 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 
-], function ($router) {
+], function () {
 
     Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
+    Route::get('logout', 'AuthController@logout');
+    Route::get('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 
 });
@@ -191,6 +191,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('usergroup/{id}', 'Utilities\UserGroupsController@show');
     //Create new user group
     Route::post('usergroup', 'Utilities\UserGroupsController@create');
+    Route::post('usergroup/rights/{id}', 'Utilities\UserGroupsController@createGroupRights');
     //Update user group
     Route::put('usergroup/{id}', 'Utilities\UserGroupsController@update');
     //Delete user group

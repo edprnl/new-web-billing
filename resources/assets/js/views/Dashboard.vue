@@ -151,15 +151,8 @@
                                     :current-page="paginations.payments.currentPage"
                                     :per-page="paginations.payments.perPage"
                                     striped hover small bordered show-empty
+                                    responsive
                                 >
-                                    <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data.item.payment_id)">
-                                            <i class="fa fa-print"></i>
-                                        </b-btn>
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
-                                            <i class="fa fa-trash"></i>
-                                        </b-btn>
-                                    </template>
                                     
                                 </b-table>
                                 <b-pagination
@@ -269,20 +262,13 @@ export default {
             })
             .then((response) => {  
                 var data = response.data
-                console.log(response)
                 var dArray = []
                 data.forEach(element => {
                     dArray.push(element.amount)
                 });
                 this.line_data = dArray
             }).catch(error => {
-                this.forms.payment.isSaving = false
-                if (!error.response) return
-                    const errors = error.response.data.errors
-                for (var key in errors) {
-                    this.forms.payment.states[key] = false
-                    this.forms.payment.errors[key] =  errors[key]
-                }
+                console.log(error)
             })
         }
     },
@@ -295,21 +281,16 @@ export default {
         })
         .then((response) => {  
             var data = response.data
-            this.no_of_tenants = data.tenants[0].no_of_tenants
-            this.no_of_contracts = data.contracts[0].no_of_contracts
-            var dArray = []
-            data.payment_line.forEach(element => {
-                dArray.push(element.amount)
-            });
-            this.line_data = dArray
+                this.no_of_tenants = data.tenants[0].no_of_tenants
+                this.no_of_contracts = data.contracts[0].no_of_contracts
+                var dArray = []
+                data.payment_line.forEach(element => {
+                    dArray.push(element.amount)
+                });
+                this.line_data = dArray
+            
         }).catch(error => {
-            this.forms.payment.isSaving = false
-            if (!error.response) return
-                const errors = error.response.data.errors
-            for (var key in errors) {
-                this.forms.payment.states[key] = false
-                this.forms.payment.errors[key] =  errors[key]
-            }
+            console.log(error)
         })
     }
 }

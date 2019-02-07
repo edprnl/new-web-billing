@@ -35,6 +35,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    responsive
                                     :filter="filters.users.criteria"
                                     :fields="tables.users.fields"
                                     :items.sync="tables.users.items"

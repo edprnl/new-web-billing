@@ -34,6 +34,7 @@
                         <b-row> <!-- row table -->
                             <b-col sm="12">
                                 <b-table  
+                                    responsive
                                     :filter="filters.natureofbusinesses.criteria"
                                     :fields="tables.natureofbusinesses.fields"
                                     :items.sync="tables.natureofbusinesses.items"

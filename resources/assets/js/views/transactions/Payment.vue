@@ -55,6 +55,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    responsive
                                     :filter="filters.payments.criteria"
                                     :fields="tables.payments.fields"
                                     :items.sync="tables.payments.items"
@@ -402,6 +403,7 @@
                                         </b-row>
                                     </b-form-group>
                                     <b-table 
+                                        responsive
                                         :fields="tables.payment_details.fields"
                                         :items.sync="tables.payment_details.items"
                                         striped hover small bordered show-empty
@@ -432,6 +434,7 @@
                                         </template>
                                     </b-table>
                                     <b-table 
+                                        responsive
                                         :fields="tables.payment_summary.fields"
                                         :items.sync="tables.payment_summary.items">
                                         <template slot="HEAD_outstanding_balance" slot-scope="data">

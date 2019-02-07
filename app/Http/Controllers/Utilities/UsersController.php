@@ -20,7 +20,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::where('is_deleted', 0)->get();                           
+        $users = User::where('is_deleted', 0)->get();
         return Reference::collection($users);
     }
 

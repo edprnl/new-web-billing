@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Utilities\GroupRights;
+use App\Http\Resources\Reference;
+use Session;
 
 class AuthController extends Controller
 {
@@ -71,11 +74,14 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $user = auth()->user();
+        $rights = GroupRights::select('right_code')->where('user_group_id', $user->user_group_id)->get();
+        session(['rights' => $rights]);
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 600,
-            'user' => $this->me(),
+            'user' => $user,
         ]);
     }
 }

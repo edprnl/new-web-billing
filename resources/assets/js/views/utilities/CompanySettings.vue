@@ -355,6 +355,7 @@
                                             </b-col>
                                         </b-row>
                                         <b-table 
+                                            responsive
                                             small bordered
                                             :fields="tables.notes.fields"
                                             :items.sync="tables.notes.items"

@@ -35,6 +35,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    responsive
                                     :filter="filters.usergroups.criteria"
                                     :fields="tables.usergroups.fields"
                                     :items.sync="tables.usergroups.items"
@@ -57,25 +58,28 @@
                                         </b-btn>
                                     </template>
                                     <template slot="row-details" slot-scope="row">
-                                        <b-list-group>
-                                            <b-list-group-item v-for="module_group in modules['module_groups']" :key="module_group.module_group">
-                                                <h4>{{module_group.module_group}}</h4>
-                                                <b-list-group class="mt-2 pl-5 pr-5">
-                                                    <b-list-group-item v-for="module in filterModules(module_group.module_group)" :key="module.module_id">
-                                                        <h5 v-b-toggle="module.module_id + '-' + row.item.user_group_id">{{module.module_name}}</h5>
-                                                        <b-collapse :id="module.module_id + '-' + row.item.user_group_id" accordion="my-accordion" role="tabpanel">
-                                                            <b-list-group class="mt-2">
-                                                                <b-list-group-item v-for="right in filterModuleRights(module.module_id)" :key="right.module_right_id">
-                                                                    <h6>{{right.right_desc}}
-                                                                    <span class="float-right"><c-switch type="text" variant="primary" on="On" off="Off" :pill="true" :checked="false"/></span>
-                                                                    </h6>
-                                                                </b-list-group-item>
-                                                            </b-list-group>
-                                                        </b-collapse>
-                                                    </b-list-group-item>
-                                                </b-list-group>
-                                            </b-list-group-item>
-                                        </b-list-group>
+                                        <b-form @submit.prevent="processRights(row.item.user_group_id)">
+                                            <b-list-group>
+                                                <b-list-group-item v-for="module_group in modules['module_groups']" :key="module_group.module_group">
+                                                    <h4>{{module_group.module_group}}</h4>
+                                                    <b-list-group class="mt-2 pl-5 pr-5">
+                                                        <b-list-group-item v-for="module in filterModules(module_group.module_group)" :key="module.module_id">
+                                                            <h5 v-b-toggle="module.module_id + '-' + row.item.user_group_id">{{module.module_name}}</h5>
+                                                            <b-collapse :id="module.module_id + '-' + row.item.user_group_id" accordion="my-accordion" role="tabpanel">
+                                                                <b-list-group class="mt-2">
+                                                                    <b-list-group-item v-for="right in filterModuleRights(module.module_id)" :key="right.module_right_id">
+                                                                        <h6>{{right.right_desc}}
+                                                                        <span class="float-right"><c-switch :ref="row.item.user_group_id + '-' + module.module_id + '-' + right.module_right_id" type="text" variant="primary" on="On" off="Off" :pill="true" :checked="true"/></span>
+                                                                        </h6>
+                                                                    </b-list-group-item>
+                                                                </b-list-group>
+                                                            </b-collapse>
+                                                        </b-list-group-item>
+                                                    </b-list-group>
+                                                </b-list-group-item>
+                                            </b-list-group>
+                                            <b-button type="submit">Save</b-button>
+                                        </b-form>
                                     </template>
                                     
                                 </b-table>
@@ -184,6 +188,11 @@ export default {
                         user_group: null,
                         user_group_desc: null,
                     }
+                },
+                userrights: {
+                    fields: {
+                        rights: []
+                    }
                 }
             },
             tables: {
@@ -269,6 +278,27 @@ export default {
         filterModuleRights(module_id){
             return this.modules['rights'].filter(r => r.module_id == module_id);
         },
+        processRights(user_group_id){
+            this.forms.userrights.fields.rights = []
+            this.modules['modules'].forEach(m => {
+                this.filterModuleRights(m.module_id).forEach(r =>{
+                    if(this.$refs[user_group_id+'-'+m.module_id+'-'+r.module_right_id][0].isOn){
+                        this.forms.userrights.fields.rights.push({right_code: m.module_id+'-'+r.module_right_id})
+                    }
+                })
+            })
+
+            this.$http.post('api/usergroup/rights/'+user_group_id, this.forms.userrights.fields, {
+            headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then((response) => {  
+                var data = response.data
+            }).catch(error => {
+                console.log(error)
+            })
+        }
     },
     async created () {
         await this.fillTableList('usergroups');

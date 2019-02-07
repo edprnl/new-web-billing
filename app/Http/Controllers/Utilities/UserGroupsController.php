@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Utilities;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Utilities\UserGroups;
+use App\Models\Utilities\GroupRights;
 use App\Models\Utilities\ModuleList;
 use App\Models\Utilities\ModuleRights;
 use App\Users;
@@ -12,6 +13,7 @@ use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Auth;
+use DB;
 
 class UserGroupsController extends Controller
 {
@@ -45,6 +47,38 @@ class UserGroupsController extends Controller
         return ( new Reference( $user_group ))
                 ->response()
                 ->setStatusCode(201);
+    }
+
+    public function createGroupRights(Request $request, $user_group_id)
+    {
+        $old_rights = GroupRights::where('user_group_id', $user_group_id);
+        $old_rights->delete();
+
+        $rights_dataSet = [];
+        $rights = $request->input('rights');
+
+        foreach($rights as $right){
+            // return $right_codes;
+            $rights_dataSet[] = [
+                'user_group_id' => $user_group_id,
+                'right_code' => $right['right_code'],
+            ];
+        }
+
+        DB::table('b_group_rights')->insert($rights_dataSet);
+
+        // $user_group = new UserGroups();
+        // $user_group->user_group = $request->input('user_group');
+        // $user_group->user_group_desc = $request->input('user_group_desc');
+        // $user_group->created_datetime = Carbon::now();
+        // $user_group->created_by = Auth::user()->id;
+    
+        // $user_group->save();
+
+        // //return json based from the resource data
+        // return ( new Reference( $user_group ))
+        //         ->response()
+        //         ->setStatusCode(201);
     }
 
     /**

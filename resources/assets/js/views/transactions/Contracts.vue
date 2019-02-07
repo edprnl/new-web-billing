@@ -36,6 +36,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    responsive
                                     :filter="filters.contracts.criteria"
                                     :fields="tables.contracts.fields"
                                     :items.sync="tables.contracts.items"
@@ -403,6 +404,7 @@
                                                 </b-col>
                                             </b-row>
                                             <b-table 
+                                                responsive
                                                 tab="1"
                                                 ref="schedules"
                                                 small bordered
@@ -479,6 +481,7 @@
                                                                 </b-col>
                                                             </b-row>
                                                             <b-table 
+                                                                responsive
                                                                 small bordered
                                                                 :fields="tables.utilities.fields"
                                                                 :items.sync="tables.utilities.items"
@@ -540,6 +543,7 @@
                                                                 </b-col>
                                                             </b-row>
                                                             <b-table 
+                                                                responsive
                                                                 small bordered
                                                                 :fields="tables.miscellaneous.fields"
                                                                 :items.sync="tables.miscellaneous.items"
@@ -600,7 +604,8 @@
                                                                     </b-button>
                                                                 </b-col>
                                                             </b-row>
-                                                            <b-table 
+                                                            <b-table
+                                                                responsive 
                                                                 small bordered
                                                                 :fields="tables.other.fields"
                                                                 :items.sync="tables.other.items"
@@ -695,6 +700,7 @@
                     </b-col>
                 </b-row>
                 <b-table 
+                    responsive
                     small bordered
                     :filter="filters.charges.criteria"
                     :fields="tables.charges.fields"
