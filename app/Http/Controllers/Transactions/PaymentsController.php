@@ -186,10 +186,15 @@ class PaymentsController extends Controller
         $payments = PaymentInfo::select(
                                 'transaction_no',
                                 'reference_no',
+                                'payment_type',
                                 'amount_paid as payment',
                                 DB::raw('"Payment" as trans_type'),
-                                'payment_date'
+                                'payment_date',
+                                'ct.check_type_desc',
+                                'check_no',
+                                'check_date'
         )
+                                ->leftJoin('b_refchecktype as ct','ct.check_type_id', '=', 'b_payment_info.check_type_id')
                                 ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-9", INTERVAL -1 MONTH)) AND  DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-28", INTERVAL -1 MONTH))')
                                 ->where('is_canceled', 0)
                                 ->where('tenant_id', $tenant_id)
@@ -198,10 +203,15 @@ class PaymentsController extends Controller
         $discounts = PaymentInfo::select(
                                 'transaction_no',
                                 'reference_no',
+                                'payment_type',
                                 'discount as payment',
                                 DB::raw('"Discount" as trans_type'),
-                                'payment_date'
+                                'payment_date',
+                                'ct.check_type_desc',
+                                'check_no',
+                                'check_date'
         )
+                                ->leftJoin('b_refchecktype as ct','ct.check_type_id', '=', 'b_payment_info.check_type_id')
                                 ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-9", INTERVAL -1 MONTH)) AND  DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-28", INTERVAL -1 MONTH))')
                                 ->where('is_canceled', 0)
                                 ->where('tenant_id', $tenant_id)
@@ -214,11 +224,27 @@ class PaymentsController extends Controller
             ->setStatusCode(200);
     }
 
-    public function latePayment($month_id, $app_year, $tenant_id){
+    public function latePayment($month_id, $app_year, $tenant_id)
+    {
         return DB::select("select GetLatePayment(".$month_id.", ".$app_year.", ".$tenant_id.") as latePayment");
     }
 
-    public function getAdvance($tenant_id){
+    public function getPaymentsForInterest($month_id, $app_year, $tenant_id)
+    {
+        $payments = PaymentInfo::select(
+                                DB::raw('IFNULL(SUM(amount_paid), 0) + IFNULL(SUM(discount), 0) as payment')
+                    )
+                                ->whereRaw('payment_date BETWEEN DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-9", INTERVAL -1 MONTH)) AND  DATE(DATE_ADD("'.$app_year.'-'.$month_id.'-28", INTERVAL -1 MONTH))')
+                                ->where('is_canceled', 0)
+                                ->where('tenant_id', $tenant_id)
+                                ->get();
+        return ( new Reference( $payments ) )
+                    ->response()
+                    ->setStatusCode(200);
+    }
+
+    public function getAdvance($tenant_id)
+    {
         $advance = PaymentInfo::where('tenant_id', $tenant_id)
                                 ->where('is_canceled', 0)
                                 ->orderBy('payment_date', 'desc')

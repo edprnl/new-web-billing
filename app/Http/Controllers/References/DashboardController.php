@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 use DB;
+use Session;
 
 class DashboardController extends Controller
 {
@@ -32,7 +33,6 @@ class DashboardController extends Controller
         $dashboard['payment_line'] = $this->getPaymentLine($payment_type, true);
         $dashboard['tenants'] = Reference::collection($tenants);
         $dashboard['contracts'] = Reference::collection($contracts);
-
         return $dashboard;
     }
 

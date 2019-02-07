@@ -34,6 +34,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    responsive
                                     :filter="filters.tenants.criteria"
                                     :fields="tables.tenants.fields"
                                     :items.sync="tables.tenants.items"
@@ -192,7 +193,7 @@
                                         </b-form-input>
                                     </b-form-group>
                                     <b-form-group>
-                                        <label>* Email Address</label>
+                                        <label>Email Address</label>
                                         <b-form-input
                                             ref="email_address"
                                             id="email_address"

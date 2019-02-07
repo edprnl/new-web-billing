@@ -1,6 +1,6 @@
 <template>
   <aside class="aside-menu">
-    <b-tabs>
+    <!-- <b-tabs>
       <b-tab title="<i class='icon-list'></i>">
         <Callout class="m-0 py-2 text-muted text-center bg-light text-uppercase">
           <small><b>Today</b></small>
@@ -214,7 +214,7 @@
           <small class="text-muted">25GB/256GB</small>
         </div>
       </b-tab>
-    </b-tabs>
+    </b-tabs> -->
   </aside>
 </template>
 

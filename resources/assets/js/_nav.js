@@ -71,11 +71,11 @@ export default {
           url: '/utilities/users',
           //icon: 'fa-building'
         },
-        {
-          name: 'User Group',
-          url: '/utilities/user_groups',
-          //icon: 'fa-building'
-        },
+        // {
+        //   name: 'User Group',
+        //   url: '/utilities/user_groups',
+        //   //icon: 'fa-building'
+        // },
         {
           name: 'Company Settings',
           url: '/utilities/company_settings',
@@ -108,6 +108,23 @@ export default {
           url: '/transactions/adjustment',
           //icon: 'fas fa-code-branch'
         }
+      ]
+    },
+    {
+      name: 'Reports',
+      url: '/reports',
+      icon: 'icon-star',
+      children:[
+        {
+          name: 'Tenant Per Sqm Rate',
+          url: '/reports/tenant_per_sqm_rate',
+          //icon: 'fa-building'
+        },
+        {
+          name: 'Contracts Master List',
+          url: '/reports/contracts_master_list',
+          //icon: 'fa-building'
+        },
       ]
     },
     // {

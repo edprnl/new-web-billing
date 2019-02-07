@@ -9,13 +9,17 @@
                             <span class="text-primary">
                                 <i class="fa fa-bars"></i> 
                                 Billing List
-                                <small>( {{ forms.period.fields.month_name + ' ' + forms.period.fields.app_year }} )</small>
+                                <small>( {{ month_name + ' ' + app_year }} )</small>
                                 <small class="font-italic">List of all billings.</small></span>
+                                <span class="float-right"><b-btn @click="showModalPeriod = true" variant="primary"><i class="fa fa-refresh"></i></b-btn></span>
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
-                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], clearFields('billing'), forms.billing.fields.vat_percent = 12, forms.billing.fields.wtax_percent = 5, counter = 0 ">
+                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], clearFields('billing'), forms.billing.fields.vat_percent = 12,
+                                        forms.billing.fields.interest_percent = 3,
+                                        forms.billing.fields.penalty_percent = 3,
+                                        forms.billing.fields.wtax_percent = 5, counter = 0 ">
                                             <i class="fa fa-plus-circle"></i> Create New Billing
                                     </b-button>
                             </b-col>
@@ -36,6 +40,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    responsive
                                     :filter="filters.billings.criteria"
                                     :fields="tables.billings.fields"
                                     :items.sync="tables.billings.items"
@@ -244,6 +249,7 @@
                                         <b-row>
                                             <b-col lg="12">
                                                 <b-table 
+                                                    responsive
                                                     small bordered
                                                     :fields="tables.schedules.fields"
                                                     :items.sync="tables.schedules.items"
@@ -257,11 +263,18 @@
                                                             <option v-for="month in options.months.items" :key="month.month_id" :value="month.month_id">{{month.month_name}}</option>
                                                         </select2>
                                                     </template>
-                                                    <template slot="escalation_percent" slot-scope="data">
+                                                    <template slot="discounted_amount_due" slot-scope="data">
                                                         <vue-autonumeric 
                                                             :class="'form-control text-right'"
-                                                            v-model="data.item.escalation_percent" 
-                                                            :options="{minimumValue: 0, maximumValue: 100,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            v-model="data.item.discounted_amount_due" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                        </vue-autonumeric>
+                                                    </template>
+                                                    <template slot="amount_due" slot-scope="data">
+                                                        <vue-autonumeric 
+                                                            :class="'form-control text-right'"
+                                                            v-model="data.item.amount_due" 
+                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                         </vue-autonumeric>
                                                     </template>
                                                     <template slot="is_vatted" slot-scope="data">
@@ -309,6 +322,7 @@
                                             </b-col>
                                         </b-row>
                                         <b-table 
+                                            responsive
                                             small bordered
                                             :fields="tables.utilities.fields"
                                             :items.sync="tables.utilities.items"
@@ -360,6 +374,7 @@
                                             </b-col>
                                         </b-row>
                                         <b-table 
+                                            responsive
                                             small bordered
                                             :fields="tables.miscellaneous.fields"
                                             :items.sync="tables.miscellaneous.items"
@@ -411,6 +426,7 @@
                                             </b-col>
                                         </b-row>
                                         <b-table 
+                                            responsive
                                             small bordered
                                             :fields="tables.other.fields"
                                             :items.sync="tables.other.items"
@@ -476,7 +492,7 @@
                                         </b-row>
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Other :</label>
-                                            <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(this.othrSubTotal)}} </label>
+                                            <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(this.forms.billing.fields.total_othr_charges)}} </label>
                                         </b-row>
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Vat Total :</label>
@@ -520,13 +536,64 @@
                                         <b-row>
                                             <label class="font-weight-bold col-sm-12 text-right"> ({{formatNumber(getWithHoldingTax)}}) </label>
                                         </b-row>
+                                        <hr>
+                                         <b-row>
+                                            <label class="font-weight-bold col-sm-6 text-right">Sub Total :</label>
+                                            <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(this.forms.billing.fields.sub_total)}} </label>
+                                        </b-row>
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Interest :</label>
-                                            <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(interestTotal)}} </label>
+                                        </b-row>
+                                        <b-row class="mb-1"> 
+                                            <label class="col-sm-5 text-right"></label>
+                                            <b-col sm="7">
+                                                <vue-autonumeric 
+                                                    :class="'text-right form-control'" 
+                                                    v-model="forms.billing.fields.interested_amount" 
+                                                    :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <label class="font-weight-bold col-sm-7 text-right col-form-label"> X </label>
+                                            <b-col sm="5">
+                                                <vue-autonumeric 
+                                                    :class="'text-right form-control'" 
+                                                    v-model="forms.billing.fields.interest_percent" 
+                                                    :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </b-col>
+                                        </b-row>
+                                        <hr>
+                                        <b-row>
+                                            <label class="font-weight-bold col-sm-12 text-right"> {{formatNumber(getInterestTotal)}} </label>
                                         </b-row>
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Penalty :</label>
-                                            <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(penaltyTotal)}} </label>
+                                        </b-row>
+                                        <b-row class="mb-1">
+                                            <label class="col-sm-5 text-right"></label>
+                                            <b-col sm="7">
+                                                <vue-autonumeric 
+                                                    :class="'text-right form-control'" 
+                                                    v-model="forms.billing.fields.penaltied_amount" 
+                                                    :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </b-col>
+                                        </b-row>
+                                        <b-row>
+                                            <label class="font-weight-bold col-sm-7 text-right col-form-label"> X </label>
+                                            <b-col sm="5">
+                                                <vue-autonumeric 
+                                                    :class="'text-right form-control'" 
+                                                    v-model="forms.billing.fields.penalty_percent" 
+                                                    :options="{minimumValue: 0, maximumValue: 100, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </b-col>
+                                        </b-row>
+                                        <hr>
+                                        <b-row>
+                                            <label class="font-weight-bold col-sm-12 text-right"> {{formatNumber(getPenaltyTotal)}} </label>
                                         </b-row>
                                         <b-row>
                                             <label class="font-weight-bold col-sm-6 text-right">Adj. Total In :</label>
@@ -663,6 +730,7 @@
             </div>
             <b-col lg=12>
                 <b-table 
+                    responsive
                     small bordered
                     :filter="filters.charges.criteria"
                     :fields="tables.charges.fields"
@@ -723,6 +791,8 @@ export default {
             showModalDelete: false,
             showModalCharges: false,
             showModalPeriod: true,
+            month_name: '',
+            app_year: '',
             options: {
                 periods: {
                     items: []
@@ -835,11 +905,22 @@ export default {
                             thStyle: {width: '5%'},
                         },
                         {
+                            key: 'discounted_amount_due',
+                            label: 'Disc Amount Due',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '17%'},
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                                
+                            }
+                        },
+                        {
                             key: 'amount_due',
                             label: 'Amount Due',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'},
+                            thStyle: {width: '17%'},
                             formatter: (value) => {
                                 return this.formatNumber(value)
                                 
@@ -1068,6 +1149,7 @@ export default {
                         termination_date: null,
                         contract_fixed_rent: null,
                         due_date: null,
+                        total_discounted_rent: 0,
                         total_fixed_rent: 0,
                         total_util_charges: 0,
                         total_misc_charges: 0,
@@ -1075,6 +1157,12 @@ export default {
                         sub_total: 0,
                         vatable_amount: 0,
                         discounted_vatable_amount: 0,
+                        interested_amount: 0,
+                        interest_percent: 3,
+                        interest_total: 0,
+                        penaltied_amount: 0,
+                        penalty_percent: 3,
+                        penalty_total: 0,
                         vat_percent: 12,
                         total_vat: 0,
                         total_amount_due: 0,
@@ -1120,13 +1208,13 @@ export default {
                     perPage: 10
                 }
             },
-            othrSubTotal: 0,
-            interestTotal: 0,
-            penaltyTotal: 0,
             counter: 0,
             charge_type: null,
             previous_balance: 0,
+            previous_sub_total: 0,
+            prev_previous_balance: 0,
             late_payment: 0,
+            payment_interest: 0,
             billing_id: null,
             is_check_all: 0,
             row: []
@@ -1169,6 +1257,8 @@ export default {
         async setUpdate(data){
             this.row = data.item
             this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
+            this.getPrevSubTotal(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
+            this.getPrevPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.filterOptionsList('contracts', data.item.tenant_id)
             await this.$http.get('/api/billingSC/sc/'+ data.item.billing_id,{
               headers: {
@@ -1195,20 +1285,24 @@ export default {
         },
         addSchedule(){
             try {
-                var fixed_rent = this.forms.billing.fields.contract_fixed_rent
-                
-                var month;
-                var escalation_percent = 0;
-                var amount_due = fixed_rent;
+                var amount_due = 0
+                var discounted_amount_due = 0
+                if(this.tables.schedules.items.length > 0){
+                    var default_rent = this.tables.schedules.items[0]
+                    amount_due = default_rent.amount_due
+                    discounted_amount_due = default_rent.discounted_amount_due
+                }
 
+                var month;
+                
                 this.counter++;
 
                 this.tables.schedules.items.push({
                     count: this.counter, 
                     month_id: this.forms.period.fields.month_id, 
                     app_year: this.forms.period.fields.app_year, 
-                    // fixed_rent: fixed_rent, 
-                    // escalation_percent: escalation_percent, 
+                    // fixed_rent: fixed_rent,
+                    discounted_amount_due: discounted_amount_due,
                     amount_due: amount_due, 
                     is_vatted: 1, 
                     contract_schedule_notes: ''
@@ -1267,6 +1361,55 @@ export default {
                 return console.log(error)
             })
         },
+        getPrevSubTotal(month_id, app_year, tenant_id){
+            this.$http.get('api/billing/sub_total/'+month_id+'/'+app_year+'/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.previous_sub_total = res[0]['subTotal'];
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
+        getPrevPrevBalance(month_id, app_year, tenant_id){
+            if(month_id == 1){
+                month_id = 13
+            }
+            var month = Number(month_id) - 1
+            this.$http.get('api/billing/'+month+'/'+app_year+'/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.prev_previous_balance = res[0]['prevBalance'];
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
+        getPaymentInterest(month_id, app_year, tenant_id){
+            this.$http.get('api/payment/interest/'+month_id+'/'+app_year+'/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.payment_interest = res.data[0].payment
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
+        },
         getLatePayment(month_id, app_year, tenant_id){
             this.$http.get('api/payment/'+month_id+'/'+app_year+'/'+tenant_id,{
                     headers: {
@@ -1316,7 +1459,10 @@ export default {
                 this.forms.billing.fields.tenant_code = tenant.tenant_code
                 this.filterOptionsList('contracts', tenant.tenant_id)
                 this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
+                this.getPrevSubTotal(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
+                this.getPrevPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getLatePayment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
+                this.getPaymentInterest(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getAdjustment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
             }
         },
@@ -1327,8 +1473,8 @@ export default {
                     this.forms.billing.fields.commencement_date = moment(contract.commencement_date).format('MMMM DD, YYYY')
                     this.forms.billing.fields.termination_date = moment(contract.termination_date).format('MMMM DD, YYYY')
                     this.forms.billing.fields.contract_fixed_rent = contract.contract_fixed_rent
-                    this.forms.billing.fields.contract_discounted_rent = contract.contract_discounted_rent
-                    var nmonth_id = Number(this.forms.period.fields.month_id + 1)
+
+                    var nmonth_id = Number(this.forms.period.fields.month_id)
                     var nyear = this.forms.period.fields.app_year
                     if(nmonth_id == 13){
                         nmonth_id = 1
@@ -1356,16 +1502,6 @@ export default {
                             }
                             this.forms.billing.fields.interested_amount = Math.max(0, (Number(this.prev_previous_balance)) - (Number(this.payment_interest)) - Number(this.late_payment))
                         }
-                        if(this.late_payment > 0){
-                            this.tables.other.items.push({
-                                charge_id: 2,
-                                charge_desc: 'Penalty 3%',
-                                contract_rate: 0.03,
-                                contract_default_reading: this.late_payment,
-                                contract_is_vatted: 0,
-                                contract_notes:''
-                            })
-                        }
                         this.counter = this.tables.schedules.items.length
                     })
                     .catch(error => {
@@ -1376,6 +1512,8 @@ export default {
             }
         },
         showBillingList(){
+            this.month_name = this.forms.period.fields.month_name
+            this.app_year = this.forms.period.fields.app_year
             if(this.forms.period.fields.period_id != null && this.forms.period.fields.department_id != null){
                 this.filterTableList('billings', this.forms.period.fields.period_id, this.forms.period.fields.department_id)
                 this.showList = true
@@ -1421,16 +1559,15 @@ export default {
         },
         getTotalDue: function(){
             var schedTotal = 0
+            var discSchedTotal = 0
             var utilTotal = 0
             var miscTotal = 0
             var othrTotal = 0
-            var othrSubTotal = 0
-            var interestTotal = 0
-            var penaltyTotal = 0
 
             this.tables.schedules.items.forEach(schedule => {
                 if(schedule != null){
                     schedTotal += Number(schedule.amount_due)
+                    discSchedTotal += Number(schedule.discounted_amount_due)
                 }        
             })
 
@@ -1448,33 +1585,22 @@ export default {
 
             this.tables.other.items.forEach(othr => {
                 if(othr != null){
-                    if(othr.charge_id == 1){
-                        interestTotal += Number(othr.contract_rate * othr.contract_default_reading)
-                    }
-                    else if(othr.charge_id == 2){
-                        penaltyTotal += Number(othr.contract_rate * othr.contract_default_reading)
-                    }
-                    else{
-                        othrSubTotal += Number(othr.contract_rate * othr.contract_default_reading)
-                    }
                     othrTotal += Number(othr.contract_rate * othr.contract_default_reading)
                 }   
             })
 
             this.forms.billing.fields.total_fixed_rent = schedTotal
+            this.forms.billing.fields.total_discounted_rent = discSchedTotal
             this.forms.billing.fields.total_util_charges = utilTotal
             this.forms.billing.fields.total_misc_charges = miscTotal
             this.forms.billing.fields.total_othr_charges = othrTotal
 
-            this.othrSubTotal = othrSubTotal
-            this.interestTotal = interestTotal
-            this.penaltyTotal = penaltyTotal
+            this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges) + Number(this.forms.billing.fields.total_vat) - Number(this.forms.billing.fields.wtax_amount)
 
-            this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
-            
-            var discounted_sub_total = Number(this.forms.billing.fields.contract_discounted_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
+            var discounted_sub_total = Number(this.forms.billing.fields.total_discounted_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
 
-            this.forms.billing.fields.total_amount_due = Number(this.forms.billing.fields.sub_total) + Number(this.getVatTotal) - Number(this.forms.billing.fields.wtax_amount) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
+
+            this.forms.billing.fields.total_amount_due = Number(this.forms.billing.fields.sub_total) + Number(this.getInterestTotal) + Number(this.getPenaltyTotal) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
             this.forms.billing.fields.discounted_total_amount_due = Number(discounted_sub_total) + Number(this.getDiscountedVatTotal) - Number(this.getDiscountedWithHoldingTax) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
@@ -1490,8 +1616,8 @@ export default {
             this.tables.schedules.items.forEach(schedule => {
                 if(schedule != null){
                     if(schedule.is_vatted == 1){
-                        schedVat += schedule.amount_due
-                        dSchedVat += this.forms.billing.fields.contract_discounted_rent
+                        schedVat += Number(schedule.amount_due)
+                        dSchedVat += Number(schedule.discounted_amount_due)
                     }
                 }
             })
@@ -1541,8 +1667,18 @@ export default {
             return this.forms.billing.fields.wtax_amount
         },
         getDiscountedWithHoldingTax: function(){
-            var discounted_withholding_tax = this.forms.billing.fields.contract_discounted_rent * (this.forms.billing.fields.wtax_percent / 100)
+            var discounted_withholding_tax = this.forms.billing.fields.total_discounted_rent * (this.forms.billing.fields.wtax_percent / 100)
             return discounted_withholding_tax
+        },
+
+        getInterestTotal: function(){
+            this.forms.billing.fields.interest_total = Number(this.forms.billing.fields.interested_amount * (this.forms.billing.fields.interest_percent / 100)).toFixed(2)
+            return this.forms.billing.fields.interest_total
+        },
+
+        getPenaltyTotal: function(){
+            this.forms.billing.fields.penalty_total = Number(this.forms.billing.fields.penaltied_amount * (this.forms.billing.fields.penalty_percent / 100)).toFixed(2)
+            return this.forms.billing.fields.penalty_total
         },
 
         getEndingBalance: function(){

@@ -33,7 +33,8 @@
                         </b-row> <!-- row button and search input -->
                         <b-row> <!-- row table -->
                             <b-col sm="12">
-                                <b-table  
+                                <b-table
+                                    responsive
                                     :filter="filters.periods.criteria"
                                     :fields="tables.periods.fields"
                                     :items.sync="tables.periods.items"

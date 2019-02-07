@@ -34,6 +34,7 @@
                         <b-row> <!-- row table -->
                             <b-col sm="12">
                                 <b-table  
+                                    responsive
                                     :filter="filters.contracttypes.criteria"
                                     :fields="tables.contracttypes.fields"
                                     :items.sync="tables.contracttypes.items"

@@ -26,7 +26,7 @@
         <b-dropdown-item @click="logOut()"><i class="fa fa-lock"></i>Logout</b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>
-    <button class="navbar-toggler aside-menu-toggler d-md-down-none" type="button" @click="asideToggle">&#9776;</button>
+    <!-- <button class="navbar-toggler aside-menu-toggler d-md-down-none" type="button" @click="asideToggle">&#9776;</button> -->
   </header>
 </template>
 <script>
@@ -34,7 +34,16 @@ export default {
   name: 'c-header',
   methods: {
     logOut(){
-      this.$router.push({ name: 'Logout' })
+      this.$http.get('api/auth/logout', {
+            headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            }).then(response => {
+            this.$store.commit('logoutUser')
+            this.$router.push({ name: 'Login' })
+      }).catch(err => {
+          console.log(err)
+      });
     },
     sidebarToggle (e) {
       e.preventDefault()

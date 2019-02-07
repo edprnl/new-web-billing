@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Utilities;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Utilities\CompanySettings;
+use App\Models\Utilities\SoaNotes;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Auth;
+use DB;
 
 class CompanySettingsController extends Controller
 {
@@ -54,6 +56,15 @@ class CompanySettingsController extends Controller
         $company = CompanySettings::findOrFail($id);
 
         return ( new Reference( $company ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    public function showNotes()
+    {
+        $notes = SoaNotes::all();
+
+        return (new Reference( $notes ))
             ->response()
             ->setStatusCode(200);
     }
@@ -135,6 +146,20 @@ class CompanySettingsController extends Controller
         return ( new Reference( $company ) )
             ->response()
             ->setStatusCode(200);
+    }
+
+    public function insertNotes(Request $request)
+    {
+        $notes_dataSet = [];
+        $notes = $request->input('items');
+        foreach($notes as $note){
+            $notes_dataSet[] = [
+                'notes' => $note['notes']
+            ];
+        }
+        $old_notes = SoaNotes::truncate();
+
+        DB::table('b_soa_notes')->insert($notes_dataSet);
     }
 
     /**

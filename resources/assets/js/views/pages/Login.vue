@@ -89,7 +89,6 @@
               <div class="carousel-caption d-none d-md-block">
                 <div class="banner-text">
                     <h2>Billing System</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation</p>
                 </div>	
               </div>
             </div>
@@ -99,7 +98,8 @@
             <b-form @submit.prevent="authLogin()" @input="login.success = null">
               <b-form-group>
                 <label class="text-uppercase">Username</label>
-                <b-form-input 
+                <b-form-input
+                  ref="username" 
                   v-model="login.username"
                   type="text" 
                   placeholder="Username">
@@ -155,7 +155,7 @@ export default {
                     password: this.login.password
                 }).then(response => {
                     this.$store.commit('loginUser')
-                    this.$store.commit('user', response.data.user.original)
+                    this.$store.commit('user', response.data.user)
                     localStorage.setItem('token', response.data.access_token)
                     this.$notify({
                       type: 'success',
@@ -167,7 +167,7 @@ export default {
                       this.$router.push({ name: 'Dashboard' })
                     }.bind(this), 1000)
                     this.login.is_saving = false
-       }).catch(err => {
+      }).catch(err => {
             this.$notify({
               type: 'error',
               group: 'notification',
@@ -175,8 +175,11 @@ export default {
               text: 'Incorrect username or password.'
             })
             this.login.is_saving = false
-       });
+      });
     }
   },
+  mounted(){
+    this.focusElement('username')
+  }
 }
 </script>

@@ -67,6 +67,7 @@ class BillingsController extends Controller
         $billing_info->month_id = $request->input('month_id');
         $billing_info->app_year = $request->input('app_year');
         $billing_info->due_date = date("Y-m-d", strtotime($request->input('due_date')));
+        $billing_info->total_discounted_rent = $request->input('total_discounted_rent');
         $billing_info->total_fixed_rent = $request->input('total_fixed_rent');
         $billing_info->total_util_charges = $request->input('total_util_charges');
         $billing_info->total_misc_charges = $request->input('total_misc_charges');
@@ -76,6 +77,12 @@ class BillingsController extends Controller
         $billing_info->discounted_vatable_amount = $request->input('discounted_vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
+        $billing_info->interested_amount = $request->input('interested_amount');
+        $billing_info->interest_percent = $request->input('interest_percent');
+        $billing_info->interest_total = $request->input('interest_total');
+        $billing_info->penaltied_amount = $request->input('penaltied_amount');
+        $billing_info->penalty_percent = $request->input('penalty_percent');
+        $billing_info->penalty_total = $request->input('penalty_total');
         $billing_info->discounted_total_amount_due = $request->input('discounted_total_amount_due');
         $billing_info->total_amount_due = $request->input('total_amount_due');
         $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
@@ -99,6 +106,7 @@ class BillingsController extends Controller
                     'billing_id' => $billing_id,
                     'month_id' => $schedule['month_id'],
                     'app_year' => $schedule['app_year'],
+                    'discounted_line_total' => $schedule['discounted_amount_due'],
                     'line_total' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],
                     'billing_schedule_notes' => $schedule['contract_schedule_notes']
@@ -175,6 +183,7 @@ class BillingsController extends Controller
         $schedules = BillingSchedule::select(
                         'b_billing_schedule.*',
                         'b_billing_schedule.billing_schedule_notes as contract_schedule_notes',
+                        'discounted_line_total as discounted_amount_due',
                         'line_total as amount_due',
                         'b_refmonths.*',
                         DB::raw("@row := @row + 1 as count")
@@ -293,6 +302,7 @@ class BillingsController extends Controller
         $billing_info->month_id = $request->input('month_id');
         $billing_info->app_year = $request->input('app_year');
         $billing_info->due_date = date("Y-m-d", strtotime($request->input('due_date')));
+        $billing_info->total_discounted_rent = $request->input('total_discounted_rent');
         $billing_info->total_fixed_rent = $request->input('total_fixed_rent');
         $billing_info->total_util_charges = $request->input('total_util_charges');
         $billing_info->total_misc_charges = $request->input('total_misc_charges');
@@ -302,6 +312,12 @@ class BillingsController extends Controller
         $billing_info->discounted_vatable_amount = $request->input('discounted_vatable_amount');
         $billing_info->vat_percent = $request->input('vat_percent');
         $billing_info->total_vat = $request->input('total_vat');
+        $billing_info->interested_amount = $request->input('interested_amount');
+        $billing_info->interest_percent = $request->input('interest_percent');
+        $billing_info->interest_total = $request->input('interest_total');
+        $billing_info->penaltied_amount = $request->input('penaltied_amount');
+        $billing_info->penalty_percent = $request->input('penalty_percent');
+        $billing_info->penalty_total = $request->input('penalty_total');
         $billing_info->total_amount_due = $request->input('total_amount_due');
         $billing_info->discounted_total_amount_due = $request->input('discounted_total_amount_due');
         $billing_info->total_adjusted_in = $request->input('total_adjusted_in');
@@ -337,6 +353,7 @@ class BillingsController extends Controller
                     'billing_id' => $billing_id,
                     'month_id' => $schedule['month_id'],
                     'app_year' => $schedule['app_year'],
+                    'discounted_line_total' => $schedule['discounted_amount_due'],
                     'line_total' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],
                     'billing_schedule_notes' => $schedule['contract_schedule_notes']
@@ -433,6 +450,11 @@ class BillingsController extends Controller
     public function prevBalance($month_id, $app_year, $tenant_id){
         // $response['balance'] = DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.")");
         return DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.") as prevBalance");
+    }
+
+    public function prevSubTotal($month_id, $app_year, $tenant_id){
+        // $response['balance'] = DB::select("select GetPreviousBalance(".$month_id.", ".$app_year.", ".$tenant_id.")");
+        return DB::select("select GetPreviousSubTotal(".$month_id.", ".$app_year.", ".$tenant_id.") as subTotal");
     }
 
     public function asOfBalance($month_id, $app_year, $tenant_id){
