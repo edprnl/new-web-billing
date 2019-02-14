@@ -14,7 +14,7 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('department')">
+                                    <b-button v-if="checkRights('2-6')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('department')">
                                             <i class="fa fa-plus-circle"></i> Create New Department
                                     </b-button>
                             </b-col>
@@ -34,7 +34,8 @@
                     
                         <b-row> <!-- row table -->
                             <b-col sm="12">
-                                <b-table  
+                                <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.departments.criteria"
                                     :fields="tables.departments.fields"
@@ -46,11 +47,11 @@
                                 > <!-- table -->
 
                                 <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
-                                    <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                    <b-btn v-if="checkRights('2-7')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" :disabled="forms.department.isDeleting" variant="danger" @click="setDelete(data)">
+                                    <b-btn v-if="checkRights('2-8')" :size="'sm'" :disabled="forms.department.isDeleting" variant="danger" @click="setDelete(data)">
                                         <icon v-if="forms.department.isDeleting" name="sync" spin></icon>
                                         <i v-else class="fa fa-trash"></i>
                                     </b-btn>
@@ -178,8 +179,7 @@ export default {
                     key: 'department_desc',
                     label: 'Department Name'
                 },
-                {
-                    
+                {   
                     key: 'action',
                     label: '',
                     thStyle: {width: '80px'},
@@ -239,7 +239,14 @@ export default {
         }
     },
     computed: {
-
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('2-7') || this.checkRights('2-8')) == false){
+                    this.tables.departments.fields.pop()
+                }
+            }
+            return true
+        }
     },
     created () {
       this.fillTableList('departments')

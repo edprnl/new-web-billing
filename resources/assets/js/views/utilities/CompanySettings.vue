@@ -541,7 +541,7 @@ export default {
     created () {
         this.fillOptionsList('accounts')
         setTimeout(function(){
-            this.fillEntityForm('companysetting', 1);
+            this.fillEntityForm('companysetting', 1)
             this.$http.get('/api/companysettingnotes', {
                 headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token'),

@@ -13,7 +13,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col  sm="4">
-                                    <b-button variant="primary" @click="resetFieldStates('tenant'),clearFields('tenant'),entryMode = 'Add', showEntry = true">
+                                    <b-button v-if="checkRights('1-2')" variant="primary" @click="resetFieldStates('tenant'),clearFields('tenant'),entryMode = 'Add', showEntry = true">
                                             <i class="fa fa-plus-circle"></i> Create New Tenant
                                     </b-button>
                             </b-col>
@@ -33,7 +33,7 @@
                         
                         <b-row>
                             <b-col sm="12">
-                                <b-table 
+                                <b-table v-if="checkAction"
                                     responsive
                                     :filter="filters.tenants.criteria"
                                     :fields="tables.tenants.fields"
@@ -43,11 +43,11 @@
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                        <b-btn v-if="checkRights('1-3')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                        <b-btn v-if="checkRights('1-4')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <icon v-if="forms.tenant.isDeleting" name="sync" spin></icon>
                                             <i v-else class="fa fa-trash"></i>
                                         </b-btn>
@@ -425,7 +425,10 @@ export default {
                         },
                         {
                             key: 'action',
-                            label: 'Action'
+                            label: 'Action',
+                            tdClass: 'text-center',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'}
                         }
                     ],
                     items: []
@@ -478,10 +481,10 @@ export default {
             this.fillEntityForm('tenant', data.item.tenant_id)
             this.showEntry=true
             this.entryMode='Edit'
-        }
+        },
     },
     created () {
-      this.fillTableList('tenants');
+        this.fillTableList('tenants');
     },
     watch: {
         showEntry: function (showEntry) {
@@ -492,6 +495,16 @@ export default {
                 })
             }
         },
+    },
+    computed: {
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('1-3') || this.checkRights('1-4')) == false){
+                    this.tables.tenants.fields.pop()
+                }
+            }
+            return true
+        }
     }
   }
 </script>
