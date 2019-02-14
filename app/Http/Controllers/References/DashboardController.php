@@ -21,7 +21,7 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($payment_type)
+    public function index($payment_type, Request $request)
     {   
         $tenants = Tenants::select(DB::raw('count(*) as no_of_tenants'))
                             ->where('is_deleted', 0)

@@ -44,7 +44,7 @@
                                     striped small bordered show-empty
                                 >
                                     <template slot="row_data" slot-scope="row">
-                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails">
+                                        <b-btn :size="'sm'" variant="success" @click="row.toggleDetails(), getRights(row)">
                                             <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
                                         </b-btn>
                                     </template>
@@ -67,9 +67,33 @@
                                                             <h5 v-b-toggle="module.module_id + '-' + row.item.user_group_id">{{module.module_name}}</h5>
                                                             <b-collapse :id="module.module_id + '-' + row.item.user_group_id" accordion="my-accordion" role="tabpanel">
                                                                 <b-list-group class="mt-2">
-                                                                    <b-list-group-item v-for="right in filterModuleRights(module.module_id)" :key="right.module_right_id">
+                                                                    <b-list-group-item v-for="right in filterGroupRights(module.module_id)" :key="right.module_right_id">
                                                                         <h6>{{right.right_desc}}
-                                                                        <span class="float-right"><c-switch :ref="row.item.user_group_id + '-' + module.module_id + '-' + right.module_right_id" type="text" variant="primary" on="On" off="Off" :pill="true" :checked="true"/></span>
+                                                                            <span class="float-right">
+                                                                                <!-- <c-switch 
+                                                                                    type="text" 
+                                                                                    variant="primary" 
+                                                                                    on="On" 
+                                                                                    off="Off"
+                                                                                    :pill="true"
+                                                                                    :ref="row.item.user_group_id + '-' + module.module_id + '-' + right.module_right_id" 
+                                                                                    :checked="right.rights == 0 ? false : true"
+                                                                                /> -->
+                                                                                <b-form-radio-group 
+                                                                                    buttons
+                                                                                    :button-variant="right.rights == 1 ?'outline-primary' : 'outline-danger'"
+                                                                                    v-model="right.rights"
+                                                                                    :options="[
+                                                                                        { text: 'On', value: '1' },
+                                                                                        { text: 'Off', value: '0' }
+                                                                                    ]"
+                                                                                />
+                                                                                <!-- <b-form-checkbox
+                                                                                    v-model="right.rights"
+                                                                                    value=1
+                                                                                    unchecked-value=0>
+                                                                                </b-form-checkbox> -->
+                                                                            </span>
                                                                         </h6>
                                                                     </b-list-group-item>
                                                                 </b-list-group>
@@ -78,7 +102,7 @@
                                                     </b-list-group>
                                                 </b-list-group-item>
                                             </b-list-group>
-                                            <b-button type="submit">Save</b-button>
+                                            <b-button class="mt-2 mr-2 float-right" variant="primary" type="submit">Save</b-button>
                                         </b-form>
                                     </template>
                                     
@@ -236,6 +260,7 @@ export default {
                 }
             },
             user_group_id: null,
+            group_rights: [],
             modules: [],
             row: []
         }
@@ -266,27 +291,23 @@ export default {
             this.user_group_id = data.item.user_group_id
         },
         setUpdate(data){
-            this.validateRequiredFields()
             this.row = data.item
             this.fillEntityForm('usergroup', data.item.user_group_id)
             this.showModalEntry=true
             this.entryMode='Edit'
         },
+        filterGroupRights(module_id){
+            return this.group_rights.filter(gr => gr.module_id == module_id);
+        },
         filterModules(module_group){
             return this.modules['modules'].filter(m => m.module_group == module_group);
         },
-        filterModuleRights(module_id){
-            return this.modules['rights'].filter(r => r.module_id == module_id);
-        },
         processRights(user_group_id){
             this.forms.userrights.fields.rights = []
-            this.modules['modules'].forEach(m => {
-                this.filterModuleRights(m.module_id).forEach(r =>{
-                    if(this.$refs[user_group_id+'-'+m.module_id+'-'+r.module_right_id][0].isOn){
-                        this.forms.userrights.fields.rights.push({right_code: m.module_id+'-'+r.module_right_id})
-                    }
-                })
-            })
+            this.group_rights.forEach(gr => {if(gr.rights == 1){
+                this.forms.userrights.fields.rights.push({right_code: gr.right_code})
+            }})
+
 
             this.$http.post('api/usergroup/rights/'+user_group_id, this.forms.userrights.fields, {
             headers: {
@@ -295,8 +316,32 @@ export default {
             })
             .then((response) => {  
                 var data = response.data
+                this.$notify({
+                    type: 'success',
+                    group: 'notification',
+                    title: 'Success!',
+                    text: "User group rights successfully updated. This will take effect on next login."
+                })
             }).catch(error => {
                 console.log(error)
+            })
+        },
+        getRights(row){
+            if(row.detailsShowing == true){
+                return
+            }
+            this.$http.get('/api/group_rights/' + row.item.user_group_id , {
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+                const res = response.data.data
+                this.group_rights = res
+            })
+            .catch(error => {
+              if (!error.response) return
+              console.log(error)
             })
         }
     },

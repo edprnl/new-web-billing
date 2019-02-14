@@ -14,7 +14,7 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('period')">
+                                    <b-button v-if="checkRights('9-34')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('period')">
                                             <i class="fa fa-plus-circle"></i> Create New Billing Period
                                     </b-button>
                             </b-col>
@@ -34,6 +34,7 @@
                         <b-row> <!-- row table -->
                             <b-col sm="12">
                                 <b-table
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.periods.criteria"
                                     :fields="tables.periods.fields"
@@ -45,11 +46,11 @@
                                 > <!-- table -->
 
                                 <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
-                                    <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                    <b-btn v-if="checkRights('9-35')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                    <b-btn v-if="checkRights('9-36')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -254,7 +255,8 @@ export default {
                     
                     key: 'action',
                     label: '',
-                    thStyle: {width: '75px'}
+                    thStyle: {width: '75px'},
+                    tdClass: 'text-center'
                 },
                 ],
                 items: []
@@ -331,7 +333,15 @@ export default {
                 set: function(newValue){
                     this.forms.period.fields.app_year = newValue
                 }
+            },
+            checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('9-35') || this.checkRights('9-36')) == false){
+                    this.tables.periods.fields.pop()
+                }
             }
+            return true
+        }
     },
     created () {
       this.fillTableList('periods')

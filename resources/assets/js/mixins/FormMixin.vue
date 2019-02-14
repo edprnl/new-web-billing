@@ -356,7 +356,40 @@
               if(typeof this.$refs[e] !== 'undefined')
               this.$refs[e].$el.focus()
             }.bind(this), 1)
+        },
+        checkRights(right_code){
+          var right = false
+          
+          var row = this.$store.state.rights.filter(right => 
+            right.right_code == right_code
+          )
+          if(row.length > 0){
+            right = true
+          }
+          return right
+        },
+        checkParentRights(right_code){
+          var state = false
+          var length = 0
+          right_code.forEach(rc => {
+            var row = this.$store.state.rights.filter(right => 
+              right.right_code.split('-')[0] == rc
+            )
+            length += row.length
+          })
+          if(length > 0){
+            state = true
+          }
+          // var right = false
+          
+          // var row = this.$store.state.rights.filter(right => 
+          //   right.right_code == right_code
+          // )
+          // if(row.length > 0){
+          //   right = true
+          // }
+          return state
         }
-      }
+      },
     }
 </script>

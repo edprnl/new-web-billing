@@ -28,6 +28,28 @@ class UserGroupsController extends Controller
         return Reference::collection($user_groups);
     }
 
+    public function getGroupRights($user_group_id)
+    {
+        $group_rights = ModuleRights::select(
+                                            'ml.module_id',
+                                            'b_module_rights.right_desc',
+                                            'b_module_rights.module_right_id',
+                                            DB::raw('CONCAT(ml.module_id, "-", b_module_rights.module_right_id) as right_code'),
+                                            DB::raw('IF(IFNULL(gr.right_code, 0) = 0, 0, 1) as rights')
+                        )
+                                    ->leftJoin('b_module_list as ml', 'b_module_rights.module_id', '=', 'ml.module_id')
+                                    ->leftJoin('b_group_rights as gr', function($join) use ($user_group_id){
+                                        $join->on('gr.right_code', '=', DB::raw('CONCAT(ml.module_id, "-", b_module_rights.module_right_id)'))
+                                            ->where('gr.user_group_id', $user_group_id);
+                                    })
+                                    ->orderBy('module_right_id')
+                                    ->get();
+                                    
+        return ( new Reference( $group_rights ))
+                ->response()
+                ->setStatusCode(201);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -191,12 +213,11 @@ class UserGroupsController extends Controller
     }
 
     public function getModuleList(){
-        $module['module_groups'] = ModuleList::select('module_group')
+        $module['module_groups'] = ModuleList::select('module_group', 'module_id')
                                     ->groupBy('module_group')
+                                    ->orderBy('module_id', 'ASC')
                                     ->get();
         $module['modules'] = ModuleList::get();
-
-        $module['rights'] = ModuleRights::get();
         
         return (new Reference( $module ) )
                 ->response()

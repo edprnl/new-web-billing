@@ -7,7 +7,7 @@ export default {
   name: 'app',
     created() {
         if(localStorage.token) {
-            this.$http.get('/api/user', {
+            this.$http.get('/api/auth/me', {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }
@@ -23,8 +23,17 @@ export default {
                 }
 
             });
+            this.$http.get('/api/session/rights', {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            }).then( response => {
+                this.$store.commit('rights', response.data.data)
+            }).catch(error => {
+                console.log(error)
+            })
         }
-    }
+    },
 }
 </script>
 <style>

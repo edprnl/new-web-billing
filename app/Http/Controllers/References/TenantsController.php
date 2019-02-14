@@ -210,6 +210,11 @@ class TenantsController extends Controller
         //
     }
 
+    public function tenantHistory($id)
+    {
+        return DB::select('CALL tenant_history('.$id.')');
+    }
+
     public function checkIfUsed($id)
     {
         $exists = 'false';

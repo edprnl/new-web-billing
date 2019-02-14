@@ -14,7 +14,7 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('contracttype')">
+                                    <b-button v-if="checkRights('6-22')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('contracttype')">
                                             <i class="fa fa-plus-circle"></i> Create New Contract Type
                                     </b-button>
                             </b-col>
@@ -33,7 +33,8 @@
                         </b-row> <!-- row button and search input -->
                         <b-row> <!-- row table -->
                             <b-col sm="12">
-                                <b-table  
+                                <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.contracttypes.criteria"
                                     :fields="tables.contracttypes.fields"
@@ -45,11 +46,11 @@
                                 > <!-- table -->
 
                                 <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
-                                    <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                    <b-btn v-if="checkRights('6-23')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                    <b-btn v-if="checkRights('6-24')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -179,7 +180,8 @@ export default {
                     
                     key: 'action',
                     label: '',
-                    thStyle: {width: '75px'}
+                    thStyle: {width: '75px'},
+                    tdClass: 'text-center',
                 },
                 ],
                 items: []
@@ -235,7 +237,14 @@ export default {
         }
     },
     computed: {
-
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('6-23') || this.checkRights('6-24')) == false){
+                    this.tables.contracttypes.fields.pop()
+                }
+            }
+            return true
+        }
     },
     created () {
       this.fillTableList('contracttypes')

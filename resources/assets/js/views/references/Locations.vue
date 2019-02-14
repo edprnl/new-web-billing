@@ -14,7 +14,7 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('location')">
+                                    <b-button v-if="checkRights('5-18')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('location')">
                                             <i class="fa fa-plus-circle"></i> Create New Location
                                     </b-button>
                             </b-col>
@@ -33,7 +33,8 @@
                         </b-row> <!-- row button and search input -->
                         <b-row> <!-- row table -->
                             <b-col sm="12">
-                                <b-table  
+                                <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.locations.criteria"
                                     :fields="tables.locations.fields"
@@ -45,11 +46,11 @@
                                 > <!-- table -->
 
                                 <template slot="action" slot-scope="data"> <!-- action slot  :to="{path: 'categories/' + data.item.id } -->
-                                    <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                    <b-btn v-if="checkRights('5-19')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                         <i class="fa fa-edit"></i>
                                     </b-btn>
 
-                                    <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                    <b-btn v-if="checkRights('5-20')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                         <i class="fa fa-trash"></i>
                                     </b-btn>
                                 </template>
@@ -179,7 +180,8 @@ export default {
                     
                     key: 'action',
                     label: '',
-                    thStyle: {width: '75px'}
+                    thStyle: {width: '75px'},
+                    tdClass: 'text-center'
                 },
                 ],
                 items: []
@@ -236,7 +238,14 @@ export default {
         }
     },
     computed: {
-
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('5-19') || this.checkRights('5-20')) == false){
+                    this.tables.locations.fields.pop()
+                }
+            }
+            return true
+        }
     },
     created () {
       this.fillTableList('locations')

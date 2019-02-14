@@ -472,7 +472,7 @@
                                             Summary
                                         </h6>
                                         <b-row>
-                                            <label class="font-weight-bold col-sm-6">Prev. Balance :</label>
+                                            <label @click="showModalHistory = true" class="font-weight-bold col-sm-6 prev-bal"><u>Prev. Balance :</u></label>
                                             <label class="font-weight-bold col-sm-6 text-right"> {{formatNumber(previous_balance)}} </label>
                                         </b-row>
                                         <b-row>
@@ -777,6 +777,32 @@
                 <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
             </div>
         </b-modal>
+        <b-modal 
+            size="lg"
+            ref="history"
+            v-model="showModalHistory"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+            @shown="checkScrollBar()"
+        >
+            <div slot="modal-title">
+                Tenant History
+            </div>
+            <b-col lg=12>
+                <b-btn class="mb-3" variant="success" v-if="sbButton" @click="navigateButton('End')">Go to Bottom</b-btn>
+                <b-table 
+                    responsive
+                    small bordered
+                    :fields="tables.tenant_history.fields"
+                    :items.sync="tables.tenant_history.items"
+                    show-empty>
+                </b-table>
+                <b-btn class="mt-3" variant="success" v-if="sbButton" @click="navigateButton('Home')">Go to Top</b-btn>
+            </b-col>
+            <div slot="modal-footer">
+                <b-button variant="secondary" @click="showModalHistory=false">Close</b-button>            
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -791,6 +817,7 @@ export default {
             showModalDelete: false,
             showModalCharges: false,
             showModalPeriod: true,
+            showModalHistory: false,
             month_name: '',
             app_year: '',
             options: {
@@ -1129,6 +1156,53 @@ export default {
                         }
                     ],
                     items: []
+                },
+                tenant_history: {
+                    fields: [
+                        {
+                            key: 'date_created',
+                            label: 'Date',
+                            formatter: (value) => {
+                                return this.moment(value, 'MMMM DD, YYYY')
+                            }
+                        },
+                        {
+                            key: 'reference_no',
+                            label: 'Reference No'
+                        },
+                        {
+                            key: 'app_date',
+                            label: 'App Date/Note'
+                        },
+                        {
+                            key: 'debit',
+                            label: 'Debit',
+                            thClass: 'text-right',
+                            tdClass: 'text-right',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
+                        },
+                        {
+                            key: 'credit',
+                            label: 'Credit',
+                            thClass: 'text-right',
+                            tdClass: 'text-right',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
+                        },
+                        {
+                            key: 'running_balance',
+                            label: 'Balance',
+                            thClass: 'text-right',
+                            tdClass: 'text-right',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
+                        }
+                    ],
+                    items: []
                 }
             },
             forms: {
@@ -1217,10 +1291,29 @@ export default {
             payment_interest: 0,
             billing_id: null,
             is_check_all: 0,
+            sbButton: true,
             row: []
         }
     },
     methods:{
+        checkScrollBar(){
+            var modal = this.$refs.history.$el.querySelector(".modal")
+            if(window.innerHeight >= modal.scrollHeight){
+                this.sbButton = false
+            }
+            else{
+                this.sbButton = true
+            }
+        },
+        navigateButton(position){
+            var modal = this.$refs.history.$el.querySelector(".modal")
+            if(position == 'Home'){
+                modal.scrollTop = 0
+            }
+            else{
+                modal.scrollTop = modal.scrollHeight
+            }
+        },
         async onBillingEntry () {
             this.forms.billing.fields.schedules = this.tables.schedules.items
             this.forms.billing.fields.utilities = this.tables.utilities.items
@@ -1256,6 +1349,7 @@ export default {
         },
         async setUpdate(data){
             this.row = data.item
+            this.getTenantHistory(data.item.tenant_id)
             this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.getPrevSubTotal(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
             this.getPrevPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
@@ -1345,6 +1439,21 @@ export default {
                 charge.is_selected = false
             })
             this.is_check_all = false
+        },
+        getTenantHistory(tenant_id){
+            this.$http.get('api/tenanthistory/'+tenant_id,{
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+            })
+            .then((response) => {
+                const res = response.data
+                this.tables.tenant_history.items = res
+            })
+            .catch(error => {
+                if (!error.response) 
+                return console.log(error)
+            })
         },
         getPrevBalance(month_id, app_year, tenant_id){
             this.$http.get('api/billing/'+month_id+'/'+app_year+'/'+tenant_id,{
@@ -1457,6 +1566,7 @@ export default {
             if(data.length > 0){
                 var tenant = this.options.tenants.items[data[0].element.index]
                 this.forms.billing.fields.tenant_code = tenant.tenant_code
+                this.getTenantHistory(tenant.tenant_id)
                 this.filterOptionsList('contracts', tenant.tenant_id)
                 this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getPrevSubTotal(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
@@ -1705,3 +1815,8 @@ export default {
     }
 }
 </script>
+<style lang="css">
+  .prev-bal {
+    cursor:pointer;
+  }
+</style>

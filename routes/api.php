@@ -22,14 +22,14 @@ Route::group([
     Route::post('login', 'AuthController@login');
     Route::get('logout', 'AuthController@logout');
     Route::get('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    Route::get('me', 'AuthController@me');
 
 });
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-}); 
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// }); 
 Route::middleware('auth:api')->group(function () {
    //---------------------------------- REFERENCES -----------------------------------------------
    //DASHBOARD
@@ -160,6 +160,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('tenants', 'References\TenantsController@index');
     //List single tenant
     Route::get('tenant/{id}', 'References\TenantsController@show');
+    Route::get('tenanthistory/{id}', 'References\TenantsController@tenantHistory');
     //Create new tenant
     Route::post('tenant', 'References\TenantsController@create');
     //Update tenant
@@ -187,6 +188,7 @@ Route::middleware('auth:api')->group(function () {
 
     //List user groups
     Route::get('usergroups', 'Utilities\UserGroupsController@index');
+    Route::get('group_rights/{user_group_id}', 'Utilities\UserGroupsController@getGroupRights');
     //List single user group
     Route::get('usergroup/{id}', 'Utilities\UserGroupsController@show');
     //Create new user group
@@ -308,15 +310,20 @@ Route::middleware('auth:api')->group(function () {
     //---------------------------------- REPORTS --------------------------------------------------
     Route::get('reports/tenantspersqmrate/{id}', 'Reports\ReportsController@tenantsPerSquareMeter');
     Route::get('reports/contractsmasterlist/{id}/{type}', 'Reports\ReportsController@contractsMasterList');
+    Route::get('reports/rentalandcharges/{location_id}/{app_year}/{app_month}/{charge_type}', 'Reports\ReportsController@rentalAndCharges');
+
     //---------------------------------- REPORTS --------------------------------------------------
+
+    //---------------------------------- SESSIONS -------------------------------------------------
+    Route::get('session/rights', 'SessionController@getRights');
     //---------------------------------- FILE UPLOAD ----------------------------------------------
     Route::post('upload', function(Request $request){
         if ($request->file->isValid()) {
             $uploadedFile = $request->file;
             $uploadedPath = $request->path;
 
-            $uploadedFile->move($uploadedPath, $uploadedFile->getClientOriginalName());
-            $path = $uploadedPath.'/'.$uploadedFile->getClientOriginalName();
+            $uploadedFile->move($uploadedPath, 'logo');
+            $path = $uploadedPath.'/logo';
             return response(['status'=>'success', 'path'=>$path], 200);
         }
     });

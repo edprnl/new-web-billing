@@ -157,6 +157,7 @@ export default {
                     this.$store.commit('loginUser')
                     this.$store.commit('user', response.data.user)
                     localStorage.setItem('token', response.data.access_token)
+                    this.$store.commit('rights', response.data.rights)
                     this.$notify({
                       type: 'success',
                       group: 'notification',

@@ -51,7 +51,7 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
+        session()->forget('rights');
         return response()->json(['message' => 'Successfully logged out']);
     }
 
@@ -75,13 +75,19 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         $user = auth()->user();
+
         $rights = GroupRights::select('right_code')->where('user_group_id', $user->user_group_id)->get();
-        session(['rights' => $rights]);
+
+
+        session()->put('rights', Reference::collection($rights));
+        session()->save();
+        
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 600,
             'user' => $user,
+            'rights' => $rights
         ]);
     }
 }

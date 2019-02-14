@@ -56,6 +56,7 @@ import soa from '@/views/reports/Soa'
 import ack_receipt from '@/views/reports/AckReceipt'
 import tenant_per_sqm_rate from '@/views/reports/TenantsPerSqmRate'
 import contracts_master_list from '@/views/reports/ContractsMasterList'
+import rental_and_charges from '@/views/reports/RentalAndCharges'
 
 import store from '../store'
 Vue.use(Router)
@@ -75,7 +76,7 @@ const router = new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
-          meta: { requiresAuth: true }
+          meta: { requiresAuth: true },
         },
         // {
         //   path: 'charts',
@@ -93,55 +94,55 @@ const router = new Router({
               path: 'tenants',
               name: 'Tenants',
               component: tenants,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '1-1'},
             },
             {
               path: 'departments',
               name: 'Departments',
               component: departments,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '2-5'}
             },
             {
               path: 'categories',
               name: 'Categories',
               component: categories,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '4-13'}
             },
             {
               path: 'charges',
               name: 'Charges',
               component: charges,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '3-9'},
             },
             {
               path: 'locations',
               name: 'Locations',
               component: locations,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '5-17'}
             },
             {
               path: 'contracttypes',
               name: 'Contract Types',
               component: contracttypes,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '6-21'}
             },
             {
               path: 'checktypes',
               name: 'Check Types',
               component: checktypes,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '7-25'}
             },
             {
               path: 'natureofbusiness',
               name: 'Nature Of Business',
               component: natureofbusiness,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '8-29'}
             },
             {
               path: 'billingperiods',
               name: 'Billing Periods',
               component: billingperiods,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '9-33'},
             },
 
           ]
@@ -157,19 +158,19 @@ const router = new Router({
               path: 'users',
               name: 'Users',
               component: users,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '10-37'}
             },
             {
               path: 'user_groups',
               name: 'User Groups',
               component: usergroups,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '11-41'}
             },
             {
               path: 'company_settings',
               name: 'Company Settings',
               component: companysettings,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '12-45'}
             }
           ]
         },
@@ -184,25 +185,31 @@ const router = new Router({
               path: 'soa',
               name: 'Soa',
               component: soa,
-              meta: { requiresAuth: true }
+              meta: { requiresAuth: true, rights: '14-54' }
             },
             {
               path: 'ack_receipt',
               name: 'Acknowledgement Receipt',
               component: ack_receipt,
-              meta: { requiresAuth: true }
+              meta: { requiresAuth: true, rights: '15-58' }
             },
             {
               path: 'tenant_per_sqm_rate',
               name: 'Tenant Per Sqm Rate',
               component: tenant_per_sqm_rate,
-              meta: { requiresAuth: true }
+              meta: { requiresAuth: true, rights: '17-63' }
             },
             {
               path: 'contracts_master_list',
               name: 'Contracts Master List',
               component: contracts_master_list,
-              meta: { requiresAuth: true }
+              meta: { requiresAuth: true, rights: '17-63' }
+            },
+            {
+              path: 'rental_and_charges',
+              name: 'Rental Rates and Charges',
+              component: rental_and_charges,
+              meta: { requiresAuth: true, rights: '17-63' }
             }
           ]
         },
@@ -217,25 +224,25 @@ const router = new Router({
               path: 'contracts',
               name: 'Contracts',
               component: contracts,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '13-46'}
             },
             {
               path: 'billing',
               name: 'Billing',
               component: billing,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '14-50'}
             },
             {
               path: 'payment',
               name: 'Payment',
               component: payment,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '15-55'}
             },
             {
               path: 'adjustment',
               name: 'Adjustment',
               component: adjustment,
-              meta: {requiresAuth: true}
+              meta: {requiresAuth: true, rights: '16-59'}
             }
           ]
         },
@@ -360,7 +367,25 @@ const router = new Router({
 })
 export default router
 router.beforeEach((to, from, next) => {
-// check if the route requires authentication and user is not logged in
+
+  //check if user has rights on this route
+  if(to.matched.some(route => route.meta.rights)){
+    var right = false
+    var row = store.state.rights.filter(right => 
+      right.right_code == to.meta.rights
+    )
+
+    if(row.length > 0){
+      right = true
+    }
+
+    if(!right){
+      next({name: from.name})
+      return
+    }
+  }
+
+  // check if the route requires authentication and user is not logged in
   if (to.matched.some(route => route.meta.requiresAuth) && !store.state.isLoggedIn) {
     // redirect to login page
     next({ name: 'Login' })

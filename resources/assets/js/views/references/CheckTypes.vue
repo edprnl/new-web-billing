@@ -14,7 +14,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('check_type')">
+                                    <b-button v-if="checkRights('7-26')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('check_type')">
                                             <i class="fa fa-plus-circle"></i> Create New Check Type
                                     </b-button>
                             </b-col>
@@ -35,6 +35,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.check_types.criteria"
                                     :fields="tables.check_types.fields"
@@ -165,7 +166,8 @@ export default {
                         {
                             key:'action',
                             label:'',
-                            thStyle: {width: '75px'}
+                            thStyle: {width: '75px'},
+                            tdClass: 'text-center',
                         }
                     ],
                     items: []
@@ -219,6 +221,16 @@ export default {
             this.showModalEntry=true
             this.entryMode='Edit'
 
+        }
+    },
+    computed: {
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('7-27') || this.checkRights('7-28')) == false){
+                    this.tables.check_types.fields.pop()
+                }
+            }
+            return true
         }
     },
     created () {
