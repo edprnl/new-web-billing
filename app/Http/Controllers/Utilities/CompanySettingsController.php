@@ -104,20 +104,34 @@ class CompanySettingsController extends Controller
                 'vat_account_id' => 'required|not_in:0',
                 'adjustment_in_account_id' => 'required|not_in:0',
                 'adjustment_out_account_id' => 'required|not_in:0',
-                'discount_account_id' => 'required|not_in:0'
+                'discount_account_id' => 'required|not_in:0',
+                'ar_account_id' => 'required|not_in:0',
+                'cash_payment_account_id' => 'required|not_in:0',
+                'card_payment_account_id' => 'required|not_in:0',
+                'online_payment_account_id' => 'required|not_in:0',
+                'interest_account_id' => 'required|not_in:0',
+                'penalty_account_id' => 'required|not_in:0'
+
             ], ['not_in' => 'The :attribute field is required.']
         )->setAttributeNames([
             'basic_rental_account_id' => 'rental account',
             'advance_rental_account_id' => 'advance rental account',
             'security_deposit_account_id' => 'security deposit',
             'electric_meter_deposit_account_id' => 'electric meter deposit',
-            'water_meter_deposit_account_id' => 'rental account',
-            'construction_deposit_account_id' => 'rental account',
-            'withholding_tax_account_id' => 'rental account',
-            'vat_account_id' => 'rental account',
-            'adjustment_in_account_id' => 'rental account',
-            'adjustment_out_account_id' => 'rental account',
-            'discount_account_id' => 'rental account'
+            'water_meter_deposit_account_id' => 'water meter account',
+            'construction_deposit_account_id' => 'construction deposit account',
+            'withholding_tax_account_id' => 'withholding tax account',
+            'vat_account_id' => 'vat account',
+            'adjustment_in_account_id' => 'adjustment in account',
+            'adjustment_out_account_id' => 'adjustment out account',
+            'discount_account_id' => 'discount account',
+            'ar_account_id' => 'account receivable out account',
+            'cash_payment_account_id' => 'cash payment account',
+            'card_payment_account_id' => 'card payment out account',
+            'online_payment_account_id' => 'online payment out account',
+            'interest_account_id' => 'interest account',
+            'penalty_account_id' => 'penalty account',
+
         ])->validate();
         
         $company = CompanySettings::findOrFail($id);
@@ -139,6 +153,12 @@ class CompanySettingsController extends Controller
         $company->adjustment_in_account_id = $request->input('adjustment_in_account_id');
         $company->adjustment_out_account_id = $request->input('adjustment_out_account_id');
         $company->discount_account_id = $request->input('discount_account_id');
+        $company->ar_account_id = $request->input('ar_account_id');
+        $company->cash_payment_account_id = $request->input('cash_payment_account_id');
+        $company->card_payment_account_id = $request->input('card_payment_account_id');
+        $company->online_payment_account_id = $request->input('online_payment_account_id');
+        $company->interest_account_id = $request->input('interest_account_id');
+        $company->penalty_account_id = $request->input('penalty_account_id');
 
         //update  based on the http json body that is sent
         $company->update();

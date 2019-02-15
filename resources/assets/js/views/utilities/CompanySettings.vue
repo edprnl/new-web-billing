@@ -1,3 +1,11 @@
+<style>
+    .label-group {
+       font-size: 14pt;
+       font-weight: bold;
+
+    } 
+</style>
+
 <template>
     <!--<b-animated fade-in>  main container -->
     <div>
@@ -142,14 +150,46 @@
                                                 </b-col>
                                             </b-row>
                                         </b-form>
-                                    </b-tab >
+                                    </b-tab>
                                         
                                     <b-tab title="Advance Settings">
                                         <b-row>
                                             <b-col sm=12>
-                                                <b-row>
-                                                    <b-col sm=1></b-col>
-                                                    <b-col sm=5>
+                                                <b-row> 
+                                                    <b-col sm=4>
+                                                       <b-row>
+                                                           <b-col sm=12>
+                                                                <label class="label-group">
+                                                                    Account Receivables
+                                                                </label>
+                                                           </b-col>
+                                                       </b-row>
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Account Receivable</label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        :style="forms.companysetting.states.ar_account_id == false ? 'border-color:red' : ''"
+                                                                        ref="ar_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.ar_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
+                                                           <b-col sm=12>
+                                                                <label class="label-group">
+                                                                    Contract Details Accounts
+                                                                </label>
+                                                           </b-col>
+                                                       </b-row>
+
                                                         <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
@@ -167,7 +207,8 @@
                                                                 </b-form-group>
                                                             </b-col>
                                                         </b-row>
-                                                         <b-row>
+
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
                                                                     <label>* Advance Rental Account </label>
@@ -184,58 +225,7 @@
                                                             </b-col>
                                                         </b-row>
 
-                                                         <b-row>
-                                                            <b-col sm=12>
-                                                                <b-form-group>
-                                                                    <label>* Security Deposit Account </label>
-                                                                    <select2
-                                                                        tab="1"
-                                                                        ref="security_deposit_account_id"
-                                                                        :allowClear="false"
-                                                                        :placeholder="'Select Account Title'"
-                                                                        v-model="forms.companysetting.fields.security_deposit_account_id"
-                                                                    >
-                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
-                                                                    </select2>
-                                                                </b-form-group>
-                                                            </b-col>
-                                                        </b-row>
-
-                                                         <b-row>
-                                                            <b-col sm=12>
-                                                                <b-form-group>
-                                                                    <label>* Electric Meter Deposit Account </label>
-                                                                    <select2
-                                                                        tab="1"
-                                                                        ref="electric_meter_deposit_account_id"
-                                                                        :allowClear="false"
-                                                                        :placeholder="'Select Account Title'"
-                                                                        v-model="forms.companysetting.fields.electric_meter_deposit_account_id"
-                                                                    >
-                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
-                                                                    </select2>
-                                                                </b-form-group>
-                                                            </b-col>
-                                                        </b-row>
-
-                                                         <b-row>
-                                                            <b-col sm=12>
-                                                                <b-form-group>
-                                                                    <label>* Water Meter Deposit Account </label>
-                                                                    <select2
-                                                                        tab="1"
-                                                                        ref="water_meter_deposit_account_id"
-                                                                        :allowClear="false"
-                                                                        :placeholder="'Select Account Title'"
-                                                                        v-model="forms.companysetting.fields.water_meter_deposit_account_id"
-                                                                    >
-                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
-                                                                    </select2>
-                                                                </b-form-group>
-                                                            </b-col>
-                                                        </b-row>
-
-                                                         <b-row>
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
                                                                     <label>* Construction Deposit Account </label>
@@ -252,10 +242,68 @@
                                                             </b-col>
                                                         </b-row>
 
-                                                         
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Security Deposit Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="security_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.security_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Electric Meter Deposit Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="electric_meter_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.electric_meter_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Water Meter Deposit Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="water_meter_deposit_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.water_meter_deposit_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
                                                     </b-col>
-                                                    <b-col sm=5>
-                                                         <b-row>
+                                                    
+                                                    <b-col sm=4>
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <label class="label-group">
+                                                                    VAT and WTAX Accounts
+                                                                </label>
+                                                            </b-col>
+                                                        </b-row>
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
                                                                     <label>* Withholding Tax Account </label>
@@ -272,7 +320,7 @@
                                                             </b-col>
                                                         </b-row>
 
-                                                         <b-row>
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
                                                                     <label>* VAT Account </label>
@@ -289,7 +337,97 @@
                                                             </b-col>
                                                         </b-row>
 
-                                                         <b-row>
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <label class="label-group">
+                                                                    Payment Collection Accounts
+                                                                </label>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Cash Payment Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="cash_payment_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.cash_payment_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Card Payment Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="card_payment_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.card_payment_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Online Payment Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="vat_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.online_payment_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Discount Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="discount_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.discount_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row> 
+
+                                                    </b-col>
+
+                                                    <b-col sm=4>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <label class="label-group">
+                                                                    Other Accounts
+                                                                </label>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
                                                                     <label>* Adjustment In Account </label>
@@ -306,7 +444,7 @@
                                                             </b-col>
                                                         </b-row>
 
-                                                         <b-row>
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
                                                                     <label>* Adjustment Out Account </label>
@@ -323,29 +461,47 @@
                                                             </b-col>
                                                         </b-row>
 
-                                                         <b-row>
+                                                        <b-row>
                                                             <b-col sm=12>
                                                                 <b-form-group>
-                                                                    <label>* Discount Account </label>
+                                                                    <label>* Interest Account </label>
                                                                     <select2
                                                                         tab="1"
-                                                                        ref="discount_account_id"
+                                                                        ref="interest_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
-                                                                        v-model="forms.companysetting.fields.discount_account_id"
+                                                                        v-model="forms.companysetting.fields.interest_account_id"
                                                                     >
                                                                         <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
                                                                     </select2>
                                                                 </b-form-group>
                                                             </b-col>
                                                         </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Penalty Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="penalty_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.penalty_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+                                                        
                                                     </b-col>
-                                                    <b-col sm=1></b-col>
-                                                    
                                                 </b-row>
                                             </b-col>
                                         </b-row>
                                     </b-tab>
+
+
                                     <b-tab title="SOA Notes">
                                         <b-row>
                                             <b-col  sm="12">
@@ -438,7 +594,13 @@ export default {
                         vat_account_id: 0,
                         adjustment_in_account_id: 0,
                         adjustment_out_account_id: 0,
-                        discount_account_id: 0
+                        discount_account_id: 0,
+                        interest_account_id: 0,
+                        penalty_account_id: 0,
+                        cash_payment_account_id: 0,
+                        card_payment_account_id: 0,
+                        online_payment_account_id: 0,
+                        ar_account_id: 0
                     },
                     states: {
                         company_id: null,
@@ -457,7 +619,13 @@ export default {
                         vat_account_id: null,
                         adjustment_in_account_id: null,
                         adjustment_out_account_id: null,
-                        discount_account_id: null
+                        discount_account_id: null,
+                        interest_account_id: null,
+                        penalty_account_id: null,
+                        cash_payment_account_id: null,
+                        card_payment_account_id: null,
+                        online_payment_account_id: null,
+                        ar_account_id: null
                     },
                 }
             },
