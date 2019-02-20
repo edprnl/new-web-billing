@@ -40,8 +40,43 @@
                                     :items.sync="tables.tenants.items"
                                     :current-page="paginations.tenants.currentPage"
                                     :per-page="paginations.tenants.perPage"
-                                    striped hover small bordered show-empty
+                                    striped small bordered show-empty
                                 >
+                                    <template slot="row_data" slot-scope="row">
+                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails">
+                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
+                                        </b-btn>
+                                    </template>
+                                    <template slot="row-details" slot-scope="row">
+                                        <h6>
+                                            Tenant Files 
+                                        </h6>
+                                        <b-row>
+                                            <b-col lg="2"></b-col>
+                                            <b-col lg="8">
+                                                <b-form-file @change="fieldChange($event, row)" ref="file" plain style="display: none;"></b-form-file>
+                                                <b-btn class="float-right mb-2" variant="primary" @click="$refs.file.$el.click()">
+                                                    <i class="fa fa-file-o"></i>
+                                                    Add File
+                                                </b-btn>
+                                                <table class="w-100 mb-2 responsive">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:90%;">Filename</th>
+                                                            <th class="text-center" style="width:10%;">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="align-middle">asdf</td>
+                                                            <td class="text-center"><b-btn size="sm" variant="danger"><i class="fa fa-trash"></i></b-btn></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </b-col>
+                                            <b-col lg="2"></b-col>
+                                        </b-row>
+                                    </template>
                                     <template slot="action" slot-scope="data">
                                         <b-btn v-if="checkRights('1-3')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
@@ -396,6 +431,12 @@ export default {
                 tenants: {
                     fields:[
                         {
+                            key:'row_data',
+                            label: '',
+                            tdClass: '',
+                            thStyle: {width: '40px'}
+                        },
+                        {
                             key:'tenant_code',
                             label: 'Tenant Code'
                         },
@@ -447,6 +488,7 @@ export default {
                 }
             },
             tenant_id: null,
+            file: new FormData,
             row: []
         }
     },
@@ -482,6 +524,41 @@ export default {
             this.showEntry=true
             this.entryMode='Edit'
         },
+        tenantFiles(tenant_id){
+            this.$http.get('/api/tenant_files/' + tenant_id, {
+                headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token'),
+                      'Content-Type' : 'multipart/form-data'
+                  }
+            })
+            .then((response) => {
+                console.log(response)
+                // this.forms.companysetting.fields.logo = response.data.path
+            })
+        },
+        fieldChange(e, row){
+            let attachment = e.target.files[0]
+            let path = 'uploads/tenants'
+
+            this.file.append('folder', row.item.tenant_id)
+            this.file.append('file', attachment)
+            this.file.append('path', path)
+
+            this.$http.post('/api/fileupload', this.file, {
+                headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token'),
+                      'Content-Type' : 'multipart/form-data'
+                  }
+            })
+            .then((response) => {
+                console.log(response)
+                // this.forms.companysetting.fields.logo = response.data.path
+            })
+            .catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
+        }
     },
     created () {
         this.fillTableList('tenants');

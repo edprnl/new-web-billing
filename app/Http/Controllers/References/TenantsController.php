@@ -5,6 +5,7 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\Tenants;
+use App\Models\References\Customers;
 use App\Models\Transactions\ContractInfo;
 use App\Models\Transactions\BillingInfo;
 use App\Http\Resources\Reference;
@@ -49,6 +50,8 @@ class TenantsController extends Controller
         )->validate();
         
         $tenant = new Tenants;
+        $customer = new Customers;
+
         $tenant->tenant_code = DB::select("select CreateTenantCode() as tenant_code")[0]->tenant_code;
         $tenant->trade_name = $request->input('trade_name');
         $tenant->company_name = $request->input('company_name');
@@ -76,6 +79,24 @@ class TenantsController extends Controller
 
         // return json based from the resource data
         if($tenant->save()){
+            $customer->tenant_id = $tenant->tenant_id;
+            $customer->customer_name = $tenant->trade_name;
+            $customer->contact_name = $tenant->contact_person;
+            $customer->address = $tenant->head_office_address;
+            $customer->email_address = $tenant->email_address;
+            $customer->contact_no = $tenant->contact_number;
+            $customer->customer_type_id = 0;
+            $customer->tin_no = $tenant->tin_number;
+            $customer->photo_path = 'assets/img/anonymous-icon.png';
+            $customer->date_created = Carbon::now();
+            $customer->posted_by_user = 0;
+            $customer->office_fax_number = ''; 
+            $customer->business_organization = '';
+            $customer->ar_trans_id = 4;
+            $customer->payment_term_desc = '';
+
+            $customer->save();
+
             return ( new Reference( $tenant ))
                 ->response()
                 ->setStatusCode(201);
@@ -106,6 +127,13 @@ class TenantsController extends Controller
         return ( new Reference( $tenant ) )
             ->response()
             ->setStatusCode(200);
+    }
+
+    public function showFiles($id)
+    {
+        $tenant_file = TenantFiles::where('tenant_id', $id);
+
+        return Reference::collection($tenant_file);
     }
 
     /**
@@ -144,6 +172,8 @@ class TenantsController extends Controller
         )->validate();
 
         $tenant = Tenants::findOrFail($id);
+        $customer = Customers::where('tenant_id', $id)->firstOrFail();
+
         $tenant->trade_name = $request->input('trade_name');
         $tenant->company_name = $request->input('company_name');
         $tenant->space_code = $request->input('space_code');
@@ -168,12 +198,23 @@ class TenantsController extends Controller
         $tenant->modified_datetime = Carbon::now();
         $tenant->modified_by = Auth::user()->id;
 
-        $tenant->save();
+        if($tenant->save()){
+            $customer->customer_name = $tenant->trade_name;
+            $customer->contact_name = $tenant->contact_person;
+            $customer->address = $tenant->head_office_address;
+            $customer->email_address = $tenant->email_address;
+            $customer->contact_no = $tenant->contact_number;
+            $customer->tin_no = $tenant->tin_number;
+            $customer->date_modified = Carbon::now();
 
-        //return json based from the resource data
-        return ( new Reference( $tenant ))
+            $customer->save();
+
+            return ( new Reference( $tenant ))
                 ->response()
                 ->setStatusCode(201);
+        }
+
+        //return json based from the resource data
     }
 
     /**

@@ -48,7 +48,7 @@
                                 ref="month_id"
                                 :allowClear="false"
                                 :placeholder="'Select Month'"
-                                v-model="month_id"
+                                v-model="jj"
                             >
                                 <option v-for="month in options.months.items" :key="month.month_id" :value="month.month_id">{{  month.month_name }}</option>
                             </select2>
@@ -70,12 +70,12 @@
                     </b-col>
                 </b-row>
                 <div slot="modal-footer">
-                    <b-btn
+                    <b-btn 
+                        @click="fetchData"
                         variant="success"
-                        @click="fetchData()"
                     >
-                        <i class="fa fa-file-excel-o"></i> 
-                        Download Data
+                        <i class="fa fa-file-excel-o"></i>
+                        Excel
                     </b-btn>
                     <b-button variant="secondary" @click="showModal=false">Close</b-button>            
                 </div>
@@ -88,23 +88,11 @@ export default {
     name: 'rentalAndCharges',
     data () {
         return {
-            excel :{
-                fields: {
-                    'Billing No.': 'billing_no',
-                    'Space Code': 'space_code',
-                    'Area(Sqm)': 'number',
-                    'Tenant': 'trade_name',
-                    'Basic Rent': 'total_fixed_rent',
-                    'Discounted Rent': 'total_discounted_rent',
-                    'Basic Rent': 'total_fixed_rent'
-                },
-                data: [],
-            },
             showModal: true,
-            location_id: null,
-            app_year: null,
-            month_id: null,
-            charge_type: null,
+            location_id: 0,
+            app_year: new Date,
+            month_id: 0,
+            charge_type: 0,
             options: {
                 locations: {
                     items: []
@@ -116,33 +104,49 @@ export default {
         }
     },
     async created(){
-        await this.fillOptionsList('locations')
         await this.fillOptionsList('months')
+        await this.fillOptionsList('locations')
     },
     methods: {
         async fetchData(){
             var year = this.moment(this.app_year, 'YYYY')
             await this.$http.get('api/reports/rentalandcharges/' + this.location_id +'/'+year+'/'+ this.month_id+'/'+this.charge_type, {
+              responseType: 'blob',
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
             })
             .then((response) => {
-                this.excel.data = response.data
-                console.log(response)
+                if(response.data.size > 0){
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'RentalAndCharges.xlsx');
+                    document.body.appendChild(link);
+                    link.click();
+                }
             })
             .catch(error => {
               if (!error.response) return
               console.log(error)
             })
         },
-        previewReport(){
-            if(this.location_id != null){
-                let routeData = this.$router.resolve({name: 'Tenant Per Sqm Rate', query: {location_id: this.location_id}});
-                window.open(routeData.href, '_blank');
-            }
-        },
     },
+    computed: {
+        jj: {
+            get: function(){
+                if(this.options.months.items.length > 0 && this.month_id == 0){
+                    setTimeout(function(){
+                        this.month_id = this.moment(new Date, 'M')
+                    }.bind(this), 1)
+                }
+                return this.month_id
+            },
+            set: function(value){
+                this.month_id = value
+            }
+        }
+    }
   }
 </script>
 

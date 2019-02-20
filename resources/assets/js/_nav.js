@@ -8,145 +8,148 @@ export default {
     {
       name: 'References',
       url: '/references',
-      icon: 'icon-puzzle',
+      icon: 'icon-book-open',
       rights: [1,2,3,4,5,6,7,8,9],
       children:[
         {
           name: 'Tenants',
           url: '/references/tenants',
-          rights: '1-1'
+          rights: '1-1',
+          icon: 'icon-user-follow'
         },
         {
           name: 'Departments',
           url: '/references/departments',
-          rights: '2-5'
+          rights: '2-5',
+          icon: 'icon-list'
         },
         {
           name: 'Charges',
           url: '/references/charges',
-          rights: '3-9'
-          //icon: 'fas fa-code-branch'
+          rights: '3-9',
+          icon: 'icon-energy'
         },
         {
           name: 'Categories',
           url: '/references/categories',
-          rights: '4-13'
-          //icon: 'fas fa-code-branch'
+          rights: '4-13',
+          icon: 'icon-folder'
         },
         {
           name: 'Locations',
           url: '/references/locations',
-          rights: '5-17'
-          //icon: 'fas fa-code-branch'
+          rights: '5-17',
+          icon: 'icon-location-pin'
         },
         {
           name: 'Contract Types',
           url: '/references/contracttypes',
-          rights: '6-21'
-          //icon: 'fas fa-code-branch'
+          rights: '6-21',
+          icon: 'icon-docs'
         }
         ,
         {
           name: 'Check Types',
           url: '/references/checktypes',
-          rights: '7-25'
-          //icon: 'fas fa-code-branch'
+          rights: '7-25',
+          icon: 'icon-credit-card'
         }
         ,
         {
           name: 'Nature Of Business',
           url: '/references/natureofbusiness',
-          rights: '8-29'
-          //icon: 'fas fa-code-branch'
+          rights: '8-29',
+          icon: 'icon-basket-loaded'
         },
         {
           name: 'Billing Period',
           url: '/references/billingperiods',
-          rights: '9-33'
-          //icon: 'fas fa-code-branch'
+          rights: '9-33',
+          icon: 'icon-calendar'
         }
 
 
-      ]
-    },
-    {
-      name: 'Utilities',
-      url: '/utilities',
-      icon: 'icon-star',
-      rights: [10,11,12],
-      children:[
-        {
-          name: 'Users',
-          url: '/utilities/users',
-          rights: '10-37'
-          //icon: 'fa-building'
-        },
-        // {
-        //   name: 'User Group',
-        //   url: '/utilities/user_groups',
-        //   rights: '11-41'
-        // },
-        {
-          name: 'Company Settings',
-          url: '/utilities/company_settings',
-          rights: '12-45'
-          //icon: 'fa-building'
-        }
       ]
     },
     {
       name: 'Transactions',
       url: '/transactions',
-      icon: 'icon-star',
+      icon: 'icon-note',
       rights: [13,14,15,16],
       children:[
         {
           name: 'Contracts',
           url: '/transactions/contracts',
-          rights: '13-46'
-          //icon: 'fa-building'
+          rights: '13-46',
+          icon: 'icon-envelope-letter'
         },
         {
           name: 'Billing',
           url: '/transactions/billing',
-          rights: '14-50'
-          //icon: 'fas fa-code-branch'
+          rights: '14-50',
+          icon: 'icon-briefcase'
         },
         {
           name: 'Payment',
           url: '/transactions/payment',
-          rights: '15-55'
-          //icon: 'fas fa-code-branch'
+          rights: '15-55',
+          icon: 'icon-wallet'
         },
         {
           name: 'Adjustment',
           url: '/transactions/adjustment',
-          rights: '16-59'
-          //icon: 'fas fa-code-branch'
+          rights: '16-59',
+          icon: 'icon-cursor-move'
         }
       ]
     },
     {
       name: 'Reports',
       url: '/reports',
-      icon: 'icon-star',
+      icon: 'icon-doc',
       rights: [17],
       children:[
         {
           name: 'Tenant Per Sqm Rate',
           url: '/reports/tenant_per_sqm_rate',
-          //icon: 'fa-building'
+          icon: 'icon-layers'
         },
         {
           name: 'Contracts Master List',
           url: '/reports/contracts_master_list',
-          //icon: 'fa-building'
+          icon: 'icon-layers'
         },
         {
           name: 'Rental Rates and Charges',
           url: '/reports/rental_and_charges',
-          //icon: 'fa-building'
+          icon: 'icon-layers'
         },
+      ]
+    },
+    {
+      name: 'Utilities',
+      url: '/utilities',
+      icon: 'icon-wrench',
+      rights: [10,11,12],
+      children:[
+        {
+          name: 'Users',
+          url: '/utilities/users',
+          rights: '10-37',
+          icon: 'icon-user'
+        },
+        {
+          name: 'User Group',
+          url: '/utilities/user_groups',
+          rights: '11-41',
+          icon: 'icon-people'
+        },
+        {
+          name: 'Company Settings',
+          url: '/utilities/company_settings',
+          rights: '12-45',
+          icon: 'icon-settings'
+        }
       ]
     },
     // {
@@ -191,7 +194,7 @@ export default {
     //     }
     //   ]
     // },
-    // // {
+    // {
     //   name: 'Icons',
     //   url: '/icons',
     //   icon: 'icon-star',

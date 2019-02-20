@@ -160,6 +160,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('tenants', 'References\TenantsController@index');
     //List single tenant
     Route::get('tenant/{id}', 'References\TenantsController@show');
+    Route::get('tenant_files/{id}', 'References\TenantsController@showFiles');
     Route::get('tenanthistory/{id}', 'References\TenantsController@tenantHistory');
     //Create new tenant
     Route::post('tenant', 'References\TenantsController@create');
@@ -310,7 +311,10 @@ Route::middleware('auth:api')->group(function () {
     //---------------------------------- REPORTS --------------------------------------------------
     Route::get('reports/tenantspersqmrate/{id}', 'Reports\ReportsController@tenantsPerSquareMeter');
     Route::get('reports/contractsmasterlist/{id}/{type}', 'Reports\ReportsController@contractsMasterList');
-    Route::get('reports/rentalandcharges/{location_id}/{app_year}/{app_month}/{charge_type}', 'Reports\ReportsController@rentalAndCharges');
+    Route::get('reports/rentalandcharges/{location_id}/{app_year}/{app_month}/{charge_type}',[
+        'as' => 'reports.rentalAndCharges', 
+        'uses' => 'Reports\ReportsController@rentalAndCharges'
+     ]);
 
     //---------------------------------- REPORTS --------------------------------------------------
 
@@ -325,6 +329,17 @@ Route::middleware('auth:api')->group(function () {
             $uploadedFile->move($uploadedPath, 'logo');
             $path = $uploadedPath.'/logo';
             return response(['status'=>'success', 'path'=>$path], 200);
+        }
+    });
+
+    Route::post('fileupload', function(Request $request){
+        if ($request->file->isValid()) {
+            $uploadedFile = $request->file;
+            $uploadedPath = $request->path;
+            $uploadedFolder = $request->folder;
+
+            $uploadedFile->move($uploadedPath.'/'.$uploadedFolder, $uploadedFile->getClientOriginalName());
+            return response(['status'=>'success', 'name'=>$uploadedFile->getClientOriginalName()], 200);
         }
     });
 });
