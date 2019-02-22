@@ -339,8 +339,8 @@
           return is_used
         },
         // format number into 2 decimal places with comma
-        formatNumber(value) {
-            let val = (value/1).toFixed(2)
+        formatNumber(value, decimal = 2) {
+            let val = (value/1).toFixed(decimal)
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
         // format date with date and format as parameters

@@ -429,7 +429,7 @@
                                                 @input='computePayment()'
                                                 v-model="data.item.amount_paid"
                                                 :class="'form-control text-right'"
-                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0, decimalPlaces: 3}">
                                             </vue-autonumeric>
                                         </template>
                                     </b-table>
@@ -795,7 +795,7 @@ export default {
                             tdClass: 'text-right align-middle',
                             thStyle: {width: '15%'},
                             formatter: (value) => {
-                                return this.formatNumber(value)
+                                return this.formatNumber(value, 3)
                             }
                         },
                         {
@@ -928,13 +928,13 @@ export default {
                 }
                 totalAmountPaid += billing.amount_paid
             })
-            // console.log(totalAmountPaid)
-            // console.log(this.carried_advance)
-            // console.log(this.forms.payment.fields.advance)
-            // console.log(this.forms.payment.fields.amount)
+            console.log(totalAmountPaid)
+            console.log(this.carried_advance)
+            console.log(this.forms.payment.fields.advance)
+            console.log(this.forms.payment.fields.amount)
 
-            var total = Number(this.forms.payment.fields.amount) - 
-            (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)) 
+            var total = Math.max(0,Number(this.forms.payment.fields.amount) - 
+            (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)))
 
             if(total >= 0 && total <= 0.09){
                 return true

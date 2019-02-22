@@ -384,7 +384,7 @@ export default {
             .then((response) => {
                 const res = response.data.data
                 this.billing = res
-                var month_id = 0
+                var month_id = res.month_id
                 if(this.billing.month_id == 1){
                     month_id = 13
                 }
