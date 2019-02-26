@@ -5,6 +5,7 @@ namespace App\Http\Controllers\References;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\References\Tenants;
+use App\Models\References\TenantFiles;
 use App\Models\References\Customers;
 use App\Models\Transactions\ContractInfo;
 use App\Models\Transactions\BillingInfo;
@@ -13,6 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 use DB;
+use Illuminate\Support\Facades\Storage;
+use File;
 
 class TenantsController extends Controller
 {
@@ -23,7 +26,10 @@ class TenantsController extends Controller
      */
     public function index()
     {
-        $tenants = Tenants::where('is_deleted', 0)->orderBy('tenant_id', 'desc')->get();
+        $tenants = Tenants::select(
+                                '*',
+                                DB::raw('"" as files')
+                            )->where('is_deleted', 0)->orderBy('tenant_id', 'desc')->get();
         return Reference::collection($tenants);
     }
 
@@ -131,7 +137,7 @@ class TenantsController extends Controller
 
     public function showFiles($id)
     {
-        $tenant_file = TenantFiles::where('tenant_id', $id);
+        $tenant_file = TenantFiles::where('tenant_id', $id)->where('is_deleted', 0)->get();
 
         return Reference::collection($tenant_file);
     }
@@ -254,6 +260,43 @@ class TenantsController extends Controller
     public function tenantHistory($id)
     {
         return DB::select('CALL tenant_history('.$id.')');
+    }
+
+    public function fileupload(Request $request)
+    {
+        if ($request->file->isValid()) {
+            $uploadedFile = $request->file;
+            $uploadedPath = $request->path;
+            $uploadedFolder = $request->folder;
+
+            if(file_exists($uploadedPath.'/'.$uploadedFolder.'/'.$uploadedFile->getClientOriginalName())){
+                $uploadedFile->move($uploadedPath.'/'.$uploadedFolder, $uploadedFile->getClientOriginalName());
+                return;
+            }
+
+            $uploadedFile->move($uploadedPath.'/'.$uploadedFolder, $uploadedFile->getClientOriginalName());
+
+            $file = new TenantFiles;
+            $file->tenant_id = $uploadedFolder;
+            $file->file_name = $uploadedFile->getClientOriginalName();
+            $file->file_path = $uploadedPath.'/'.$uploadedFolder;
+            $file->save();
+
+            return response(['status'=>'success', 'name'=>$uploadedFile->getClientOriginalName(), 'path'=>$uploadedPath.'/'.$uploadedFolder, 'id'=>$file->file_id], 200);
+        }
+    }
+
+    public function filedelete(Request $request)
+    {
+        if(File::delete($request->path)){
+
+            $file = TenantFiles::findOrFail($request->file_id);
+            $file->is_deleted = 1;
+            $file->save();
+
+            return response(['status'=>'success', 'message'=>'Deleted Successfully', 'title'=>'Success'], 200);
+        }
+        return response(['status'=>'error', 'message'=>'Deleting Failed', 'title'=>'Error'], 200); 
     }
 
     public function checkIfUsed($id)

@@ -198,7 +198,7 @@
         clearFields (entity) {
           var fields = this.forms[entity].fields
           for (var keyField in fields) {
-            if (typeof fields[keyField] !== 'object') { 
+            if (typeof fields[keyField] !== 'object') {
               if(typeof fields[keyField] == 'number'){
                 fields[keyField] = 0
               }

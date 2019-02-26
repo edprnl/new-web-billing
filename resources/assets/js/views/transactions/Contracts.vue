@@ -1656,10 +1656,10 @@ export default {
         },
         computeDates(is_commencement){
             if(is_commencement){
-                this.forms.contract.fields.termination_date = moment(this.forms.contract.fields.commencement_date).add(this.forms.contract.fields.contract_terms, 'months').format('MMMM DD, YYYY')
+                this.forms.contract.fields.termination_date = moment(this.forms.contract.fields.commencement_date).add(this.forms.contract.fields.contract_terms, 'months').subtract(1,'days').format('MMMM DD, YYYY')
             }
             else{
-                this.forms.contract.fields.commencement_date = moment(this.forms.contract.fields.termination_date).subtract(this.forms.contract.fields.contract_terms, 'months').format('MMMM DD, YYYY')
+                this.forms.contract.fields.commencement_date = moment(this.forms.contract.fields.termination_date).subtract(this.forms.contract.fields.contract_terms, 'months').add(1,'days').format('MMMM DD, YYYY')
             }
             
         }

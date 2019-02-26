@@ -332,15 +332,7 @@ Route::middleware('auth:api')->group(function () {
         }
     });
 
-    Route::post('fileupload', function(Request $request){
-        if ($request->file->isValid()) {
-            $uploadedFile = $request->file;
-            $uploadedPath = $request->path;
-            $uploadedFolder = $request->folder;
-
-            $uploadedFile->move($uploadedPath.'/'.$uploadedFolder, $uploadedFile->getClientOriginalName());
-            return response(['status'=>'success', 'name'=>$uploadedFile->getClientOriginalName()], 200);
-        }
-    });
+    Route::post('fileupload', 'References\TenantsController@fileupload');
+    Route::post('filedelete', 'References\TenantsController@filedelete');
 });
 
