@@ -416,14 +416,22 @@
                                                 <i class="fa fa-check-circle" style="color: green;"></i>
                                             </h3>
                                         </template>
-                                        <template slot="discount" slot-scope="data">
+                                        <template slot="is_discounted" slot-scope="data">
+                                            <b-form-checkbox
+                                                v-model="data.item.is_discounted"
+                                                @input="getDiscount(data)"
+                                                value=1
+                                                unchecked-value=0>
+                                            </b-form-checkbox>
+                                        </template>
+                                        <!-- <template slot="discount" slot-scope="data">
                                             <vue-autonumeric 
                                                 @input='computePayment()'
                                                 v-model="data.item.discount"
                                                 :class="'form-control text-right'" 
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                             </vue-autonumeric>
-                                        </template>
+                                        </template> -->
                                         <template slot="amount_paid" slot-scope="data">
                                             <vue-autonumeric 
                                                 @input='computePayment()'
@@ -776,17 +784,7 @@ export default {
                             key:'month_name',
                             label: 'Month',
                             tdClass: 'align-middle',
-                            thStyle: {width: '8%'}
-                        },
-                        {
-                            key: 'bill_discount',
-                            label: 'Bill Discount',
-                            thClass: 'text-right',
-                            tdClass: 'text-right align-middle',
-                            thStyle: {width: '10%'},
-                            formatter: (value) => {
-                                return this.formatNumber(value)
-                            }
+                            thStyle: {width: '10%'}
                         },
                         {
                             key:'outstanding_balance',
@@ -799,10 +797,20 @@ export default {
                             }
                         },
                         {
+                            key: 'is_discounted',
+                            label: 'is discounted?',
+                            thStyle: {width: '70px'},
+                            tdClass: 'text-center align-middle',
+                        },
+                        {
                             key:'discount',
                             label: 'Discount',
                             thClass: 'text-right',
-                            thStyle: {width: '15%'},
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '13%'},
+                            formatter: (value) => {
+                                return this.formatNumber(value, 3)
+                            }
                         },
                         {
                             key:'amount_paid',
@@ -815,7 +823,7 @@ export default {
                             label: 'Remaining Balance',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'},
+                            thStyle: {width: '17%'},
                             formatter: (value, key, item) => {
                                 return this.formatNumber(Math.max(0, Number(item.outstanding_balance) - (Number(item.discount) + Number(item.amount_paid))));
                             }
@@ -928,10 +936,6 @@ export default {
                 }
                 totalAmountPaid += billing.amount_paid
             })
-            console.log(totalAmountPaid)
-            console.log(this.carried_advance)
-            console.log(this.forms.payment.fields.advance)
-            console.log(this.forms.payment.fields.amount)
 
             var total = Math.max(0,Number(this.forms.payment.fields.amount) - 
             (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)))
@@ -1075,6 +1079,14 @@ export default {
                 this.forms.payment.fields.check_type = null
                 this.forms.payment.fields.check_no = null
                 this.forms.payment.fields.check_date = null
+            }
+        },
+        getDiscount(data){
+            if(data.item.is_discounted == 1){
+                data.item.discount = data.item.bill_discount
+            }
+            else{
+                data.item.discount = 0.00
             }
         },
         distributePayment(){

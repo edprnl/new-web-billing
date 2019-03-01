@@ -552,6 +552,9 @@ export default {
             this.entryMode='Edit'
         },
         async tenantFiles(row){
+            if(row.detailsShowing == true){
+                return
+            }
             var res = []
             await this.$http.get('/api/tenant_files/' + row.item.tenant_id, {
                 headers: {
