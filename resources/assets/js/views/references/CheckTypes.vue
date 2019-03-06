@@ -157,11 +157,15 @@ export default {
                         {
                             key:'check_type_code',
                             label: 'Check Type Code',
-                            thStyle: {width: '150px'}
+                            thStyle: {width: '150px'},
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'check_type_desc',
                             label: 'Description',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'action',

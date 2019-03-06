@@ -166,7 +166,7 @@
                                                 <b-form-group>
                                                     <b-row>
                                                         <b-col lg=4>
-                                                            <label class="col-form-label">Commencement Date : </label>
+                                                            <label class="col-form-label">Commencement Date :</label>
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <b-form-input
@@ -848,14 +848,19 @@ export default {
                         {
                             key: 'billing_no',
                             label: 'Billing No.',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key: 'contract_no',
                             label: 'Contract No.',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key: 'app_year',
                             label: 'App Year/Month',
+                            tdClass: 'align-middle',
                             formatter: (value, key, item) => {
                                 return item.app_year + '/' + item.month_name
                             }
@@ -863,16 +868,19 @@ export default {
                         {
                             key: 'trade_name',
                             label: 'Tenant',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key: 'tenant_code',
-                            label: 'Tenant Code'
+                            label: 'Tenant Code',
+                            tdClass: 'align-middle',
                         },
                         {
                             key: 'total_amount_due',
                             label: 'Total Amount Due',
                             thClass: 'text-right',
-                            tdClass: 'text-right',
+                            tdClass: 'text-right align-middle',
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
@@ -1564,6 +1572,10 @@ export default {
         },
         getTenantInfo: function (value, data) {
             if(data.length > 0){
+                this.tables.schedules.items = []
+                this.tables.utilities.items = []
+                this.tables.miscellaneous.items = []
+                this.tables.other.items = []
                 var tenant = this.options.tenants.items[data[0].element.index]
                 this.forms.billing.fields.tenant_code = tenant.tenant_code
                 this.getTenantHistory(tenant.tenant_id)

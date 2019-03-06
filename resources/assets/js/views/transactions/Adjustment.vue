@@ -286,14 +286,19 @@ export default {
                         {
                             key: 'adjustment_no',
                             label: 'Adjustment No.',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key: 'trade_name',
                             label: 'Tenant',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key: 'adjustment_type',
                             label: 'Adjustment Type',
+                            tdClass: 'align-middle',
                             formatter: (value) => {
                                 if(value == 0){
                                     return 'In'
@@ -305,14 +310,15 @@ export default {
                             key: 'amount',
                             label: 'Amount',
                             thClass: 'text-right',
-                            tdClass: 'text-right',
+                            tdClass: 'text-right align-middle',
                             formatter: (value) => {
                                 return this.formatNumber(value)
                             }
                         },
                         {
                             key: 'notes',
-                            label: 'Notes'
+                            label: 'Notes',
+                            tdClass: 'align-middle',
                         },
                         {
                             key: 'action',

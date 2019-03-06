@@ -170,11 +170,15 @@ export default {
                 {
                     key: 'contract_type_code',
                     label: 'Code',
-                    thStyle: {width: '150px'}
+                    thStyle: {width: '150px'},
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     key: 'contract_type_desc',
-                    label: 'Location Name'
+                    label: 'Location Name',
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     

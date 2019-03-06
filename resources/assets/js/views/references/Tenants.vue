@@ -337,7 +337,7 @@
                                             Notarized Contract of Lease
                                         </b-form-checkbox>
                                     </b-form-group>
-                                    <b-form-group>
+                                    <!-- <b-form-group>
                                         <b-form-checkbox
                                             id="proof_of_billing"
                                             v-model="forms.tenant.fields.proof_of_billing"
@@ -345,7 +345,7 @@
                                             unchecked-value="0">
                                             Proof of Billing
                                         </b-form-checkbox>
-                                    </b-form-group>
+                                    </b-form-group> -->
                                     <b-form-group>
                                         <b-form-checkbox
                                             id="others"
@@ -460,37 +460,46 @@ export default {
                         {
                             key:'tenant_code',
                             label: 'Tenant Code',
-                            thStyle: {width: '100px'}
+                            thStyle: {width: '100px'},
+                            tdClass: 'align-middle',
+                            sortable:true
                         },
                         {
                             key:'trade_name',
                             label: 'Trade Name',
-                            thStyle: {width: '13%'}
+                            thStyle: {width: '13%'},
+                            tdClass: 'align-middle',
+                            sortable:true
                         },
                         {
                             key:'company_name',
                             label: 'Company Name',
-                            thStyle: {width: '13%'}
+                            thStyle: {width: '13%'},
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'head_office_address',
                             label: 'Address',
-                            thStyle: {width: '15%'}
+                            thStyle: {width: '15%'},
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'contact_person',
                             label: 'Contact Person',
-                            thStyle: {width: '12%'}
+                            thStyle: {width: '12%'},
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'designation',
                             label: 'Designation',
-                            thStyle: {width: '12%'}
+                            thStyle: {width: '12%'},
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'business_concept',
                             label: 'Business Concept',
-                            thStyle: {width: '12%'}
+                            thStyle: {width: '12%'},
+                            tdClass: 'align-middle',
                         },
                         {
                             key: 'action',
@@ -552,6 +561,9 @@ export default {
             this.entryMode='Edit'
         },
         async tenantFiles(row){
+            if(row.detailsShowing == true){
+                return
+            }
             var res = []
             await this.$http.get('/api/tenant_files/' + row.item.tenant_id, {
                 headers: {

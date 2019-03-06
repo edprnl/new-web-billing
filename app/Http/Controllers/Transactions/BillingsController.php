@@ -469,9 +469,13 @@ class BillingsController extends Controller
                                     'b_billing_info.app_year',
                                     'b_billing_info.month_id',
                                     'b_refmonths.month_name',
+                                    'b_billing_info.wtax_amount',
+                                    'b_billing_info.wtax_amount as bwtax_amount',
+                                    DB::raw('b_billing_info.total_discounted_rent * (b_billing_info.wtax_percent / 100) as dwtax_amount'),
                                     DB::raw('b_billing_info.total_amount_due - (IFNULL(SUM(b_payment_details.amount_paid), 0) + IFNULL(SUM(b_payment_details.discount), 0)) as outstanding_balance'),
                                     DB::raw('b_billing_info.total_amount_due - b_billing_info.discounted_total_amount_due as bill_discount'),
                                     DB::raw('"0" as checker'),
+                                    DB::raw('"0" as is_discounted'),
                                     DB::raw('"0.00" as discount'),
                                     DB::raw('"0.00" as amount_paid')
                                 )

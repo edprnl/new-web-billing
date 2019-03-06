@@ -1,12 +1,15 @@
 <style>
     .select2-container--bootstrap4 .select2-selection {
-        font-size: .69rem!important;
+        font-size: .72rem!important;
     }
     .select2-search--dropdown .select2-search__field{
-        font-size: .69rem!important;
+        font-size: .72rem!important;
     }
     .select2-results__option {
-        font-size: .69rem!important;
+        font-size: .72rem!important;
+    }
+    .select2-container--bootstrap4 .select2-selection--single{
+        line-height: .9rem!important;
     }
 </style>
 

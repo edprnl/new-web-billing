@@ -91,12 +91,6 @@ const router = new Router({
           },
           children: [
             {
-              path: 'tenants',
-              name: 'Tenants',
-              component: tenants,
-              meta: {requiresAuth: true, rights: '1-1'},
-            },
-            {
               path: 'departments',
               name: 'Departments',
               component: departments,
@@ -148,8 +142,8 @@ const router = new Router({
           ]
         },
         {
-          path: 'utilities',
-          name: 'Utilities',
+          path: 'accounts',
+          name: 'Accounts',
           component: {
             render (c) { return c('router-view') }
           },
@@ -220,6 +214,12 @@ const router = new Router({
             render (c) { return c('router-view') }
           },
           children: [
+            {
+              path: 'tenants',
+              name: 'Tenants',
+              component: tenants,
+              meta: {requiresAuth: true, rights: '1-1'},
+            },
             {
               path: 'contracts',
               name: 'Contracts',

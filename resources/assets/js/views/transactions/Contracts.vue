@@ -44,6 +44,47 @@
                                     :per-page="paginations.contracts.perPage"
                                     striped hover small bordered show-empty
                                 >
+                                    <template slot="row_data" slot-scope="row">
+                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails()">
+                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
+                                        </b-btn>
+                                    </template>
+                                    <template slot="row-details" slot-scope="row">
+                                        <b-row class="font-weight-bold ml-2 mr-2">
+                                            <b-col lg="4">
+                                                <p>Contract No. : {{row.item.contract_no}}</p>
+                                                <p>Tenant Code : {{row.item.tenant_code}}</p>
+                                                <p>Tenant : {{row.item.trade_name}}</p>
+                                                <p>Signatory : {{row.item.contract_signatory}}</p>
+                                                <p>Billing Address : {{row.item.contract_billing_address}}</p>
+                                                <p>Department : {{row.item.department_desc}}</p>
+                                                <p>Nature of Business : {{row.item.nature_of_business_desc}}</p>
+                                                <p>Approved Merchandise : {{row.item.contract_approved_merch}}</p>
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <p>Location : {{row.item.location_desc}}</p>
+                                                <p>Contract Types : {{row.item.contract_type_desc}}</p>
+                                                <p>Category : {{row.item.category_desc}}</p>
+                                                <p>Terms : {{row.item.contract_terms}}</p>
+                                                <p>Commencement Date : {{moment(row.item.commencement_date, 'MMMM DD, YYYY')}}</p>
+                                                <p>Termination Date : {{moment(row.item.termination_date, 'MMMM DD, YYYY')}}</p>
+                                                <p>Start Billing Date : {{moment(row.item.start_billing_date, 'MMMM DD, YYYY')}}</p>
+                                                <p>App Floor Area : {{row.item.contract_floor_area}}</p>
+                                            </b-col>
+                                            <b-col lg="4">
+                                                <p>Basic Rental : {{formatNumber(row.item.contract_fixed_rent)}}</p>
+                                                <p>Discounted Rental : {{formatNumber(row.item.contract_discounted_rent)}}</p>
+                                                <p>Advance Rental : {{formatNumber(row.item.contract_advance_rent)}}</p>
+                                                <p>Security Deposit : {{formatNumber(row.item.security_deposit)}}</p>
+                                                <p>Electric Meter Deposit : {{formatNumber(row.item.power_meter_deposit)}}</p>
+                                                <p>Water Meter Deposit : {{formatNumber(row.item.water_meter_deposit)}}</p>
+                                                <p>Construction Deposit : {{formatNumber(row.item.construction_deposit)}}</p>
+                                                <p>Escalation % : {{formatNumber(row.item.contract_escalation_percent)}}</p>
+                                                <p>Escalation Notes : {{row.item.escalation_notes}}</p>
+                                                <p>Remarks : {{row.item.contract_remarks}}</p>
+                                            </b-col>
+                                        </b-row>
+                                    </template>
                                     <template slot="action" slot-scope="data">
                                         <b-btn :size="'sm'" variant="primary" @click="setUpdate(data), tabIndex=0">
                                             <i class="fa fa-edit"></i>
@@ -1113,28 +1154,42 @@ export default {
                             tdClass: 'd-none'
                         },
                         {
+                            key:'row_data',
+                            label: '',
+                            tdClass: '',
+                            thStyle: {width: '2%'}
+                        },
+                        {
                             key:'contract_no',
-                            label: 'Contract No'
+                            label: 'Contract No',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'trade_name',
-                            label: 'Trade Name'
+                            label: 'Trade Name',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'department_desc',
-                            label:'Department'
+                            label:'Department',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'location_desc',
-                            label:'Location'
+                            label:'Location',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'contract_type_desc',
-                            label:'Contract Type'
+                            label:'Contract Type',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'category_desc',
-                            label:'Category'
+                            label:'Category',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'action',

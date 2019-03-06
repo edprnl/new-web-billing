@@ -92,7 +92,9 @@ class PaymentsController extends Controller
                     'payment_id' => $payment_id,
                     'billing_id' => $detail['billing_id'],
                     'discount' => $detail['discount'],
-                    'amount_paid' => $detail['amount_paid']
+                    'amount_paid' => $detail['amount_paid'],
+                    'is_discounted' => $detail['is_discounted'],
+                    'wtax_amount' => $detail['wtax_amount']
                 ];
             }
             DB::table('b_payment_details')->insert($payment_details_dataSet);

@@ -179,7 +179,7 @@
                                     <td style="text-align: right">{{ formatNumber(misc.billing_misc_line_total) }}</td>
                                     <td style="text-align: right">{{ formatNumber(misc.billing_misc_line_total) }}</td>
                                 </tr>
-                                <tr v-if="other.lenght > 0">
+                                <tr v-if="other.length > 0">
                                     <td colspan="2">OTHER CHARGES :</td>
                                     <td></td>
                                     <td></td>
@@ -187,7 +187,7 @@
                                     <td></td>
                                 </tr>
                                 <!-- may foreach dito -->
-                                <tr v-if="other.lenght > 0" v-for="othr in other">
+                                <tr v-if="other.length > 0" v-for="othr in other">
                                     <td></td>
                                     <td>{{ othr.charge_desc }} <i>{{ othr.contract_notes }}</i></td>
                                     <td style="text-align: right">{{ formatNumber(othr.contract_rate) }}</td>

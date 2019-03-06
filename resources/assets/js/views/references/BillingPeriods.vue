@@ -222,6 +222,7 @@ export default {
                 {
                     key: 'period_start_date',
                     label: 'Start Date',
+                    tdClass: 'align-middle',
                     formatter: (value) => {
                             return this.moment(value,'MMMM DD, Y')
                                 
@@ -230,6 +231,7 @@ export default {
                 {
                     key: 'period_end_date',
                     label: 'End Date',
+                    tdClass: 'align-middle',
                     formatter: (value) => {
                             return this.moment(value,'MMMM DD, Y')
                                 
@@ -237,15 +239,18 @@ export default {
                 },
                 {
                     key: 'month_name',
-                    label: 'Applicable Month'
+                    label: 'Applicable Month',
+                    tdClass: 'align-middle',
                 },
                 {
                     key: 'app_year',
-                    label: 'Applicable Year'
+                    label: 'Applicable Year',
+                    tdClass: 'align-middle',
                 },
                 {
                     key: 'period_due_date',
                     label: 'Due Date',
+                    tdClass: 'align-middle',
                     formatter: (value) => {
                             return this.moment(value,'MMMM DD, Y')
                                 
