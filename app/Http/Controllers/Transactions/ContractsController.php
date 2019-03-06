@@ -30,6 +30,7 @@ class ContractsController extends Controller
                             ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
                             ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
                             ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->leftJoin('b_refnatureofbusiness', 'b_refnatureofbusiness.nature_of_business_id', '=', 'b_contract_info.nature_of_business_id')
                             ->where('b_contract_info.is_deleted', 0);
         if($tenant_id != null){
             $contracts->where('b_contract_info.tenant_id', $tenant_id);

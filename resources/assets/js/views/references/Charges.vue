@@ -188,15 +188,21 @@ export default {
                 {
                     key: 'charge_code',
                     label: 'Code',
-                    thStyle: {width: '150px'}
+                    thStyle: {width: '150px'},
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     key: 'charge_desc',
-                    label: 'Charge Name'
+                    label: 'Charge Name',
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     key: 'account_title',
-                    label: 'Account Title'
+                    label: 'Account Title',
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     

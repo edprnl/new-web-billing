@@ -9,14 +9,8 @@ export default {
       name: 'References',
       url: '/references',
       icon: 'icon-book-open',
-      rights: [1,2,3,4,5,6,7,8,9],
+      rights: [2,3,4,5,6,7,8,9],
       children:[
-        {
-          name: 'Tenants',
-          url: '/references/tenants',
-          rights: '1-1',
-          icon: 'icon-user-follow'
-        },
         {
           name: 'Departments',
           url: '/references/departments',
@@ -75,8 +69,14 @@ export default {
       name: 'Transactions',
       url: '/transactions',
       icon: 'icon-note',
-      rights: [13,14,15,16],
+      rights: [1,13,14,15,16],
       children:[
+        {
+          name: 'Tenants',
+          url: '/transactions/tenants',
+          rights: '1-1',
+          icon: 'icon-user-follow'
+        },
         {
           name: 'Contracts',
           url: '/transactions/contracts',
@@ -127,26 +127,26 @@ export default {
       ]
     },
     {
-      name: 'Utilities',
-      url: '/utilities',
+      name: 'Accounts',
+      url: '/accounts',
       icon: 'icon-wrench',
       rights: [10,11,12],
       children:[
         {
           name: 'Users',
-          url: '/utilities/users',
+          url: '/accounts/users',
           rights: '10-37',
           icon: 'icon-user'
         },
         {
           name: 'User Group',
-          url: '/utilities/user_groups',
+          url: '/accounts/user_groups',
           rights: '11-41',
           icon: 'icon-people'
         },
         {
           name: 'Company Settings',
-          url: '/utilities/company_settings',
+          url: '/accounts/company_settings',
           rights: '12-45',
           icon: 'icon-settings'
         }

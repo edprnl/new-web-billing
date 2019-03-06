@@ -173,11 +173,15 @@ export default {
                 {
                     key: 'department_code',
                     label: 'Code',
-                    thStyle: {width: '150px'}
+                    thStyle: {width: '150px'},
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     key: 'department_desc',
-                    label: 'Department Name'
+                    label: 'Department Name',
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {   
                     key: 'action',

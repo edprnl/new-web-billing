@@ -214,22 +214,30 @@ export default {
                         {
                             key:'username',
                             label: 'Username',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'firstname',
                             label: 'Firstname',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'middlename',
                             label: 'Middlename',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'lastname',
                             label: 'Lastname',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'email',
                             label: 'Email',
+                            tdClass: 'align-middle',
                         },
                         {
                             key:'action',

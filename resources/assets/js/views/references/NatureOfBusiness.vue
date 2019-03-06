@@ -170,11 +170,15 @@ export default {
                 {
                     key: 'nature_of_business_code',
                     label: 'Code',
-                    thStyle: {width: '150px'}
+                    thStyle: {width: '150px'},
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     key: 'nature_of_business_desc',
-                    label: 'Description'
+                    label: 'Description',
+                    tdClass: 'align-middle',
+                    sortable: true
                 },
                 {
                     

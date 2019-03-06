@@ -157,11 +157,15 @@ export default {
                         {
                             key:'category_code',
                             label: 'Category Code',
-                            thStyle: {width: '150px'}
+                            thStyle: {width: '150px'},
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'category_desc',
                             label: 'Description',
+                            tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'action',

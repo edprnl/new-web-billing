@@ -699,16 +699,19 @@ export default {
                             key:'transaction_no',
                             label: 'Trans No',
                             tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'reference_no',
                             label: 'Reference No',
                             tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'trade_name',
                             label: 'Tenant',
                             tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'payment_date',
@@ -1084,9 +1087,11 @@ export default {
         getDiscount(data){
             if(data.item.is_discounted == 1){
                 data.item.discount = data.item.bill_discount
+                data.item.wtax_amount = data.item.dwtax_amount
             }
             else{
                 data.item.discount = 0.00
+                data.item.wtax_amount = data.item.bwtax_amount
             }
         },
         distributePayment(){

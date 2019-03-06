@@ -232,6 +232,7 @@ export default {
                             key:'user_group',
                             label: 'User Group',
                             tdClass: 'align-middle',
+                            sortable: true
                         },
                         {
                             key:'user_group_desc',
