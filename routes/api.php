@@ -305,6 +305,7 @@ Route::middleware('auth:api')->group(function () {
     //Check if adjustment was used
     Route::get('adjustmentcheck/{id}', 'Transactions\AdjustmentsController@checkIfUsed');
     // END ADJUSTMENTS
+    
 
     //---------------------------------- TRANSACTIONS ---------------------------------------------
 
@@ -317,6 +318,14 @@ Route::middleware('auth:api')->group(function () {
      ]);
 
     //---------------------------------- REPORTS --------------------------------------------------
+
+    //---------------------------------- Accounting --------------------------------------------------
+    Route::get('arbilling/getjournalinfo/{id}', 'Accounting\ArBillingController@getJournalInfo');
+    Route::post('arbilling/insertjournalinfo', 'Accounting\ArBillingController@insertJournalInfo');
+
+    Route::get('arpayment/getjournalinfo/{start_date}/{end_date}', 'Accounting\ArPaymentController@getJournalInfo');
+    Route::post('arpayment/insertjournalinfo', 'Accounting\ArPaymentController@insertJournalInfo');
+    //---------------------------------- Accounting --------------------------------------------------
 
     //---------------------------------- SESSIONS -------------------------------------------------
     Route::get('session/rights', 'SessionController@getRights');

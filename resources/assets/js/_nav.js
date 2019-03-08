@@ -104,6 +104,26 @@ export default {
       ]
     },
     {
+      name: 'Accounting',
+      url: '/accounting',
+      icon: 'icon-wrench',
+      rights: [10,11,12],
+      children:[
+        {
+          name: 'AR Billing',
+          url: '/accounting/ar_billing',
+          rights: '10-37',
+          icon: 'icon-user'
+        },
+        {
+          name: 'AR Payment',
+          url: '/accounting/ar_payment',
+          rights: '10-37',
+          icon: 'icon-user'
+        },
+      ]
+    },
+    {
       name: 'Reports',
       url: '/reports',
       icon: 'icon-doc',
