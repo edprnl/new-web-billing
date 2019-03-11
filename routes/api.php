@@ -208,6 +208,7 @@ Route::middleware('auth:api')->group(function () {
     //List company
     Route::get('companysettings', 'Utilities\CompanySettingsController@index');
     Route::post('companysetting/notes', 'Utilities\CompanySettingsController@insertNotes');
+    Route::get('csdepartments', 'Utilities\CompanySettingsController@departments');
     //List single company
     Route::get('companysetting/{id}', 'Utilities\CompanySettingsController@show');
     Route::get('companysettingnotes', 'Utilities\CompanySettingsController@showNotes');
