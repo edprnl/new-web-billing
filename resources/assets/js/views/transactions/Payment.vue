@@ -854,7 +854,7 @@ export default {
                                     item.wtax_amount = item.dwtax_amount
                                 }
                                 else{
-                                    item.wtax_amount = Number(item.bwtax_amount) * (Number(item.amount_paid) / (Number(item.outstanding_balance) - Number(item.discount)))
+                                    item.wtax_amount = Number(item.bwtax_amount) * (Number(item.amount_paid) / (Number(item.total_amount_due) - Number(item.discount)))
                                 }
                             }
                         },
