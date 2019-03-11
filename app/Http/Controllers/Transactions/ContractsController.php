@@ -323,7 +323,8 @@ class ContractsController extends Controller
      */
     public function show($id)
     {
-        $contract = ContractInfo::findOrFail($id);
+        $contract = ContractInfo::join('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+                                ->findOrFail($id);
 
         return ( new Reference( $contract ) )
             ->response()

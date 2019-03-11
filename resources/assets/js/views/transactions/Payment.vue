@@ -437,6 +437,7 @@
                                                 @input='computePayment()'
                                                 v-model="data.item.amount_paid"
                                                 :class="'form-control text-right'"
+                                                :disabled="data.item.is_discounted == 1 ? true : false"
                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0, decimalPlaces: 3}">
                                             </vue-autonumeric>
                                         </template>
@@ -554,7 +555,7 @@
                                 <b-button 
                                     :disabled="forms.payment.isSaving" 
                                     variant="primary" 
-                                    @click="onPaymentEntry()">
+                                    @click="showModalConfirmation = true">
                                     <icon v-if="forms.payment.isSaving" name="sync" spin></icon>
                                     <i class="fa fa-check"></i>
                                     Save
@@ -584,6 +585,26 @@
                     OK
                 </b-button>
                 <b-button variant="secondary" @click="showModalDelete=false">Close</b-button>            
+            </div>
+        </b-modal>
+        <b-modal 
+            v-model="showModalConfirmation"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Save Payment
+            </div>
+            <b-col lg=12>
+                Are you sure you want to save this payment?
+            </b-col>
+            <div slot="modal-footer">
+                <b-button :disabled="forms.payment.isSaving" variant="primary" @click="onPaymentEntry()">
+                    <icon v-if="forms.payment.isSaving" name="sync" spin></icon>
+                    <i class="fa fa-check"></i>
+                    Yes
+                </b-button>
+                <b-button variant="secondary" @click="showModalConfirmation=false">Cancel</b-button>            
             </div>
         </b-modal>
 
@@ -644,6 +665,7 @@ export default {
             showEntry: false, //if true show entry
             showModalDelete: false,
             showModalCheckType: false,
+            showModalConfirmation: false,
             options: {
                 tenants: {
                     items: []
@@ -821,6 +843,21 @@ export default {
                             thClass: 'text-right',
                             thStyle: {width: '15%'},
                         },
+                         {
+                            key:'wtax_amount',
+                            label: 'wtax',
+                            thClass: 'text-right d-none',
+                            tdClass: 'd-none',
+                            thStyle: {width: '15%'},
+                            formatter: (value, key, item) => {
+                                if(item.is_discounted == 1){
+                                    item.wtax_amount = item.dwtax_amount
+                                }
+                                else{
+                                    item.wtax_amount = Number(item.bwtax_amount) * (Number(item.amount_paid) / (Number(item.outstanding_balance) - Number(item.discount)))
+                                }
+                            }
+                        },
                         {
                             key:'remaining_balance',
                             label: 'Remaining Balance',
@@ -873,6 +910,13 @@ export default {
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             thStyle: {width: '15%'}
+                        },
+                        {
+                            key: 'f',
+                            label: '',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '10%'}
                         },
                         {
                             key:'discount',
@@ -940,20 +984,27 @@ export default {
                 totalAmountPaid += billing.amount_paid
             })
 
-            var total = Math.max(0,Number(this.forms.payment.fields.amount) - 
-            (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance)))
-
+            var total = Number(this.forms.payment.fields.amount) - 
+            (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance))
             if(total >= 0 && total <= 0.09){
+                this.showModalConfirmation = false
                 return true
             }
             else{
-                this.$notify({
-                    type: 'error',
-                    group: 'notification',
-                    title: 'Error',
-                    text: "The sum of amount paid is not equal to the amount given."
-                })
-                return false
+                if(total <= -0.01 && total >= -0.09){
+                    this.showModalConfirmation = false
+                    return true
+                }
+                else{
+                    this.$notify({
+                        type: 'error',
+                        group: 'notification',
+                        title: 'Error',
+                        text: "The sum of amount paid is not equal to the amount given."
+                    })
+                    this.showModalConfirmation = false
+                    return false
+                }
             }
         },
         async onPaymentEntry(){
@@ -983,15 +1034,14 @@ export default {
                         this.paginations.payments.totalRows++
 
                         this.showEntry = false
+                        this.showModalConfirmation = false
                     }).catch(error => {
                         this.forms.payment.isSaving = false
+                        this.showModalConfirmation = false
                         if (!error.response) return
                             const errors = error.response.data.errors
                         var a = 0
                         for (var key in errors) {
-                            console.log(key)
-                            // this.forms[entity].states[key] = false
-                            // this.forms[entity].errors[key] =  errors[key]
                             if(a == 0){
                                 this.focusElement(key)
                                 this.$notify({
@@ -1087,16 +1137,17 @@ export default {
         getDiscount(data){
             if(data.item.is_discounted == 1){
                 data.item.discount = data.item.bill_discount
-                data.item.wtax_amount = data.item.dwtax_amount
+                data.item.amount_paid = Number(data.item.outstanding_balance) - Number(data.item.discount)
             }
             else{
                 data.item.discount = 0.00
-                data.item.wtax_amount = data.item.bwtax_amount
+                data.item.amount_paid = 0.00
             }
+
+            this.computePayment()
         },
         distributePayment(){
             var amount = Number(this.forms.payment.fields.amount) + Number(this.carried_advance)
-            //alert(this.carried_advance)
             var balance_paid = 0
             var total_outstanding_balance = 0
             var discount = 0
