@@ -1724,7 +1724,7 @@ export default {
 
             this.forms.billing.fields.total_amount_due = Number(this.forms.billing.fields.sub_total) + Number(this.getInterestTotal) + Number(this.getPenaltyTotal) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
-            this.forms.billing.fields.discounted_total_amount_due = Number(discounted_sub_total) + Number(this.getDiscountedVatTotal) - Number(this.getDiscountedWithHoldingTax) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
+            this.forms.billing.fields.discounted_total_amount_due = Number(discounted_sub_total) + + Number(this.getInterestTotal) + Number(this.getPenaltyTotal) + Number(this.getDiscountedVatTotal) - Number(this.getDiscountedWithHoldingTax) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
             return this.forms.billing.fields.total_amount_due
         },

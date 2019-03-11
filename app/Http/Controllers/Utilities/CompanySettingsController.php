@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Utilities\CompanySettings;
 use App\Models\Utilities\SoaNotes;
+use App\Models\References\Departments;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +33,12 @@ class CompanySettingsController extends Controller
     public function create()
     {
         //
+    }
+
+    public function departments(){
+        $departments = Departments::where('is_deleted', 0)
+                        ->where('is_active', 1)->get();
+        return Reference::collection($departments);
     }
 
     /**
@@ -110,7 +117,9 @@ class CompanySettingsController extends Controller
                 'card_payment_account_id' => 'required|not_in:0',
                 'online_payment_account_id' => 'required|not_in:0',
                 'interest_account_id' => 'required|not_in:0',
-                'penalty_account_id' => 'required|not_in:0'
+                'penalty_account_id' => 'required|not_in:0',
+                'account_department_id' => 'required|not_in:0',
+                'payment_advances_account_id' => 'required|not_in:0'
 
             ], ['not_in' => 'The :attribute field is required.']
         )->setAttributeNames([
@@ -131,6 +140,8 @@ class CompanySettingsController extends Controller
             'online_payment_account_id' => 'online payment out account',
             'interest_account_id' => 'interest account',
             'penalty_account_id' => 'penalty account',
+            'account_department_id' => 'account department',
+            'payment_advances_account_id' => 'advance payment account'
 
         ])->validate();
         
@@ -159,6 +170,8 @@ class CompanySettingsController extends Controller
         $company->online_payment_account_id = $request->input('online_payment_account_id');
         $company->interest_account_id = $request->input('interest_account_id');
         $company->penalty_account_id = $request->input('penalty_account_id');
+        $company->account_department_id = $request->input('account_department_id');
+        $company->payment_advances_account_id = $request->input('payment_advances_account_id');
 
         //update  based on the http json body that is sent
         $company->update();

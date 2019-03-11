@@ -40,7 +40,6 @@
                                                             <b-col lg=9>
                                                                 <b-form-input
                                                                     tab="0"
-                                                                    :style="forms.companysetting.states.company_name == false ? 'border-color:red' : ''"
                                                                     ref="company_name"
                                                                     id="company_name"
                                                                     v-model="forms.companysetting.fields.company_name"
@@ -58,7 +57,6 @@
                                                             <b-col lg=9>
                                                                 <b-form-textarea
                                                                     tab="0"
-                                                                    :style="forms.companysetting.states.company_address == false ? 'border-color:red' : ''"
                                                                     ref="company_address"
                                                                     id="company_address"
                                                                     v-model="forms.companysetting.fields.company_address"
@@ -170,7 +168,6 @@
                                                                     <label>* Account Receivable</label>
                                                                     <select2
                                                                         tab="1"
-                                                                        :style="forms.companysetting.states.ar_account_id == false ? 'border-color:red' : ''"
                                                                         ref="ar_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -196,7 +193,6 @@
                                                                     <label>* Rental Account </label>
                                                                     <select2
                                                                         tab="1"
-                                                                        :style="forms.companysetting.states.company_address == false ? 'border-color:red' : ''"
                                                                         ref="basic_rental_account_id"
                                                                         :allowClear="false"
                                                                         :placeholder="'Select Account Title'"
@@ -413,7 +409,24 @@
                                                                     </select2>
                                                                 </b-form-group>
                                                             </b-col>
-                                                        </b-row> 
+                                                        </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Advance Payment Account </label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="payment_advances_account_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.payment_advances_account_id"
+                                                                    >
+                                                                        <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
 
                                                     </b-col>
 
@@ -490,6 +503,23 @@
                                                                         v-model="forms.companysetting.fields.penalty_account_id"
                                                                     >
                                                                         <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
+                                                                    </select2>
+                                                                </b-form-group>
+                                                            </b-col>
+                                                        </b-row>
+
+                                                        <b-row>
+                                                            <b-col sm=12>
+                                                                <b-form-group>
+                                                                    <label>* Account Department</label>
+                                                                    <select2
+                                                                        tab="1"
+                                                                        ref="account_department_id"
+                                                                        :allowClear="false"
+                                                                        :placeholder="'Select Account Title'"
+                                                                        v-model="forms.companysetting.fields.account_department_id"
+                                                                    >
+                                                                        <option v-for="department in options.csdepartments.items" :key="department.department_id" :value="department.department_id">{{department.department_name}}</option>
                                                                     </select2>
                                                                 </b-form-group>
                                                             </b-col>
@@ -573,6 +603,9 @@ export default {
                 accounts: {
                     items: []
                 },
+                csdepartments: {
+                    items: []
+                }
             },
             forms: {
                 companysetting : {
@@ -600,32 +633,9 @@ export default {
                         cash_payment_account_id: 0,
                         card_payment_account_id: 0,
                         online_payment_account_id: 0,
-                        ar_account_id: 0
-                    },
-                    states: {
-                        company_id: null,
-                        company_name: null,
-                        company_address: null,
-                        email_address: null,
-                        mobile_number: null,
-                        landline: null,
-                        logo: null,
-                        advance_rental_account_id: null,
-                        security_deposit_account_id: null,
-                        electric_meter_deposit_account_id: null,
-                        water_meter_deposit_account_id: null,
-                        construction_deposit_account_id: null,
-                        withholding_tax_account_id: null,
-                        vat_account_id: null,
-                        adjustment_in_account_id: null,
-                        adjustment_out_account_id: null,
-                        discount_account_id: null,
-                        interest_account_id: null,
-                        penalty_account_id: null,
-                        cash_payment_account_id: null,
-                        card_payment_account_id: null,
-                        online_payment_account_id: null,
-                        ar_account_id: null
+                        ar_account_id: 0,
+                        payment_advances_account_id: 0,
+                        account_department_id: 0
                     },
                 }
             },
@@ -708,6 +718,7 @@ export default {
     },
     created () {
         this.fillOptionsList('accounts')
+        this.fillOptionsList('csdepartments')
         setTimeout(function(){
             this.fillEntityForm('companysetting', 1)
             this.$http.get('/api/companysettingnotes', {

@@ -493,16 +493,16 @@ export default {
         computeAll(){
             // total current charges 
             //fixed rental
-            this.total_fixed_charges = Number(this.billing.total_amount_due)
+            this.total_fixed_charges = Number(this.billing.total_amount_due) - (Number(this.billing.interest_total) + Number(this.billing.penalty_total))
             //discounted rental
-            this.total_discounted_charges = Number(this.billing.discounted_total_amount_due)
+            this.total_discounted_charges = Number(this.billing.discounted_total_amount_due) - (Number(this.billing.interest_total) + Number(this.billing.penalty_total))
 
             //total amount due
             //fixed rental
             this.total_outstanding_balance = Number(this.previous_balance) + Number(this.billing.interest_total) + Number(this.billing.penalty_total)
-            this.total_fixed_amount_due = Number(this.previous_balance) + Number(this.total_fixed_charges)
+            this.total_fixed_amount_due = Number(this.previous_balance) + Number(this.billing.total_amount_due)
             //discounted rental
-            this.total_discounted_amounted_due = Number(this.previous_balance) + Number(this.total_discounted_charges)
+            this.total_discounted_amounted_due = Number(this.previous_balance) + Number(this.billing.discounted_total_amount_due)
         }
     },
   }
