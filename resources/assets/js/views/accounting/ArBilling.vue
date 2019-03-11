@@ -1,6 +1,23 @@
 <template>
     <div>
         <notifications group="notification" />
+        <!-- <b-modal
+            v-model="showConfirmation"
+            :noCloseOnEsc="true"
+            :noCloseOnBackdrop="true"
+        >
+            <div slot="modal-title">
+                Confirmation
+            </div>
+                Are you sure you want to continue? This transaction is irreversable.
+            <div slot="modal-footer">
+                <b-button variant="primary" @click="onInsertAr()">
+                    <i class="fa fa-check"></i>
+                    Send to Accounting
+                </b-button>
+                <b-button variant="secondary" @click="showConfirmation=false">Close</b-button>            
+            </div>
+        </b-modal> -->
         <b-modal
             v-model="showModalPeriod"
             :noCloseOnEsc="true"
@@ -63,12 +80,20 @@
                     </b-form-group>
                 </b-col>
             </b-row>
-            <div slot="modal-footer">
-                <b-button variant="primary" @click="onInsertAr()">
+            <div v-if="showConfirmation==false" slot="modal-footer">
+                <b-button variant="primary" @click="showConfirmation=true">
                     <i class="fa fa-check"></i>
                     Send to Accounting
                 </b-button>
                 <b-button variant="secondary" @click="showModalPeriod=false">Close</b-button>            
+            </div>
+            <div v-else slot="modal-footer">
+                Are you sure you want to continue? This transaction is irreversable.
+                <b-button class="ml-2" variant="success" @click="showConfirmation=false, onInsertAr()">
+                    <i class="fa fa-check"></i>
+                    Yes
+                </b-button>
+                <b-button variant="danger" @click="showConfirmation=false">No</b-button>            
             </div>
         </b-modal>
     </div>
@@ -80,6 +105,7 @@ export default {
     data () {
         return {
             showModalPeriod: true,
+            showConfirmation: false,
             forms: {
                 period: {
                     fields: {
@@ -112,14 +138,16 @@ export default {
                         }
                 })
                 .then((response) => {
-                    
+                    this.$notify({
+                        type: 'success',
+                        group: 'notification',
+                        title: 'Success',
+                        text: "Successfully sent to Accounting."
+                    })
                 })
                 .catch(error => {
                     if (!error.response) return
                     console.log(error)
-                })
-                response.data.forEach(info => {
-                    
                 })
             })
             .catch(error => {
