@@ -6,21 +6,21 @@ import Full from '@/containers/Full'
 
 // Views
 import Dashboard from '@/views/Dashboard'
-import Charts from '@/views/Charts'
-import Widgets from '@/views/Widgets'
+// import Charts from '@/views/Charts'
+// import Widgets from '@/views/Widgets'
 
 // Views - Components
-import Buttons from '@/views/components/Buttons'
-import SocialButtons from '@/views/components/SocialButtons'
-import Cards from '@/views/components/Cards'
-import Forms from '@/views/components/Forms'
-import Modals from '@/views/components/Modals'
-import Switches from '@/views/components/Switches'
-import Tables from '@/views/components/Tables'
+// import Buttons from '@/views/components/Buttons'
+// import SocialButtons from '@/views/components/SocialButtons'
+// import Cards from '@/views/components/Cards'
+// import Forms from '@/views/components/Forms'
+// import Modals from '@/views/components/Modals'
+// import Switches from '@/views/components/Switches'
+// import Tables from '@/views/components/Tables'
 
 // Views - Icons
-import FontAwesome from '@/views/icons/FontAwesome'
-import SimpleLineIcons from '@/views/icons/SimpleLineIcons'
+// import FontAwesome from '@/views/icons/FontAwesome'
+// import SimpleLineIcons from '@/views/icons/SimpleLineIcons'
 
 // Views - Pages
 import Page404 from '@/views/pages/Page404'
@@ -58,6 +58,10 @@ import tenant_per_sqm_rate from '@/views/reports/TenantsPerSqmRate'
 import contracts_master_list from '@/views/reports/ContractsMasterList'
 import rental_and_charges from '@/views/reports/RentalAndCharges'
 
+//Views - Accounting
+import ar_billing from '@/views/accounting/ArBilling'
+import ar_payment from '@/views/accounting/ArPayment'
+
 import store from '../store'
 Vue.use(Router)
 
@@ -68,7 +72,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: 'dashboard',
       name: 'Home',
       component: Full,
       children: [
@@ -243,6 +247,27 @@ const router = new Router({
               name: 'Adjustment',
               component: adjustment,
               meta: {requiresAuth: true, rights: '16-59'}
+            }
+          ]
+        },
+        {
+          path: 'accounting',
+          name: 'Accounting',
+          component: {
+            render (c) { return c('router-view') }
+          },
+          children: [
+            {
+              path: 'ar_billing',
+              name: 'AR Billing',
+              component: ar_billing,
+              meta: { requiresAuth: true}
+            },
+            {
+              path: 'ar_payment',
+              name: 'AR Payment',
+              component: ar_payment,
+              meta: { requiresAuth: true}
             }
           ]
         },

@@ -50,7 +50,7 @@ Vue.component('cSwitch', cSwitch)
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 const axiosConfig = {
-  baseURL: 'http://www.smctbilling.com',
+  baseURL: 'http://newbilling.test',
   timeout: 30000
 }
 
