@@ -438,7 +438,7 @@
                                                 v-model="data.item.amount_paid"
                                                 :class="'form-control text-right'"
                                                 :disabled="data.item.is_discounted == 1 ? true : false"
-                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0, decimalPlaces: 3}">
+                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                             </vue-autonumeric>
                                         </template>
                                     </b-table>
@@ -971,7 +971,7 @@ export default {
             this.tables.payment_details.items.forEach(billing => {
                 billing.checker = 0
                 
-                if(Number(billing.outstanding_balance).toFixed(2) < (Number(billing.discount) + Number(billing.amount_paid))){
+                if(Number(billing.outstanding_balance).toFixed(2) < (Number(billing.discount).toFixed(2) + Number(billing.amount_paid).toFixed(2))){
                     billing.checker = 1
                     this.$notify({
                         type: 'error',
@@ -986,7 +986,7 @@ export default {
 
             var total = Number(this.forms.payment.fields.amount) - 
             (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance))
-            if(total >= 0 && total <= 0.09){
+            if(total >= 0){
                 this.showModalConfirmation = false
                 return true
             }

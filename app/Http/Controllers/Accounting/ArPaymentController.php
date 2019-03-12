@@ -39,7 +39,7 @@ class ArPaymentController extends Controller
             if($journal_info->save())
             {
                 $temp_journal_id = $journal_info->temp_journal_id;
-                DB::select('CALL insert_payment_to_account_details('.$temp_journal_id.', "'.$start_date.'", "'.$end_date.'", '.$info['tenant_id'].')');
+                DB::select('CALL insert_payment_to_account_details('.$temp_journal_id.', "'.$start_date.'", "'.$end_date.'", '.$info['tenant_id'].', '.$info['payment_id'].')');
             }
         }
         return response()->json(['message' => 'Successfully sent to accounting.']);
