@@ -122,7 +122,8 @@ class BillingsController extends Controller
                     'billing_util_reading' => $utility['contract_default_reading'],
                     'billing_util_line_total' => $utility['contract_line_total'],
                     'billing_util_is_vatted' => $utility['contract_is_vatted'],
-                    'billing_util_notes' => $utility['contract_notes']
+                    'billing_util_notes' => $utility['contract_notes'],
+                    'sort_key' => $utility['sort_key']
                 ];
             }
 
@@ -135,7 +136,8 @@ class BillingsController extends Controller
                     'billing_misc_reading' => $misc['contract_default_reading'],
                     'billing_misc_line_total' => $misc['contract_line_total'],
                     'billing_misc_is_vatted' => $misc['contract_is_vatted'],
-                    'billing_misc_notes' => $misc['contract_notes']
+                    'billing_misc_notes' => $misc['contract_notes'],
+                    'sort_key' => $misc['sort_key']
                 ];
             }
 
@@ -148,7 +150,8 @@ class BillingsController extends Controller
                     'billing_othr_reading' => $other['contract_default_reading'],
                     'billing_othr_line_total' => $other['contract_line_total'],
                     'billing_othr_is_vatted' => $other['contract_is_vatted'],
-                    'billing_othr_notes' => $other['contract_notes']
+                    'billing_othr_notes' => $other['contract_notes'],
+                    'sort_key' => $other['sort_key']
                 ];
             }
 
@@ -198,11 +201,12 @@ class BillingsController extends Controller
                         'billing_util_is_vatted as contract_is_vatted',
                         'billing_util_notes as contract_notes',
                         'billing_util_line_total',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_billing_util_charges.charge_id')
-                    ->where('billing_id', $id)->get();
+                    ->where('billing_id', $id)->orderBy('sort_key', 'asc')->get();
         $misc_charges = BillingMiscCharges::select(
                         'billing_misc_id',
                         'billing_id',
@@ -211,11 +215,12 @@ class BillingsController extends Controller
                         'billing_misc_is_vatted as contract_is_vatted',
                         'billing_misc_notes as contract_notes',
                         'billing_misc_line_total',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_billing_misc_charges.charge_id')
-                    ->where('billing_id', $id)->get();
+                    ->where('billing_id', $id)->orderBy('sort_key', 'asc')->get();
         $othr_charges = BillingOthrCharges::select(
                         'billing_othr_id',
                         'billing_id',
@@ -224,11 +229,12 @@ class BillingsController extends Controller
                         'billing_othr_is_vatted as contract_is_vatted',
                         'billing_othr_notes as contract_notes',
                         'billing_othr_line_total',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_billing_othr_charges.charge_id')
-                    ->where('billing_id', $id)->get();
+                    ->where('billing_id', $id)->orderBy('sort_key', 'asc')->get();
 
         $billing['schedules'] = Reference::collection($schedules);
         $billing['util_charges'] = Reference::collection($util_charges);
@@ -356,7 +362,7 @@ class BillingsController extends Controller
                     'discounted_line_total' => $schedule['discounted_amount_due'],
                     'line_total' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],
-                    'billing_schedule_notes' => $schedule['contract_schedule_notes']
+                    'billing_schedule_notes' => $schedule['contract_schedule_notes'],
                 ];
             }
 
@@ -369,7 +375,8 @@ class BillingsController extends Controller
                     'billing_util_reading' => $utility['contract_default_reading'],
                     'billing_util_line_total' => $utility['contract_line_total'],
                     'billing_util_is_vatted' => $utility['contract_is_vatted'],
-                    'billing_util_notes' => $utility['contract_notes']
+                    'billing_util_notes' => $utility['contract_notes'],
+                    'sort_key' => $utility['sort_key']
                 ];
             }
 
@@ -382,7 +389,8 @@ class BillingsController extends Controller
                     'billing_misc_reading' => $misc['contract_default_reading'],
                     'billing_misc_line_total' => $misc['contract_line_total'],
                     'billing_misc_is_vatted' => $misc['contract_is_vatted'],
-                    'billing_misc_notes' => $misc['contract_notes']
+                    'billing_misc_notes' => $misc['contract_notes'],
+                    'sort_key' => $utility['sort_key']
                 ];
             }
 
@@ -395,7 +403,8 @@ class BillingsController extends Controller
                     'billing_othr_reading' => $other['contract_default_reading'],
                     'billing_othr_line_total' => $other['contract_line_total'],
                     'billing_othr_is_vatted' => $other['contract_is_vatted'],
-                    'billing_othr_notes' => $other['contract_notes']
+                    'billing_othr_notes' => $other['contract_notes'],
+                    'sort_key' => $utility['sort_key']
                 ];
             }
 

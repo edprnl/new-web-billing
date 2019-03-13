@@ -76,6 +76,7 @@ class PaymentsController extends Controller
         $payment_info->check_date = date("Y-m-d", strtotime($request->input('check_date')));
         $payment_info->balance_paid = $request->input('balance_paid');
         $payment_info->advance = $request->input('advance');
+        $payment_info->carried_advance = $request->input('carried_advance');
         $payment_info->discount = $request->input('discount');
         $payment_info->remarks = $request->input('remarks');
 

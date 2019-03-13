@@ -116,6 +116,7 @@ class ContractsController extends Controller
                         'contract_util_default_reading as contract_default_reading',
                         'contract_util_is_vatted as contract_is_vatted',
                         'contract_util_notes as contract_notes',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
@@ -128,6 +129,7 @@ class ContractsController extends Controller
                         'contract_misc_default_reading as contract_default_reading',
                         'contract_misc_is_vatted as contract_is_vatted',
                         'contract_misc_notes as contract_notes',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )
@@ -140,6 +142,7 @@ class ContractsController extends Controller
                         'contract_othr_default_reading as contract_default_reading',
                         'contract_othr_is_vatted as contract_is_vatted',
                         'contract_othr_notes as contract_notes',
+                        'sort_key',
                         'b_refcharges.charge_id',
                         'b_refcharges.charge_desc'
                     )

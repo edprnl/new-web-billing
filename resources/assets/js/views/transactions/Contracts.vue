@@ -763,7 +763,7 @@
             <div slot="modal-footer">
                 <b-button variant="primary" @click="addCharges(charge_type)">
                     <i class="fa fa-check"></i>
-                    Save
+                    Add
                 </b-button>
                 <b-button variant="secondary" @click="showModalCharges=false">Close</b-button>            
             </div>
@@ -1611,8 +1611,17 @@ export default {
             }
         },
         removeSchedule(){
+            var start = new Date(this.forms.contract.fields.start_billing_date)
+            var month_value = start.getMonth() + 1
+
             this.tables.schedules.items.splice(this.tables.schedules.items.length - 1, 1)
             this.counter--
+            var month_id = (month_value + this.counter) % 12
+
+            if(month_id == 0){
+                console.log('minus year')
+                this.app_year--
+            }
         },
         addCharges(charge_type){
             try {
@@ -1625,7 +1634,7 @@ export default {
                             contract_default_reading: 0,
                             contract_is_vatted: 0,
                             contract_notes:'',
-                            sort_key:0
+                            sort_key:charge.sort
                         })
                         charge.is_selected = false
                     }
