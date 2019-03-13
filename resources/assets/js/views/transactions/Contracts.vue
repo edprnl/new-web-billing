@@ -1267,13 +1267,6 @@ export default {
                             thStyle: {width: '10%'}
                         },
                         {
-                            key: 'escalation_amount',
-                            label: 'Escalation Amount',
-                            thClass: 'text-right',
-                            tdClass: 'text-right align-middle',
-                            thStyle: {width: '10%'}
-                        },
-                        {
                             key: 'discounted_amount_due',
                             label: 'Disc Amount Due',
                             thClass: 'text-right',
