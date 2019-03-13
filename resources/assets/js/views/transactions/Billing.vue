@@ -326,6 +326,8 @@
                                             small bordered
                                             :fields="tables.utilities.fields"
                                             :items.sync="tables.utilities.items"
+                                            :sort-by="'sort_key'"
+                                            :sort-desc="false"
                                             show-empty>
                                             <template slot="contract_rate" slot-scope="data">
                                                 <vue-autonumeric 
@@ -378,6 +380,8 @@
                                             small bordered
                                             :fields="tables.miscellaneous.fields"
                                             :items.sync="tables.miscellaneous.items"
+                                            :sort-by="'sort_key'"
+                                            :sort-desc="false"
                                             show-empty>
                                             <template slot="contract_rate" slot-scope="data">
                                                 <vue-autonumeric 
@@ -430,6 +434,8 @@
                                             small bordered
                                             :fields="tables.other.fields"
                                             :items.sync="tables.other.items"
+                                            :sort-by="'sort_key'"
+                                            :sort-desc="false"
                                             show-empty>
                                             <template slot="contract_rate" slot-scope="data">
                                                 <vue-autonumeric 
@@ -752,7 +758,7 @@
             <div slot="modal-footer">
                 <b-button variant="primary" @click="addCharges(charge_type)">
                     <i class="fa fa-check"></i>
-                    Save
+                    Add
                 </b-button>
                 <b-button variant="secondary" @click="showModalCharges=false">Close</b-button>            
             </div>
@@ -991,6 +997,13 @@ export default {
                             tdClass: 'd-none'
                         },
                         {
+                            key: 'sort_key',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none',
+                            sortable: true
+                        },
+                        {
                             key: 'charge_desc',
                             label: 'Description',
                             tdClass: 'align-middle',
@@ -1052,6 +1065,13 @@ export default {
                             tdClass: 'd-none'
                         },
                         {
+                            key: 'sort_key',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none',
+                            sortable: true
+                        },
+                        {
                             key: 'charge_desc',
                             label: 'Description',
                             tdClass: 'align-middle',
@@ -1111,6 +1131,13 @@ export default {
                             label: '',
                             thClass: 'd-none',
                             tdClass: 'd-none'
+                        },
+                        {
+                            key: 'sort_key',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none',
+                            sortable: true
                         },
                         {
                             key: 'charge_desc',
@@ -1428,7 +1455,8 @@ export default {
                             contract_rate: 0,
                             contract_default_reading: 0,
                             contract_is_vatted: 0,
-                            contract_notes:''
+                            contract_notes:'',
+                            sort_key: charge.sort
                         })
                         charge.is_selected = false
                     }

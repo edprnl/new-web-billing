@@ -51,6 +51,7 @@ class ChargesController extends Controller
         $charge->charge_code = $request->input('charge_code');
         $charge->charge_desc = $request->input('charge_desc');
         $charge->account_id = $request->input('account_id');
+        $charge->sort = $request->input('sort');
         $charge->created_datetime = Carbon::now();
         $charge->created_by = Auth::user()->id;
         
@@ -124,6 +125,7 @@ class ChargesController extends Controller
         $charge->charge_code = $request->input('charge_code');
         $charge->charge_desc = $request->input('charge_desc');
         $charge->account_id = $request->input('account_id');
+        $charge->sort = $request->input('sort');
         $charge->modified_datetime = Carbon::now();
         $charge->modified_by = Auth::user()->id;
 

@@ -118,6 +118,19 @@
                                 <option v-for="account in options.accounts.items" :key="account.account_id" :value="account.account_id">{{account.account_title}}</option>
                             </select2>
                         </b-form-group>
+                        <b-row>
+                            <b-col lg=3>
+                                <b-form-group>
+                                    <label>Sort</label>
+                                    <vue-autonumeric
+                                        ref="sort"
+                                        v-model="forms.charge.fields.sort"
+                                        :class="'form-control text-right'" 
+                                        :options="{minimumValue: 0, decimalPlaces: 0, emptyInputBehavior: 0}">
+                                    </vue-autonumeric>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
                     </b-form>
                 </b-col> <!-- modal body -->
 
@@ -178,7 +191,8 @@ export default {
                     charge_id: null,
                     charge_code: null,
                     charge_desc: null,
-                    account_id: 0
+                    account_id: 0,
+                    sort: 0
                 }
             }
         },
@@ -203,6 +217,12 @@ export default {
                     label: 'Account Title',
                     tdClass: 'align-middle',
                     sortable: true
+                },
+                {
+                    key: 'sort',
+                    label: 'Sort',
+                    tdClass: 'align-middle text-center',
+                    thClass: 'text-center'
                 },
                 {
                     

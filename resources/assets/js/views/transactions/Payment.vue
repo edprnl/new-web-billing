@@ -391,7 +391,7 @@
                                                     <b-col lg="7">
                                                         <b-input-group>
                                                             <vue-autonumeric 
-                                                                v-model="carried_advance"
+                                                                v-model="forms.payment.fields.carried_advance"
                                                                 :class="'form-control text-right'" 
                                                                 readonly
                                                                 :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
@@ -695,6 +695,7 @@ export default {
                         remarks: null,
                         balance_paid: 0.00,
                         advance: 0.00,
+                        carried_advance: 0.00,
                         discount: 0.00,
                     }
                 },
@@ -959,7 +960,6 @@ export default {
             total_remaining_balance: 0,
             payment_id: null,
             is_check: false,
-            carried_advance: 0,
             date_from: moment().startOf('month').format('YYYY-MM-DD'),
             date_to: moment().endOf('month').format('YYYY-MM-DD'),
             row: []
@@ -985,13 +985,13 @@ export default {
             })
 
             var total = Number(this.forms.payment.fields.amount) - 
-            (Number(totalAmountPaid) - Number(this.carried_advance) + Number(this.forms.payment.fields.advance))
+            (Number(totalAmountPaid) - Number(this.forms.payment.fields.carried_advance) + Number(this.forms.payment.fields.advance))
             if(total >= 0){
                 this.showModalConfirmation = false
                 return true
             }
             else{
-                if(total <= -0.01 && total >= -0.09){
+                if(total >= -0.09){
                     this.showModalConfirmation = false
                     return true
                 }
@@ -1116,9 +1116,9 @@ export default {
                 }
             }).then((response) => {
                 const res = response.data
-                this.carried_advance = 0
+                this.forms.payment.fields.carried_advance = 0
                 if(res.data.length > 0){
-                    this.carried_advance = res.data[0].advance
+                    this.forms.payment.fields.carried_advance = res.data[0].advance
                 }
             }).catch(error => {
                 if (!error.response) 
@@ -1147,7 +1147,7 @@ export default {
             this.computePayment()
         },
         distributePayment(){
-            var amount = Number(this.forms.payment.fields.amount) + Number(this.carried_advance)
+            var amount = Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance)
             var balance_paid = 0
             var total_outstanding_balance = 0
             var discount = 0
@@ -1166,7 +1166,7 @@ export default {
                     amount = 0
                 }
             })
-            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.carried_advance)) - Number(balance_paid))
+            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance)) - Number(balance_paid)).toFixed(2)
             this.forms.payment.fields.balance_paid = balance_paid
             this.total_outstanding_balance = total_outstanding_balance
         },
@@ -1183,7 +1183,7 @@ export default {
                 remaining_balance += Math.max(0, Number(billing.outstanding_balance) - (Number(billing.discount) + Number(billing.amount_paid)))
             })
 
-            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.carried_advance)) - Number(balance))
+            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance)) - Number(balance)).toFixed(2)
             this.forms.payment.fields.discount = totalDiscount
             this.forms.payment.fields.balance_paid = totalAmount
             this.total_remaining_balance = remaining_balance
