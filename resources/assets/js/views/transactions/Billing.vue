@@ -1745,14 +1745,14 @@ export default {
             this.forms.billing.fields.total_misc_charges = miscTotal
             this.forms.billing.fields.total_othr_charges = othrTotal
 
-            this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges) + Number(this.forms.billing.fields.total_vat) - Number(this.forms.billing.fields.wtax_amount)
+            this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges) + Number(this.forms.billing.fields.total_vat) - Number(this.forms.billing.fields.wtax_amount).toFixed(2)
 
             var discounted_sub_total = Number(this.forms.billing.fields.total_discounted_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges)
 
 
             this.forms.billing.fields.total_amount_due = Number(this.forms.billing.fields.sub_total) + Number(this.getInterestTotal) + Number(this.getPenaltyTotal) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
-            this.forms.billing.fields.discounted_total_amount_due = Number(discounted_sub_total) + + Number(this.getInterestTotal) + Number(this.getPenaltyTotal) + Number(this.getDiscountedVatTotal) - Number(this.getDiscountedWithHoldingTax) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
+            this.forms.billing.fields.discounted_total_amount_due = Number(discounted_sub_total) + Number(this.getInterestTotal) + Number(this.getPenaltyTotal) + Number(this.getDiscountedVatTotal) - Number(this.getDiscountedWithHoldingTax) + Number(this.forms.billing.fields.total_adjusted_in) - Number(this.forms.billing.fields.total_adjusted_out)
 
             return this.forms.billing.fields.total_amount_due
         },
@@ -1795,6 +1795,7 @@ export default {
                     }
                 }
             })
+            
             this.forms.billing.fields.vatable_amount = Number(schedVat) + Number(utilVat) + Number(miscVat) + Number(othrVat)
 
             this.forms.billing.fields.discounted_vatable_amount = Number(dSchedVat) + Number(utilVat) + Number(miscVat) + Number(othrVat)

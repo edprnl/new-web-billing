@@ -82,15 +82,19 @@
                                                 <p>Escalation % : {{formatNumber(row.item.contract_escalation_percent)}}</p>
                                                 <p>Escalation Notes : {{row.item.escalation_notes}}</p>
                                                 <p>Remarks : {{row.item.contract_remarks}}</p>
+                                                <p>is Renewal? : {{row.item.is_renewal == 1 ? 'Yes' : 'No'}}</p>
                                             </b-col>
                                         </b-row>
                                     </template>
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data), tabIndex=0">
+                                        <b-btn :size="'sm'" title="Renew" variant="success" @click="setRenewal(data), tabIndex=0">
+                                            <i class="fa fa-refresh"></i>
+                                        </b-btn>
+                                        <b-btn :size="'sm'" title="Edit" variant="primary" @click="setUpdate(data), tabIndex=0">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                        <b-btn :size="'sm'" title="Delete" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -427,6 +431,18 @@
                                                             placeholder="Remarks">
                                                         </b-form-textarea>
                                                     </b-form-group>
+                                                    <b-form-group>
+                                                        <label>is Renewal?</label>
+                                                        <b-form-radio-group 
+                                                            buttons
+                                                            :button-variant="forms.contract.fields.is_renewal == 1 ?'outline-success' : 'outline-danger'"
+                                                            v-model="forms.contract.fields.is_renewal"
+                                                            :options="[
+                                                                { text: 'Yes', value: '1' },
+                                                                { text: 'No', value: '0' }
+                                                            ]"
+                                                        />
+                                                    </b-form-group>
                                                 </b-col>
                                             </b-row>
                                         </b-tab>
@@ -471,6 +487,13 @@
                                                         :class="'form-control text-right'"
                                                         v-model="data.item.escalation_percent" 
                                                         :options="{minimumValue: 0, maximumValue: 100,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                    </vue-autonumeric>
+                                                </template>
+                                                <template slot="escalation_amount" slot-scope="data">
+                                                    <vue-autonumeric 
+                                                        :class="'form-control text-right'"
+                                                        v-model="data.item.escalation_amount" 
+                                                        :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                     </vue-autonumeric>
                                                 </template>
                                                 <template slot="is_vatted" slot-scope="data">
@@ -1100,6 +1123,7 @@ export default {
                         utilities: [],
                         miscellaneous: [],
                         other: [],
+                        is_renewal: 0
                     }
                 },
                 department : {
@@ -1195,7 +1219,7 @@ export default {
                             key:'action',
                             label:'Action',
                             thClass: 'text-center',
-                            thStyle: {width: '75px'},
+                            thStyle: {width: '110px'},
                         }
                     ],
                     items: []
@@ -1250,18 +1274,25 @@ export default {
                             label: 'Disc Rent',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '12%'}
+                            thStyle: {width: '11%'}
                         },
                         {
                             key: 'fixed_rent',
                             label: 'Basic Rent',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '12%'}
+                            thStyle: {width: '11%'}
                         },
                         {
                             key: 'escalation_percent',
-                            label: 'Escalation %',
+                            label: 'Esc %',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '7%'}
+                        },
+                        {
+                            key: 'escalation_amount',
+                            label: 'Esc Amount',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
                             thStyle: {width: '10%'}
@@ -1271,9 +1302,9 @@ export default {
                             label: 'Disc Amount Due',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '12%'},
+                            thStyle: {width: '11%'},
                             formatter: (value, key, item) => {
-                                item.discounted_amount_due = Number(item.discounted_rent) + (Number(item.discounted_rent) * (Number(item.escalation_percent)/100))
+                                item.discounted_amount_due = Number(item.discounted_rent) + (Number(item.discounted_rent) * (Number(item.escalation_percent)/100)) + Number(item.escalation_amount)
                                 return this.formatNumber(item.discounted_amount_due)
                                 
                             }
@@ -1283,9 +1314,9 @@ export default {
                             label: 'Amount Due',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '12%'},
+                            thStyle: {width: '11%'},
                             formatter: (value, key, item) => {
-                                item.amount_due = Number(item.fixed_rent) + (Number(item.fixed_rent) * (Number(item.escalation_percent)/100))
+                                item.amount_due = Number(item.fixed_rent) + (Number(item.fixed_rent) * (Number(item.escalation_percent)/100)) + Number(item.escalation_amount)
                                 return this.formatNumber(item.amount_due)
                                 
                             }
@@ -1500,7 +1531,7 @@ export default {
             this.forms.contract.fields.miscellaneous = this.tables.miscellaneous.items
             this.forms.contract.fields.other = this.tables.other.items
 
-            if(this.entryMode == 'Add'){
+            if(this.entryMode == 'Add' || this.entryMode == 'Renewal'){
                 this.createEntity('contract', false, 'contracts', true)
             }
             else{
@@ -1523,6 +1554,33 @@ export default {
             this.contract_id = data.item.contract_id
             this.showModalDelete = true
         },
+        setRenewal(data){
+            this.row = data.item
+            this.fillEntityForm('contract', data.item.contract_id)
+            this.$http.get('/api/contracts/sc/'+ data.item.contract_id,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+                const res = response.data
+                this.tables.utilities.items = res.util_charges
+                this.tables.miscellaneous.items = res.misc_charges
+                this.tables.other.items = res.othr_charges
+                this.showEntry=true
+                this.entryMode='Renewal'
+                this.counter = this.tables.schedules.items.length
+                this.forms.contract.fields.is_renewal = 1
+                this.forms.contract.fields.contract_no = null
+                this.forms.contract.fields.commencement_date = this.forms.contract.fields.termination_date
+                this.forms.contract.fields.start_billing_date = this.forms.contract.fields.termination_date
+                this.computeDates(true)
+            }).catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
+        },
+
         setUpdate(data){
             this.row = data.item
             this.fillEntityForm('contract', data.item.contract_id)
@@ -1592,6 +1650,7 @@ export default {
                         discounted_rent:discounted_rent,
                         fixed_rent:fixed_rent,
                         escalation_percent:escalation_percent,
+                        escalation_amount: 0,
                         discounted_amount_due:discounted_amount_due,
                         amount_due:amount_due,
                         is_vatted:1,
