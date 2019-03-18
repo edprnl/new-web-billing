@@ -30,9 +30,19 @@ class DashboardController extends Controller
         $contracts = ContractInfo::select(DB::raw('count(*) as no_of_contracts'))
                             ->where('is_deleted', 0)
                             ->get();
+
+        $from = Carbon::now();
+        $to = Carbon::now()->addMonths(4);
+        $expiring_contracts = ContractInfo::select(DB::raw('count(*) as no_of_expiring_contracts'))
+                            ->where('is_deleted', 0)
+                            ->whereBetween('termination_date', [$from, $to])
+                            ->get();
+        
         $dashboard['payment_line'] = $this->getPaymentLine($payment_type, true);
         $dashboard['tenants'] = Reference::collection($tenants);
         $dashboard['contracts'] = Reference::collection($contracts);
+        $dashboard['expiring_contracts'] = Reference::collection($expiring_contracts);
+
         return $dashboard;
     }
 
@@ -44,7 +54,7 @@ class DashboardController extends Controller
             $query = $query."SELECT
                                 IFNULL(SUM(amount_paid), 0) as amount
                             FROM b_payment_info 
-                            WHERE MONTH(payment_date) = $i AND IF($payment_type = -1, 0=0, payment_type = $payment_type)";
+                            WHERE MONTH(payment_date) = $i AND IF($payment_type = -1, 0=0, payment_type = $payment_type) AND is_canceled = 0";
             if($i != 12)
             {
                 $query = $query." UNION ALL ";

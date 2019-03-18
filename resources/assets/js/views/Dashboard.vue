@@ -103,7 +103,7 @@
                                         <h6>EXPIRING CONTRACTS</h6>
                                     </span>
                                     <div class="info-box-number">
-                                        <h3>0</h3>
+                                        <h3>{{no_of_expiring_contracts}}</h3>
                                     </div>
                                 </div>
                             </div>  
@@ -246,6 +246,7 @@ export default {
             line_data: [],
             no_of_tenants: 0,
             no_of_contracts: 0,
+            no_of_expiring_contracts: 0,
         }
     },
     methods: {
@@ -283,6 +284,7 @@ export default {
             var data = response.data
                 this.no_of_tenants = data.tenants[0].no_of_tenants
                 this.no_of_contracts = data.contracts[0].no_of_contracts
+                this.no_of_expiring_contracts = data.expiring_contracts[0].no_of_expiring_contracts
                 var dArray = []
                 data.payment_line.forEach(element => {
                     dArray.push(element.amount)

@@ -222,6 +222,7 @@ class ContractsController extends Controller
         $contract_info->contract_floor_area = $request->input('contract_floor_area');
         $contract_info->department_id = $request->input('department_id');
         $contract_info->nature_of_business_id = $request->input('nature_of_business_id');
+        $contract_info->is_renewal = $request->input('is_renewal');
 
         $contract_info->created_datetime = Carbon::now();
         $contract_info->created_by = Auth::user()->id;
@@ -242,6 +243,7 @@ class ContractsController extends Controller
                     'discounted_rent' => $schedule['discounted_rent'],
                     'fixed_rent' => $schedule['fixed_rent'],
                     'escalation_percent' => $schedule['escalation_percent'],
+                    'escalation_amount' => $schedule['escalation_amount'],
                     'discounted_amount_due' => $schedule['discounted_amount_due'],
                     'amount_due' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],
@@ -412,6 +414,7 @@ class ContractsController extends Controller
         $contract_info->contract_floor_area = $request->input('contract_floor_area');
         $contract_info->department_id = $request->input('department_id');
         $contract_info->nature_of_business_id = $request->input('nature_of_business_id');
+        $contract_info->is_renewal = $request->input('is_renewal');
 
         $contract_info->created_datetime = Carbon::now();
         $contract_info->created_by = Auth::user()->id;
@@ -444,6 +447,7 @@ class ContractsController extends Controller
                     'discounted_rent' => $schedule['discounted_rent'],
                     'fixed_rent' => $schedule['fixed_rent'],
                     'escalation_percent' => $schedule['escalation_percent'],
+                    'escalation_amount' => $schedule['escalation_amount'],
                     'discounted_amount_due' => $schedule['discounted_amount_due'],
                     'amount_due' => $schedule['amount_due'],
                     'is_vatted' => $schedule['is_vatted'],

@@ -10,13 +10,13 @@
                     <b-card >
                         <table width="100%">
                             <tr>
-                                <td width="80%" class="align-center">
+                                <td style="object-fit: cover;"><img :src="company_info.logo" style="height: 90px; width: 200px; text-align: left;"></td>
+                                <td width="80%">
                                     <div style="font-size: 20pt;font-weight: 500;">{{company_info.company_name}}</div>
                                     <div style="font-size: 11pt;font-weight: 500;margin-top: 0px;">{{company_info.company_address}}</div>
                                     <div style="font-size: 11pt;font-weight: 500;margin-top: 0px;">{{company_info.email_address}}</div>
                                     <div style="font-size: 11pt;font-weight: 500;margin-top: 0px;">{{company_info.landline}}/{{company_info.mobile_number}}</div>
                                 </td>
-                                <td width="20%" style="object-fit: cover;"><img :src="company_info.logo" style="height: 90px; width: 200px; text-align: right;"></td>
                             </tr>
                         </table>
                         <div style="font-size: 11pt; width: 100%;">
@@ -34,34 +34,38 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style="width:12%;">TENANT :</td>
-                                    <td style="width:38%; text-align: left;">{{ billing.trade_name }}</td>
+                                    <td style="width:15%;">TRADE NAME :</td>
+                                    <td style="width:35%; text-align: left;">{{ billing.trade_name }}</td>
                                     <td style="width:12%;">BILLING NO :</td>
                                     <td style="width:38%; text-align: left;">{{ billing.billing_no }}</td>
                                 </tr>
                                 <tr>
-                                    <td>NAME :</td>
-                                    <td>{{ billing.contract_signatory }}</td>
+                                    <td>COMPANY NAME :</td>
+                                    <td>{{ billing.company_name }}</td>
                                     <td>BILLING PERIOD :</td>
                                     <td>{{ moment(billing.period_start_date, "MMMM DD, YYYY") }} to {{ moment(billing.period_end_date, "MMMM DD, YYYY") }}</td>
                                 </tr>
                                 <tr>
-                                    <td>TENANT CODE :</td>
-                                    <td>{{ billing.tenant_code }}</td>
+                                    <td>NAME :</td>
+                                    <td>{{ billing.contract_signatory }}</td>
                                     <td>SPACE CODE :</td>
                                     <td>{{ billing.space_code }}</td>
                                 </tr>
                                 <tr>
-                                    <td>CATEGORY :</td>
-                                    <td>{{ billing.category_desc }}</td>
+                                    <td>TENANT CODE :</td>
+                                    <td>{{ billing.tenant_code }}</td>
                                     <td>LEASED AREA :</td>
                                     <td>{{ formatNumber(billing.contract_floor_area) }}sqm</td>
                                 </tr>
                                 <tr>
-                                    <td>LOCATION :</td>
-                                    <td>{{ billing.location_desc }}</td>
+                                    <td>CATEGORY :</td>
+                                    <td>{{ billing.category_desc }}</td>
                                     <td>DUE DATE :</td>
                                     <td>{{ moment(billing.period_due_date, "MMMM DD, YYYY") }}</td>
+                                </tr>
+                                <tr>
+                                    <td>LOCATION :</td>
+                                    <td>{{ billing.location_desc }}</td>
                                 </tr>
                             </tbody>
                         </table>
