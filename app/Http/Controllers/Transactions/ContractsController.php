@@ -10,6 +10,8 @@ use App\Models\Transactions\ContractSchedule;
 use App\Models\Transactions\ContractUtilCharges;
 use App\Models\Transactions\ContractMiscCharges;
 use App\Models\Transactions\ContractOthrCharges;
+use App\Models\Transactions\ContractOtherFees;
+use App\Models\References\FeeType;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -31,12 +33,134 @@ class ContractsController extends Controller
                             ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
                             ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
                             ->leftJoin('b_refnatureofbusiness', 'b_refnatureofbusiness.nature_of_business_id', '=', 'b_contract_info.nature_of_business_id')
+                            ->leftJoin(
+                                DB::raw("
+                                        (SELECT
+                                            a.contract_id,
+                                            SUM(a.advance_rent) as c_advance_rent,
+                                            SUM(a.security_deposit) as c_security_deposit,
+                                            SUM(a.electric_meter_deposit) as c_electric_meter_deposit,
+                                            SUM(a.water_meter_deposit) as c_water_meter_deposit,
+                                            SUM(a.construction_deposit) as c_construction_deposit
+                                        FROM
+                                            (
+                                                SELECT
+                                                    contract_id,
+                                                    IFNULL(SUM(fee_credit), 0) as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit,
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 1
+                                                GROUP BY contract_id
+                                                UNION ALL SELECT
+                                                    contract_id,
+                                                    0 as advance_rent, 
+                                                    IFNULL(SUM(fee_credit), 0) as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 2
+                                                GROUP BY contract_id
+                                                UNION ALL SELECT
+                                                    contract_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    IFNULL(SUM(fee_credit), 0) as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 3
+                                                GROUP BY contract_id
+                                                UNION ALL SELECT
+                                                    contract_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    IFNULL(SUM(fee_credit), 0)  as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 4
+                                                GROUP BY contract_id
+                                                UNION ALL SELECT
+                                                    contract_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    IFNULL(SUM(fee_credit), 0) as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 5
+                                                GROUP BY contract_id
+                                            ) AS a
+                                            GROUP BY contract_id
+                                ) a" ), 'b_contract_info.contract_id', '=', 'a.contract_id')
                             ->where('b_contract_info.is_deleted', 0);
         if($tenant_id != null){
             $contracts->where('b_contract_info.tenant_id', $tenant_id);
         }  
 
-        return Reference::collection($contracts->orderBy('contract_id','desc')->get());
+        return Reference::collection($contracts->orderBy('b_contract_info.contract_id','desc')->get());
+    }
+
+    public function getFeeType($contract_id = null)
+    {
+        $fee_type = FeeType::select(
+                                'b_reffeetype.*',
+                                'cof.contract_id',
+                                DB::raw("IFNULL(SUM(cof.fee_credit), 0) - IFNULL(SUM(cof.fee_debit), 0) as amount"),
+                                DB::raw('"" as history')
+                            )
+                            ->leftJoin('b_contract_other_fees as cof', function($join) use ($contract_id){
+                                $join->on('cof.fee_type_id', '=', 'b_reffeetype.fee_type_id')
+                                    ->where('cof.contract_id', $contract_id)
+                                    ;
+                              })
+                            // ->leftJoin('b_contract_other_fees as cof', 'cof.fee_type_id', '=', 'b_reffeetype.fee_type_id')
+                            ->groupBy('fee_type_id')
+                            ->get();
+
+        return Reference::collection($fee_type);
+    }
+
+    public function saveFees(Request $request)
+    {
+        $fee = new ContractOtherFees;
+        $fee->contract_id = $request->input('contract_id');
+        $fee->fee_type_id = $request->input('fee_type_id');
+        $fee->fee_credit = $request->input('amount');
+        $fee->fee_notes = $request->input('fee_notes');
+        $fee->created_datetime = Carbon::now();
+        $fee->created_by = Auth::user()->id;
+        $fee->save();
+
+        return ( new Reference( $fee ) )
+            ->response()
+            ->setStatusCode(200);
+    }
+
+    public function contractFeesHistory($contract_id, $fee_type_id)
+    {
+        DB::statement(DB::raw('set @balance=0'));
+        $contract_fees = ContractOtherFees::select(
+                                                'fee_debit',
+                                                'fee_credit',
+                                                'fee_notes',
+                                                'created_datetime',
+                                                DB::raw('@balance:= @balance + (fee_credit - fee_debit) as balance')
+                                            )
+                                            ->where('contract_id', $contract_id)
+                                            ->where('fee_type_id', $fee_type_id)
+                                            ->get();
+
+        return Reference::collection($contract_fees);
     }
 
     public function scheduleAndCharges($id)
@@ -329,6 +453,75 @@ class ContractsController extends Controller
     public function show($id)
     {
         $contract = ContractInfo::join('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+                                ->leftJoin(
+                                    DB::raw("
+                                            (SELECT
+                                                a.contract_id,
+                                                SUM(a.advance_rent) as c_advance_rent,
+                                                SUM(a.security_deposit) as c_security_deposit,
+                                                SUM(a.electric_meter_deposit) as c_electric_meter_deposit,
+                                                SUM(a.water_meter_deposit) as c_water_meter_deposit,
+                                                SUM(a.construction_deposit) as c_construction_deposit
+                                            FROM
+                                                (
+                                                    SELECT
+                                                        contract_id,
+                                                        IFNULL(SUM(fee_credit), 0) as advance_rent, 
+                                                        0 as security_deposit,
+                                                        0 as electric_meter_deposit,
+                                                        0 as water_meter_deposit,
+                                                        0 as construction_deposit
+                                                    FROM
+                                                        b_contract_other_fees
+                                                    WHERE fee_type_id = 1
+                                                    GROUP BY contract_id
+                                                    UNION ALL SELECT
+                                                        contract_id,
+                                                        0 as advance_rent, 
+                                                        IFNULL(SUM(fee_credit), 0) as security_deposit,
+                                                        0 as electric_meter_deposit,
+                                                        0 as water_meter_deposit, 
+                                                        0 as construction_deposit
+                                                    FROM
+                                                        b_contract_other_fees
+                                                    WHERE fee_type_id = 2
+                                                    GROUP BY contract_id
+                                                    UNION ALL SELECT
+                                                        contract_id,
+                                                        0 as advance_rent, 
+                                                        0 as security_deposit,
+                                                        IFNULL(SUM(fee_credit), 0) as electric_meter_deposit,
+                                                        0 as water_meter_deposit, 
+                                                        0 as construction_deposit
+                                                    FROM
+                                                        b_contract_other_fees
+                                                    WHERE fee_type_id = 3
+                                                    GROUP BY contract_id
+                                                    UNION ALL SELECT
+                                                        contract_id,
+                                                        0 as advance_rent, 
+                                                        0 as security_deposit,
+                                                        0 as electric_meter_deposit,
+                                                        IFNULL(SUM(fee_credit), 0)  as water_meter_deposit, 
+                                                        0 as construction_deposit
+                                                    FROM
+                                                        b_contract_other_fees
+                                                    WHERE fee_type_id = 4
+                                                    GROUP BY contract_id
+                                                    UNION ALL SELECT
+                                                        contract_id,
+                                                        0 as advance_rent, 
+                                                        0 as security_deposit,
+                                                        0 as electric_meter_deposit,
+                                                        0 as water_meter_deposit, 
+                                                        IFNULL(SUM(fee_credit), 0) as construction_deposit
+                                                    FROM
+                                                        b_contract_other_fees
+                                                    WHERE fee_type_id = 5
+                                                    GROUP BY contract_id
+                                                ) AS a
+                                                GROUP BY contract_id
+                                    ) a" ), 'b_contract_info.contract_id', '=', 'a.contract_id')
                                 ->findOrFail($id);
 
         return ( new Reference( $contract ) )

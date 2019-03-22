@@ -7,11 +7,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Reference;
 use App\Models\Accounting\TempJournalAccounts;
 use App\Models\Accounting\TempJournalInfo;
+use App\Models\Transactions\PaymentInfo;
 use DB;
 use Carbon\Carbon;
 
 class ArPaymentController extends Controller
 {
+    public function getSentPayment($from, $to)
+    {
+        $payments = PaymentInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_payment_info.tenant_id')
+                            ->leftJoin('b_refchecktype', 'b_refchecktype.check_type_id', '=', 'b_payment_info.check_type_id')
+                            ->where('is_canceled', 0)
+                            ->where('is_sent', 1)
+                            ->orderBy('payment_id', 'desc');
+        if($from != null && $to != null){
+            $payments->whereRaw('DATE(payment_date) BETWEEN DATE("'.$from.'") AND DATE("'.$to.'")');
+        }
+
+        return Reference::collection($payments->get());
+    }
+
     public function getJournalInfo($start_date, $end_date)
     {
         return DB::select('CALL get_payment_to_accounting_info("'.$start_date.'","'.$end_date.'")');
@@ -41,6 +56,11 @@ class ArPaymentController extends Controller
                 $temp_journal_id = $journal_info->temp_journal_id;
                 DB::select('CALL insert_payment_to_account_details('.$temp_journal_id.', "'.$start_date.'", "'.$end_date.'", '.$info['tenant_id'].', '.$info['payment_id'].')');
             }
+
+            $payment = PaymentInfo::findOrFail($info['payment_id']);
+            $payment->is_sent = 1;
+            $payment->save();
+            
         }
         return response()->json(['message' => 'Successfully sent to accounting.']);
     }
