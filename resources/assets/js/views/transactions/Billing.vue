@@ -16,10 +16,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
-                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], clearFields('billing'), forms.billing.fields.vat_percent = 12,
-                                        forms.billing.fields.interest_percent = 3,
-                                        forms.billing.fields.penalty_percent = 3,
-                                        forms.billing.fields.wtax_percent = 5, counter = 0 ">
+                                        @click="checkIfSent()">
                                             <i class="fa fa-plus-circle"></i> Create New Billing
                                     </b-button>
                             </b-col>
@@ -1293,7 +1290,8 @@ export default {
                         app_year: null,
                         month_id: null,
                         month_name: null,
-                        department_id: 0
+                        department_id: 0,
+                        is_sent: null
                     }
                 }
             },
@@ -1370,6 +1368,15 @@ export default {
             await this.deleteEntity('billing', this.billing_id, true, 'billings', 'billing_id')
         },
         async setDelete(data){
+            if(this.forms.period.fields.is_sent == 1){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error',
+                    text: "This billing period was already locked. You can't add, edit and delete billing."
+                })
+                return
+            }
             if(await this.checkIfUsed('billing', data.item.billing_id) == true){
                 this.$notify({
                     type: 'error',
@@ -1383,6 +1390,15 @@ export default {
             this.showModalDelete = true
         },
         async setUpdate(data){
+            if(this.forms.period.fields.is_sent == 1){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error',
+                    text: "This billing period was already locked. You can't add, edit and delete billing."
+                })
+                return
+            }
             this.row = data.item
             this.getTenantHistory(data.item.tenant_id)
             this.getPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
@@ -1596,6 +1612,7 @@ export default {
                 this.forms.period.fields.month_name = period.month_name
                 this.forms.period.fields.month_id = period.month_id
                 this.forms.period.fields.due_date = moment(period.period_due_date).format('MMMM DD, YYYY')
+                this.forms.period.fields.is_sent = period.is_sent
             }
         },
         getTenantInfo: function (value, data) {
@@ -1688,6 +1705,29 @@ export default {
                 })
                 this.is_check_all = 0
             }
+        },
+        checkIfSent(){
+            if(this.forms.period.fields.is_sent == 1){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error',
+                    text: "This billing period was already locked. You can't add, edit and delete billing."
+                })
+                return
+            }
+            this.showEntry = true
+            this.entryMode='Add'
+            this.tables.schedules.items=[]
+            this.tables.utilities.items=[]
+            this.tables.miscellaneous.items=[]
+            this.tables.other.items=[]
+            this.clearFields('billing')
+            this.forms.billing.fields.vat_percent = 12
+            this.forms.billing.fields.interest_percent = 3
+            this.forms.billing.fields.penalty_percent = 3
+            this.forms.billing.fields.wtax_percent = 5
+            this.counter = 0 
         }
     },
     computed :{

@@ -498,8 +498,10 @@ class BillingsController extends Controller
                                         ;
                                   })
                                 ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
+                                ->leftJoin('b_refbillingperiod', 'b_refbillingperiod.period_id', '=', 'b_billing_info.period_id')
                                 ->where('b_billing_info.tenant_id', $tenant_id)
-                                ->where('is_deleted', 0)
+                                ->where('b_billing_info.is_deleted', 0)
+                                ->where('b_refbillingperiod.is_sent', 1)
                                 // ->where('b_payment_info.is_canceled', 0)
                                 ->groupBy('billing_id')
                                 ->havingRaw('outstanding_balance >= 0.9')

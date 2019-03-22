@@ -15,7 +15,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
-                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, computeDates(true),counter = 0 ">
+                                        @click="fillTableList('feetypes'), showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, computeDates(true),counter = 0 ">
                                             <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
                             </b-col>
@@ -74,11 +74,11 @@
                                             <b-col lg="4">
                                                 <p>Basic Rental : {{formatNumber(row.item.contract_fixed_rent)}}</p>
                                                 <p>Discounted Rental : {{formatNumber(row.item.contract_discounted_rent)}}</p>
-                                                <p>Advance Rental : {{formatNumber(row.item.contract_advance_rent)}}</p>
-                                                <p>Security Deposit : {{formatNumber(row.item.security_deposit)}}</p>
-                                                <p>Electric Meter Deposit : {{formatNumber(row.item.power_meter_deposit)}}</p>
-                                                <p>Water Meter Deposit : {{formatNumber(row.item.water_meter_deposit)}}</p>
-                                                <p>Construction Deposit : {{formatNumber(row.item.construction_deposit)}}</p>
+                                                <p>Advance Rental : {{formatNumber(row.item.c_advance_rent)}}</p>
+                                                <p>Security Deposit : {{formatNumber(row.item.c_security_deposit)}}</p>
+                                                <p>Electric Meter Deposit : {{formatNumber(row.item.c_electric_meter_deposit)}}</p>
+                                                <p>Water Meter Deposit : {{formatNumber(row.item.c_water_meter_deposit)}}</p>
+                                                <p>Construction Deposit : {{formatNumber(row.item.c_construction_deposit)}}</p>
                                                 <p>Escalation % : {{formatNumber(row.item.contract_escalation_percent)}}</p>
                                                 <p>Escalation Notes : {{row.item.escalation_notes}}</p>
                                                 <p>Remarks : {{row.item.contract_remarks}}</p>
@@ -87,6 +87,9 @@
                                         </b-row>
                                     </template>
                                     <template slot="action" slot-scope="data">
+                                        <b-btn :size="'sm'" title="Fees" variant="secondary" @click="showFees(data), tabIndex=0">
+                                            <i class="fa fa-ticket"></i>
+                                        </b-btn>
                                         <b-btn :size="'sm'" title="Renew" variant="success" @click="setRenewal(data), tabIndex=0">
                                             <i class="fa fa-refresh"></i>
                                         </b-btn>
@@ -359,16 +362,18 @@
                                                             <b-col lg="6">
                                                                 <label>Advance Rental </label>
                                                                 <vue-autonumeric 
+                                                                    readonly
                                                                     :class="'form-control text-right'" 
-                                                                    v-model="forms.contract.fields.contract_advance_rent" 
+                                                                    v-model="forms.contract.fields.c_advance_rent" 
                                                                     :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                                 </vue-autonumeric> 
                                                             </b-col>
                                                             <b-col lg="6">
                                                                 <label>Security Deposit </label>
                                                                 <vue-autonumeric 
+                                                                    readonly
                                                                     :class="'form-control text-right'" 
-                                                                    v-model="forms.contract.fields.security_deposit" 
+                                                                    v-model="forms.contract.fields.c_security_deposit" 
                                                                     :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                                 </vue-autonumeric> 
                                                             </b-col>
@@ -379,16 +384,18 @@
                                                             <b-col lg="6">
                                                                 <label>Electric Meter Deposit </label>
                                                                 <vue-autonumeric 
+                                                                    readonly
                                                                     :class="'form-control text-right'" 
-                                                                    v-model="forms.contract.fields.power_meter_deposit" 
+                                                                    v-model="forms.contract.fields.c_electric_meter_deposit" 
                                                                     :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                                 </vue-autonumeric> 
                                                             </b-col>
                                                             <b-col lg="6">
                                                                 <label>Water Meter Deposit </label>
                                                                 <vue-autonumeric 
+                                                                    readonly
                                                                     :class="'form-control text-right'" 
-                                                                    v-model="forms.contract.fields.water_meter_deposit" 
+                                                                    v-model="forms.contract.fields.c_water_meter_deposit" 
                                                                     :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                                 </vue-autonumeric> 
                                                             </b-col>
@@ -399,8 +406,9 @@
                                                             <b-col lg="6">
                                                                 <label>Construction Deposit </label>
                                                                 <vue-autonumeric 
+                                                                    readonly
                                                                     :class="'form-control text-right'" 
-                                                                    v-model="forms.contract.fields.construction_deposit" 
+                                                                    v-model="forms.contract.fields.c_construction_deposit" 
                                                                     :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
                                                                 </vue-autonumeric> 
                                                             </b-col>
@@ -741,6 +749,125 @@
                 </b-col>
             </b-row>
         </div>
+        <div>
+            <b-modal
+                v-model="showModalFeesList"
+                :noCloseOnEsc="true"
+                :noCloseOnBackdrop="true"
+                size="lg"
+            >
+                <div slot="modal-title">
+                    Contract Fees
+                </div>
+                <b-row>
+                    <b-col sm="12">
+                        <b-row class="mb-2">
+                            <b-col sm="12">
+                                <h6>Contract No. : {{contract_no}}</h6>
+                                <h6>Trade Name : {{trade_name}}</h6>
+                                <h6>Company Name : {{company_name}}</h6>
+                            </b-col>
+                        </b-row>
+                        <b-table 
+                            responsive
+                            small bordered
+                            :fields="tables.feetypes.fields"
+                            :items.sync="tables.feetypes.items"
+                            show-empty>
+                            <template slot="row_data" slot-scope="row">
+                                <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails(), contractFeesHistory(row)">
+                                    <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
+                                </b-btn>
+                            </template>
+                            <template slot="row-details" slot-scope="row">
+                                <b-row>
+                                    <b-col lg="2"></b-col>
+                                    <b-col lg="8">
+                                        <h6>{{row.item.fee_type_desc}} History</h6>
+                                        <table class="w-100 mb-2 responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>Datetime</th>
+                                                    <th>Notes</th>
+                                                    <th class="text-right">Debit</th>
+                                                    <th class="text-right">Credit</th>
+                                                    <th class="text-right">Balance</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-if="row.item.history.length == 0" >
+                                                    <td colspan="2">No files found.</td>
+                                                </tr>
+                                                <tr v-for="history in row.item.history">
+                                                    <td class="align-middle">{{ moment(history.created_datetime, 'MMMM DD, YYYY hh:mm:ss a') }}</td>
+                                                    <td class="align-middle">{{ history.fee_notes }}</td>
+                                                    <td class="align-middle text-right">{{ formatNumber(history.fee_debit) }}</td>
+                                                    <td class="align-middle text-right">{{ formatNumber(history.fee_credit) }}</td>
+                                                    <td class="align-middle text-right">{{ formatNumber(history.balance) }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </b-col>
+                                    <b-col lg="2"></b-col>
+                                </b-row>
+                            </template>
+                            <template slot="action" slot-scope="data">
+                                <b-btn @click="setFees(data.item)" :size="'sm'" variant="primary">
+                                    <i class="fa fa-edit"></i>
+                                </b-btn>
+                            </template>
+                        </b-table>
+                    </b-col>
+                </b-row>
+                <div slot="modal-footer">
+                    <b-button variant="secondary" @click="showModalFeesList=false">Close</b-button>            
+                </div>
+            </b-modal>
+            <b-modal 
+                    v-model="showModalFees"
+                    :noCloseOnEsc="true"
+                    :noCloseOnBackdrop="true"
+                    @shown="focusElement('amount')"
+                >
+                
+                <div slot="modal-title"> <!-- modal title -->
+                    Fee Entry - {{forms.contract_other_fees.fields.fee_mode}}
+                </div> <!-- modal title -->
+
+                <b-col lg=12> <!-- modal body -->
+                    <b-form autocomplete="off">
+                        <b-form-group>
+                            <label for="amount">* Amount</label>
+                            <vue-autonumeric 
+                                ref="amount"
+                                v-model="forms.contract_other_fees.fields.amount"
+                                :class="'form-control text-right'" 
+                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                            </vue-autonumeric>
+                        </b-form-group>
+                        <b-form-group>
+                            <label for="amount">Notes</label>
+                            <b-form-textarea
+                                v-model="forms.contract_other_fees.fields.fee_notes"
+                                type="text"
+                                :rows="2"
+                                placeholder="Notes">
+                        </b-form-textarea>
+                        </b-form-group>
+                    </b-form>
+                </b-col> <!-- modal body -->
+
+                <div slot="modal-footer"><!-- modal footer buttons -->
+                    <b-button :disabled="forms.contract_other_fees.isSaving" variant="primary" @click="saveFees()">
+                        <icon v-if="forms.contract_other_fees.isSaving" name="sync" spin></icon>
+                        <i class="fa fa-check"></i>
+                        Save
+                    </b-button>
+                    <b-button variant="secondary" @click="showModalFees=false">Close</b-button>
+                </div> <!-- modal footer buttons -->
+
+            </b-modal> <!--fees modal -->
+        </div>
         <b-modal 
             v-model="showModalCharges"
             :noCloseOnEsc="true"
@@ -1047,7 +1174,6 @@
             </div> <!-- modal footer buttons -->
 
         </b-modal>
-
     </div>
 </template>
 
@@ -1065,6 +1191,11 @@ export default {
             showModalCategory: false,
             showModalContractType: false,
             showModalLocation: false,
+            showModalFees: false,
+            showModalFeesList: false,
+            contract_no: null,
+            trade_name: null,
+            company_name: null,
             options: {
                 tenants: {
                     items: []
@@ -1112,11 +1243,16 @@ export default {
                         contract_fixed_rent: 0,
                         contract_discounted_rent: 0,
                         contract_advance_rent: 0,
+                        c_advance_rent: 0,
                         contract_escalation_percent: 0,
                         security_deposit: 0,
+                        c_security_deposit: 0,
                         power_meter_deposit: 0,
+                        c_electric_meter_deposit: 0,
                         water_meter_deposit: 0,
+                        c_water_meter_deposit: 0,
                         construction_deposit: 0,
+                        c_construction_deposit: 0,
                         escalation_notes: null,
                         contract_remarks: null,
                         schedules: [],
@@ -1166,8 +1302,17 @@ export default {
                         location_code: null,
                         location_desc: null
                     }
+                },
+                contract_other_fees : {
+                    isSaving: false,
+                    fields: {
+                        contract_id: null,
+                        fee_mode: null,
+                        fee_type_id: null,
+                        fee_notes: null,
+                        amount: null
+                    }
                 }
-
             },
             tables: {
                 contracts: {
@@ -1219,7 +1364,7 @@ export default {
                             key:'action',
                             label:'Action',
                             thClass: 'text-center',
-                            thStyle: {width: '110px'},
+                            thStyle: {width: '150px'},
                         }
                     ],
                     items: []
@@ -1493,7 +1638,39 @@ export default {
                         }
                     ],
                     items: []
-                }
+                },
+                feetypes: {
+                    fields: [
+                        {
+                            key:'row_data',
+                            label: '',
+                            tdClass: '',
+                            thStyle: {width: '2%'}
+                        },
+                        {
+                            key: 'fee_type_desc',
+                            label: 'Fee Type Desc',
+                            tdClass: 'align-middle'
+                        },
+                        {
+                            key: 'amount',
+                            label: 'Amount',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            formatter: (value) => {
+                                return this.formatNumber(value)
+                            }
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '75px'},
+                            tdClass: 'text-center'
+                        }
+                    ],
+                    items: []
+                },
             },
             filters: {
                 contracts: {
@@ -1572,8 +1749,8 @@ export default {
                 this.counter = this.tables.schedules.items.length
                 this.forms.contract.fields.is_renewal = 1
                 this.forms.contract.fields.contract_no = null
-                this.forms.contract.fields.commencement_date = this.forms.contract.fields.termination_date
-                this.forms.contract.fields.start_billing_date = this.forms.contract.fields.termination_date
+                this.forms.contract.fields.commencement_date = new Date(this.forms.contract.fields.termination_date)
+                this.forms.contract.fields.start_billing_date = new Date(this.forms.contract.fields.termination_date)
                 this.computeDates(true)
             }).catch(error => {
               if (!error.response) return
@@ -1785,6 +1962,97 @@ export default {
                 this.forms.contract.fields.commencement_date = moment(this.forms.contract.fields.termination_date).subtract(this.forms.contract.fields.contract_terms, 'months').add(1,'days').format('MMMM DD, YYYY')
             }
             
+        },
+
+        setFees(item){
+            this.forms.contract_other_fees.fields.fee_mode = item.fee_type_desc
+            this.forms.contract_other_fees.fields.fee_type_id = item.fee_type_id
+            this.forms.contract_other_fees.fields.amount = 0
+            this.showModalFees = true
+        },
+
+        showFees(data){
+            this.tables.feetypes.items = []
+            this.showModalFeesList = true
+            this.contract_no = data.item.contract_no
+            this.trade_name = data.item.trade_name
+            this.company_name = data.item.company_name
+            this.forms.contract_other_fees.fields.contract_id = data.item.contract_id
+            this.$http.get('/api/feetypes/'+ data.item.contract_id,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+                const res = response.data.data
+                this.tables.feetypes.items = res
+            }).catch(error => {
+              if (!error.response) return
+              console.log(error)
+            })
+        },
+
+        saveFees(){
+            this.$http.post('/api/contract_other_fees', this.forms.contract_other_fees.fields,{
+              headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token')
+                  }
+            })
+            .then((response) => {
+                var tblft = this.tables.feetypes.items.filter(ft => 
+                    ft.fee_type_id == this.forms.contract_other_fees.fields.fee_type_id
+                )
+
+                var tblContract = this.tables.contracts.items.filter(c => 
+                    c.contract_id == response.data.data.contract_id
+                )
+
+                var type = ""
+
+                if(this.forms.contract_other_fees.fields.fee_type_id == 1){
+                    type = "c_advance_rent"
+                }
+                else if(this.forms.contract_other_fees.fields.fee_type_id == 2){
+                    type = "c_security_deposit"
+                }
+                else if(this.forms.contract_other_fees.fields.fee_type_id == 3){
+                    type = "c_electric_meter_deposit"
+                }
+                else if(this.forms.contract_other_fees.fields.fee_type_id == 4){
+                    type = "c_water_meter_deposit"
+                }
+                else {
+                    type = "c_construction_deposit"
+                }
+                
+                tblContract[0][type] = Number(tblContract[0][type]) + Number(response.data.data.fee_credit)
+                tblft[0].amount = Number(tblft[0].amount) + Number(response.data.data.fee_credit)
+                console.log(response.data.data.contract_id)
+                this.$notify({
+                    type: 'success',
+                    group: 'notification',
+                    title: 'Success!',
+                    text: "Fee successfully saved."
+                })
+                this.showModalFees = false
+            }).catch(error => {
+                this.showModalFees = false
+                if (!error.response) return
+                console.log(error)
+            })
+        },
+        contractFeesHistory(row){
+            if(row.detailsShowing == true){
+                return
+            }
+            this.$http.get('/api/contractfeeshistory/' + row.item.contract_id + '/' + row.item.fee_type_id, {
+                headers: {
+                      Authorization: 'Bearer ' + localStorage.getItem('token'),
+                  }
+            })
+            .then((response) => {
+                row.item.history = response.data.data
+            })
         }
     },
     created () {

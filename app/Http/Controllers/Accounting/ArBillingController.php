@@ -7,12 +7,29 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Reference;
 use App\Models\Accounting\TempJournalAccounts;
 use App\Models\Accounting\TempJournalInfo;
+use App\Models\Transactions\BillingInfo;
+use App\Models\References\BillingPeriod;
 use DB;
 use Carbon\Carbon;
 
 
 class ArBillingController extends Controller
 {
+    public function getSentBilling($period_id)
+    {
+        $billings = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
+                                ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
+                                ->leftJoin('b_refmonths', 'b_refmonths.month_id', '=', 'b_billing_info.month_id')
+                                ->leftJoin('b_refbillingperiod', 'b_refbillingperiod.period_id', '=', 'b_billing_info.period_id')
+                                ->where('b_refbillingperiod.is_sent', 1)
+                                ->where('b_billing_info.is_deleted', 0);     
+        if($period_id != 0){
+            $billings->where('b_billing_info.period_id', $period_id);
+        }
+
+        return Reference::collection($billings->get());
+    }
+
     public function getJournalInfo($period_id)
     {
         return DB::select('CALL get_ar_to_accounting_info('.$period_id.')');
@@ -43,6 +60,11 @@ class ArBillingController extends Controller
                 DB::select('CALL insert_ar_to_accounting_details('.$info['tenant_id'].','.$temp_journal_id.', '.$period_id.')');
             }
         }
+
+        $period = BillingPeriod::findOrFail($request->input('period_id'));
+        $period->is_sent = 1;
+        $period->save();
+
         return response()->json(['message' => 'Successfully sent to accounting.']);
     }
 }

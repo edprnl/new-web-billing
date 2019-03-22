@@ -225,6 +225,10 @@ Route::middleware('auth:api')->group(function () {
     //CONTRACT INFO
     //List contracts
     Route::get('contracts', 'Transactions\ContractsController@index');
+    Route::get('feetypes/{contract_id}', 'Transactions\ContractsController@getFeeType');
+    Route::post('contract_other_fees', 'Transactions\ContractsController@saveFees');
+    Route::get('contractfeeshistory/{contract_id}/{fee_type_id}', 'Transactions\ContractsController@contractFeesHistory');
+
     Route::get('contracts/{tenant_id}', 'Transactions\ContractsController@index');
     //List Schedules and Charges
     Route::get('contracts/sc/{id}', 'Transactions\ContractsController@scheduleAndCharges');
@@ -321,9 +325,11 @@ Route::middleware('auth:api')->group(function () {
     //---------------------------------- REPORTS --------------------------------------------------
 
     //---------------------------------- Accounting --------------------------------------------------
+    Route::get('arbilling/getsentbilling/{id}', 'Accounting\ArBillingController@getSentBilling');
     Route::get('arbilling/getjournalinfo/{id}', 'Accounting\ArBillingController@getJournalInfo');
     Route::post('arbilling/insertjournalinfo', 'Accounting\ArBillingController@insertJournalInfo');
 
+    Route::get('arpayment/getsentpayment/{start_date}/{end_date}', 'Accounting\ArPaymentController@getSentPayment');
     Route::get('arpayment/getjournalinfo/{start_date}/{end_date}', 'Accounting\ArPaymentController@getJournalInfo');
     Route::post('arpayment/insertjournalinfo', 'Accounting\ArPaymentController@insertJournalInfo');
     //---------------------------------- Accounting --------------------------------------------------

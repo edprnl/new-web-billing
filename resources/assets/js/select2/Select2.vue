@@ -8,9 +8,6 @@
     .select2-results__option {
         font-size: .72rem!important;
     }
-    .select2-container--bootstrap4 .select2-selection--single{
-        line-height: .9rem!important;
-    }
 </style>
 
 <template>

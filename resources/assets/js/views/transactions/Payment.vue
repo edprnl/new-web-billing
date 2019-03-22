@@ -18,7 +18,7 @@
                                     </b-button>
                             </b-col>
                             <b-col sm="1">
-                                <label class="col-form-label">From:</label>
+                                <label class="col-form-label float-right">From:</label>
                             </b-col>
                             <b-col sm="2">
                                 <date-picker 
@@ -31,7 +31,7 @@
                                 </date-picker>
                             </b-col>
                             <b-col sm="1">
-                                <label class="col-form-label">To:</label>
+                                <label class="col-form-label float-right">To:</label>
                             </b-col>
                             <b-col sm="2">
                                 <date-picker
@@ -73,7 +73,7 @@
                                             <h5 slot="header">
                                                 Payment Info ({{row.item.transaction_no}})
                                             </h5>
-                                            <b-row>
+                                            <b-row class="font-weight-bold">
                                                 <b-col lg="4">
                                                     <p>Reference No : {{row.item.reference_no}}</p>
                                                     <p>Transaction Date : {{moment(row.item.payment_date, 'MMMM DD, YYYY')}}</p>
@@ -1068,6 +1068,15 @@ export default {
             this.deleteEntity('payment', this.payment_id, true, 'payments', 'payment_id')
         },
         async setDelete(data){
+            if(data.item.is_sent == 1){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error',
+                    text: "This payment was already locked. You can't cancel it anymore."
+                })
+                return
+            }
             if(await this.checkIfUsed('payment', data.item.payment_id) == true){
                 this.$notify({
                     type: 'error',
