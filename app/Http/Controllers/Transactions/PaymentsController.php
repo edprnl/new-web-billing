@@ -100,6 +100,17 @@ class PaymentsController extends Controller
                 ];
             }
             DB::table('b_payment_details')->insert($payment_details_dataSet);
+            
+            if($payment_info->used_advances > 0)
+            {
+                $fee = new ContractOtherFees;
+                $fee->payment_id = $request->input('payment_id');
+                $fee->fee_type_id = 1;
+                $fee->fee_debit = $request->input('amount');
+                $fee->created_datetime = Carbon::now();
+                $fee->created_by = Auth::user()->id;
+                $fee->save();
+            }
         }
         
         $data = PaymentInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_payment_info.tenant_id')
