@@ -201,6 +201,22 @@
                                                         </b-col>
                                                     </b-row>
                                                 </b-form-group>
+                                                <b-form-group>
+                                                    <b-row>
+                                                        <b-col lg=4>
+                                                            <label class="col-form-label">Cntrct Advance : </label>
+                                                        </b-col>
+                                                        <b-col lg="8">
+                                                            <vue-autonumeric
+                                                                readonly
+                                                                ref="contract_advance"
+                                                                v-model="forms.payment.fields.contract_advance"
+                                                                :class="'form-control text-right'" 
+                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                            </vue-autonumeric>
+                                                        </b-col>
+                                                    </b-row>
+                                                </b-form-group>
                                             </b-col>
                                             <b-col lg="4">
                                                 <b-form-group>
@@ -248,7 +264,7 @@
                                                             >
                                                                 <option value="0">Cash</option>
                                                                 <option value="1">Check</option>
-                                                                <option value="1">Online</option>
+                                                                <option value="2">Online</option>
                                                             </select2>
                                                         </b-col>
                                                     </b-row>
@@ -330,7 +346,7 @@
                                                 <b-form-group>
                                                     <b-row>
                                                         <b-col lg=4>
-                                                            <label class="col-form-label">Amount :</label>
+                                                            <label class="col-form-label"> Paid Amount :</label>
                                                         </b-col>
                                                         <b-col lg="8">
                                                             <vue-autonumeric 
@@ -358,11 +374,15 @@
                                     <b-form-group>
                                         <b-row>
                                             <b-col lg="4">
+                                            </b-col>
+                                            <b-col lg="3">
+                                            </b-col>
+                                            <b-col lg="5">
                                                 <b-row>
                                                     <b-col lg=3>
-                                                        <label class="col-form-label">Amount :</label>
+                                                        <label class="col-form-label">Paid Amount :</label>
                                                     </b-col>
-                                                    <b-col lg="8">
+                                                    <b-col lg="9">
                                                         <b-input-group>
                                                             <vue-autonumeric 
                                                                 v-model="forms.payment.fields.amount"
@@ -377,25 +397,6 @@
                                                                     Distribute
                                                                 </b-button>
                                                             </b-input-group-append>
-                                                        </b-input-group>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-col>
-                                            <b-col lg="4">
-                                            </b-col>
-                                            <b-col lg="4">
-                                                <b-row>
-                                                    <b-col lg=5>
-                                                        <label class="col-form-label">Carry Over Balance :</label>
-                                                    </b-col>
-                                                    <b-col lg="7">
-                                                        <b-input-group>
-                                                            <vue-autonumeric 
-                                                                v-model="forms.payment.fields.carried_advance"
-                                                                :class="'form-control text-right'" 
-                                                                readonly
-                                                                :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}">
-                                                            </vue-autonumeric>
                                                         </b-input-group>
                                                     </b-col>
                                                 </b-row>
@@ -460,7 +461,7 @@
                                         </template>
                                     </b-table>
                                     <b-row>
-                                        <b-col lg="8">
+                                        <b-col lg="7">
                                             <b-form-group>
                                                 <label>Remarks</label>
                                                 <b-form-textarea
@@ -472,37 +473,63 @@
                                                 </b-form-textarea>
                                             </b-form-group>
                                         </b-col>
-                                        <b-col lg="4">
+                                        <b-col lg="5">
+                                            <table style="width:100%" class="table-sm">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3">Total Billing</td>
+                                                        <td class="text-right">{{ formatNumber(total_outstanding_balance) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width:5%!important"></td>
+                                                        <td style="width:35%!important">Total Discount</td>
+                                                        <td style="width:30%!important"></td>
+                                                        <td style="width:30%!important" class="text-right">{{ formatNumber(forms.payment.fields.discount) }}</td>
+                                                    </tr>
+                                                    <tr style="border-top: 1px solid #c2cfd6">
+                                                        <td colspan="3">Sub Total</td>
+                                                        <td class="text-right">{{ formatNumber(Number(total_outstanding_balance) - Number(forms.payment.fields.discount)) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3">Payments</td>
+                                                        <td class="text-right"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>Advance used</td>
+                                                        <td>
+                                                            <vue-autonumeric 
+                                                                v-model="forms.payment.fields.used_advances"
+                                                                :class="'form-control text-right'" 
+                                                                :options="{minimumValue: 0, maximumValue: forms.payment.fields.contract_advance, modifyValueOnWheel: false, emptyInputBehavior: 0}" 
+                                                            >
+                                                            </vue-autonumeric>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>Carry Over Balance</td>
+                                                        <td class="text-right">{{formatNumber(forms.payment.fields.carried_advance)}}</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>Paid Amount</td>
+                                                        <td class="text-right">{{formatNumber(forms.payment.fields.amount)}}</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr style="border-top: 1px solid #c2cfd6">
+                                                        <td colspan="3">Total Paid</td>
+                                                        <td class="text-right">{{formatNumber(Number(forms.payment.fields.carried_advance) + Number(forms.payment.fields.amount) + Number(forms.payment.fields.used_advances))}}</td>
+                                                    </tr>
+                                                    <tr style="border-top: 1px solid #c2cfd6">
+                                                        <td colspan="3">Advance</td>
+                                                        <td class="text-right">{{formatNumber(forms.payment.fields.advance)}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                             <!-- <b-form-group>
-                                                <b-row>
-                                                    <b-col lg="4">
-                                                        <label class="col-form-label">Balance Paid : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <vue-autonumeric 
-                                                            v-model="forms.payment.fields.balance_paid"
-                                                            :class="'form-control text-right'" 
-                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}"
-                                                            readonly>
-                                                        </vue-autonumeric>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group>
-                                            <b-form-group>
-                                                <b-row>
-                                                    <b-col lg="4">
-                                                        <label class="col-form-label">Total Discount : </label>
-                                                    </b-col>
-                                                    <b-col lg="8">
-                                                        <vue-autonumeric 
-                                                            v-model="forms.payment.fields.discount"
-                                                            :class="'form-control text-right'" 
-                                                            :options="{minimumValue: 0, modifyValueOnWheel: false, emptyInputBehavior: 0}" readonly>
-                                                        </vue-autonumeric>
-                                                    </b-col>
-                                                </b-row>
-                                            </b-form-group> -->
-                                            <b-form-group>
                                                 <b-row>
                                                     <b-col lg="4">
                                                         <label class="col-form-label">Advance : </label>
@@ -531,7 +558,7 @@
                                                         </vue-autonumeric>
                                                     </b-col>
                                                 </b-row>
-                                            </b-form-group>
+                                            </b-form-group> -->
                                         </b-col>
                                     </b-row>
                                 </b-card>
@@ -696,6 +723,8 @@ export default {
                         balance_paid: 0.00,
                         advance: 0.00,
                         carried_advance: 0.00,
+                        contract_advance: 0.00,
+                        used_advances: 0.00,
                         discount: 0.00,
                     }
                 },
@@ -896,13 +925,6 @@ export default {
                             key:'d',
                             label: '',
                             tdClass: 'align-middle',
-                            thStyle: {width: '8%'}
-                        },
-                        {
-                            key: 'e',
-                            label: '',
-                            thClass: 'text-right',
-                            tdClass: 'text-right align-middle',
                             thStyle: {width: '10%'}
                         },
                         {
@@ -917,13 +939,13 @@ export default {
                             label: '',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '10%'}
+                            thStyle: {width: '70px'}
                         },
                         {
                             key:'discount',
                             label: '',
                             thClass: 'text-right',
-                            thStyle: {width: '15%'},
+                            thStyle: {width: '13%'},
                         },
                         {
                             key:'amount_paid',
@@ -936,7 +958,7 @@ export default {
                             label: '',
                             thClass: 'text-right',
                             tdClass: 'text-right align-middle',
-                            thStyle: {width: '15%'}
+                            thStyle: {width: '17%'}
                         },
                     ],
                     items: []
@@ -954,6 +976,7 @@ export default {
                     perPage: 10
                 }
             },
+            is_contract_advance: 0,
             is_print: 0,
             print_payment_id: 0,
             total_outstanding_balance: 0,
@@ -985,7 +1008,7 @@ export default {
             })
 
             var total = Number(this.forms.payment.fields.amount) - 
-            (Number(totalAmountPaid) - Number(this.forms.payment.fields.carried_advance) + Number(this.forms.payment.fields.advance))
+            (Number(totalAmountPaid) - Number(this.forms.payment.fields.carried_advance) - Number(this.forms.payment.fields.used_advances) + Number(this.forms.payment.fields.advance))
             if(total >= 0){
                 this.showModalConfirmation = false
                 return true
@@ -1125,9 +1148,10 @@ export default {
                 }
             }).then((response) => {
                 const res = response.data
+                this.forms.payment.fields.contract_advance = res.data.contract_advance[0].contract_advance
                 this.forms.payment.fields.carried_advance = 0
                 if(res.data.length > 0){
-                    this.forms.payment.fields.carried_advance = res.data[0].advance
+                    this.forms.payment.fields.carried_advance = res.data.advance[0].advance
                 }
             }).catch(error => {
                 if (!error.response) 
@@ -1137,7 +1161,7 @@ export default {
             this.distributePayment()
         },
         getPaymentType: function (value, data) {
-            if(value == 0){
+            if(value == 0 || value == 2){
                 this.forms.payment.fields.check_type = null
                 this.forms.payment.fields.check_no = null
                 this.forms.payment.fields.check_date = null
@@ -1156,7 +1180,7 @@ export default {
             this.computePayment()
         },
         distributePayment(){
-            var amount = Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance)
+            var amount = Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance) + Number(this.forms.payment.fields.used_advances)
             var balance_paid = 0
             var total_outstanding_balance = 0
             var discount = 0
@@ -1175,7 +1199,7 @@ export default {
                     amount = 0
                 }
             })
-            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance)) - Number(balance_paid)).toFixed(2)
+            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance) + Number(this.forms.payment.fields.used_advances)) - Number(balance_paid)).toFixed(2)
             this.forms.payment.fields.balance_paid = balance_paid
             this.total_outstanding_balance = total_outstanding_balance
         },
@@ -1192,7 +1216,7 @@ export default {
                 remaining_balance += Math.max(0, Number(billing.outstanding_balance) - (Number(billing.discount) + Number(billing.amount_paid)))
             })
 
-            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance)) - Number(balance)).toFixed(2)
+            this.forms.payment.fields.advance = Math.max(0, (Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance) + Number(this.forms.payment.fields.used_advances)) - Number(balance)).toFixed(2)
             this.forms.payment.fields.discount = totalDiscount
             this.forms.payment.fields.balance_paid = totalAmount
             this.total_remaining_balance = remaining_balance

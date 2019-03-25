@@ -8,6 +8,10 @@
     .select2-results__option {
         font-size: .72rem!important;
     }
+    
+    .select2-container--open {
+        z-index:2500;
+    }
 </style>
 
 <template>

@@ -77,6 +77,7 @@ class PaymentsController extends Controller
         $payment_info->balance_paid = $request->input('balance_paid');
         $payment_info->advance = $request->input('advance');
         $payment_info->carried_advance = $request->input('carried_advance');
+        $payment_info->used_advances = $request->input('used_advances');
         $payment_info->discount = $request->input('discount');
         $payment_info->remarks = $request->input('remarks');
 
@@ -248,11 +249,14 @@ class PaymentsController extends Controller
 
     public function getAdvance($tenant_id)
     {
-        $advance = PaymentInfo::where('tenant_id', $tenant_id)
+        $advance['advance'] = PaymentInfo::where('tenant_id', $tenant_id)
                                 ->where('is_canceled', 0)
                                 ->orderBy('payment_date', 'desc')
                                 ->limit(1)
                                 ->get();
+
+        $advance['contract_advance'] = DB::select("select GetContractAdvances(".$tenant_id.") as contract_advance");
+
 
         return ( new Reference( $advance ) )
             ->response()
