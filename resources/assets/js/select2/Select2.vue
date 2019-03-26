@@ -8,6 +8,10 @@
     .select2-results__option {
         font-size: .72rem!important;
     }
+    
+    .select2-container--open {
+        z-index:2500;
+    }
 </style>
 
 <template>
@@ -20,7 +24,7 @@
         props: ['options', 'value', 'placeholder', 'allowClear','reference'],
         mounted(){
             var vm = this
-            $('.modal-content').removeAttr('tabindex')
+            $('.modal').removeAttr('tabindex')
 
             $(this.$el)
             .select2({ 

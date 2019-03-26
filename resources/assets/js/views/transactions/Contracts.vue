@@ -1306,7 +1306,7 @@ export default {
                 contract_other_fees : {
                     isSaving: false,
                     fields: {
-                        contract_id: null,
+                        tenant_id: null,
                         fee_mode: null,
                         fee_type_id: null,
                         fee_notes: null,
@@ -1977,8 +1977,8 @@ export default {
             this.contract_no = data.item.contract_no
             this.trade_name = data.item.trade_name
             this.company_name = data.item.company_name
-            this.forms.contract_other_fees.fields.contract_id = data.item.contract_id
-            this.$http.get('/api/feetypes/'+ data.item.contract_id,{
+            this.forms.contract_other_fees.fields.tenant_id = data.item.tenant_id
+            this.$http.get('/api/feetypes/'+ data.item.tenant_id,{
               headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token')
                   }
@@ -2045,7 +2045,7 @@ export default {
             if(row.detailsShowing == true){
                 return
             }
-            this.$http.get('/api/contractfeeshistory/' + row.item.contract_id + '/' + row.item.fee_type_id, {
+            this.$http.get('/api/contractfeeshistory/' + row.item.tenant_id + '/' + row.item.fee_type_id, {
                 headers: {
                       Authorization: 'Bearer ' + localStorage.getItem('token'),
                   }

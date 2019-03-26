@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Transactions\PaymentInfo;
 use App\Models\Transactions\PaymentDetails;
+use App\Models\Transactions\ContractOtherFees;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -77,6 +78,7 @@ class PaymentsController extends Controller
         $payment_info->balance_paid = $request->input('balance_paid');
         $payment_info->advance = $request->input('advance');
         $payment_info->carried_advance = $request->input('carried_advance');
+        $payment_info->used_advances = $request->input('used_advances');
         $payment_info->discount = $request->input('discount');
         $payment_info->remarks = $request->input('remarks');
 
@@ -99,6 +101,18 @@ class PaymentsController extends Controller
                 ];
             }
             DB::table('b_payment_details')->insert($payment_details_dataSet);
+            
+            if($payment_info->used_advances > 0)
+            {
+                $fee = new ContractOtherFees;
+                $fee->tenant_id = $request->input('tenant_id');
+                $fee->payment_id = $payment_info->payment_id;
+                $fee->fee_type_id = 1;
+                $fee->fee_debit = $request->input('used_advances');
+                $fee->created_datetime = Carbon::now();
+                $fee->created_by = Auth::user()->id;
+                $fee->save();
+            }
         }
         
         $data = PaymentInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_payment_info.tenant_id')
@@ -177,7 +191,11 @@ class PaymentsController extends Controller
         $payment->canceled_by = Auth::user()->id;
 
         //update classification based on the http json body that is sent
-        $payment->save();
+        if($payment->save())
+        {
+            ContractOtherFees::where('payment_id', $id)->delete();
+        }
+
 
         return ( new Reference( $payment ) )
             ->response()
@@ -248,11 +266,14 @@ class PaymentsController extends Controller
 
     public function getAdvance($tenant_id)
     {
-        $advance = PaymentInfo::where('tenant_id', $tenant_id)
+        $advance['advance'] = PaymentInfo::where('tenant_id', $tenant_id)
                                 ->where('is_canceled', 0)
                                 ->orderBy('payment_date', 'desc')
                                 ->limit(1)
                                 ->get();
+
+        $advance['contract_advance'] = DB::select("select GetContractAdvances(".$tenant_id.") as contract_advance");
+
 
         return ( new Reference( $advance ) )
             ->response()
