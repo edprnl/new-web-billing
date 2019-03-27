@@ -43,7 +43,6 @@ class PaymentsController extends Controller
                 'reference_no' => 'required',
                 'tenant_id' => 'required|not_in:0',
                 'payment_type' => 'required',
-                'amount' => 'required|not_in:0'
             ],  ['not_in' => 'The :attribute field is required.']
         )->setAttributeNames([
             'tenant_id' => 'tenant',

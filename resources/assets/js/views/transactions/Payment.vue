@@ -474,7 +474,7 @@
                                             </b-form-group>
                                         </b-col>
                                         <b-col lg="5">
-                                            <table style="width:100%" class="table-sm">
+                                            <table style="width:100%" class="table-sm font-weight-bold">
                                                 <tbody>
                                                     <tr>
                                                         <td colspan="3">Total Billing</td>
@@ -582,7 +582,7 @@
                                 <b-button 
                                     :disabled="forms.payment.isSaving" 
                                     variant="primary" 
-                                    @click="showModalConfirmation = true">
+                                    @click="showModalConfirmation = true, distributePayment()">
                                     <icon v-if="forms.payment.isSaving" name="sync" spin></icon>
                                     <i class="fa fa-check"></i>
                                     Save
@@ -991,6 +991,17 @@ export default {
     methods:{
         validateForm(){
             var totalAmountPaid = 0
+            if(Number(this.forms.payment.fields.amount) + Number(this.forms.payment.fields.carried_advance) + Number(this.forms.payment.fields.used_advances) == 0){
+                this.$notify({
+                    type: 'error',
+                    group: 'notification',
+                    title: 'Error',
+                    text: "The total paid is equal to 0."
+                })
+                this.showModalConfirmation = false
+                return false
+            }
+
             this.tables.payment_details.items.forEach(billing => {
                 billing.checker = 0
                 
@@ -1002,6 +1013,7 @@ export default {
                         title: 'Error',
                         text: "The payment is greater to the balance."
                     })
+                    this.showModalConfirmation = false
                     return false
                 }
                 totalAmountPaid += billing.amount_paid

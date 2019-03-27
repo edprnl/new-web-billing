@@ -467,6 +467,60 @@
                                                 </b-btn>
                                             </template>
                                         </b-table>
+                                        <b-row class="mb-2">
+                                            <b-col sm="4">
+                                                <h5>Adjustments</h5>
+                                            </b-col>
+                                            <b-col sm="4">
+                                                <span></span>
+                                            </b-col>
+                                            <b-col  sm="4">
+                                                <b-button class="float-right" variant="primary" @click="showModalCharges = true, clearCharges('utilities'), charge_type='adjustment'">
+                                                    <i class="fa fa-plus-circle"></i> Add Charges
+                                                </b-button>
+                                            </b-col>
+                                        </b-row>
+                                        <b-table 
+                                            responsive
+                                            small bordered
+                                            :fields="tables.adjustment.fields"
+                                            :items.sync="tables.adjustment.items"
+                                            :sort-by="'sort_key'"
+                                            :sort-desc="false"
+                                            show-empty>
+                                            <template slot="contract_rate" slot-scope="data">
+                                                <vue-autonumeric 
+                                                    :class="'form-control text-right'"
+                                                    v-model="data.item.contract_rate" 
+                                                    :options="{minimumValue: 0,modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </template>
+                                            <template slot="contract_default_reading" slot-scope="data">
+                                                <vue-autonumeric 
+                                                    :class="'form-control text-right'"
+                                                    v-model="data.item.contract_default_reading" 
+                                                    :options="{modifyValueOnWheel: false, emptyInputBehavior: 0}">
+                                                </vue-autonumeric>
+                                            </template>
+                                            <template slot="contract_is_vatted" slot-scope="data">
+                                                <b-form-checkbox
+                                                    v-model="data.item.contract_is_vatted"
+                                                    value=1
+                                                    unchecked-value=0>
+                                                </b-form-checkbox>
+                                            </template>
+                                            <template slot="contract_notes" slot-scope="data">
+                                                <b-form-input 
+                                                    placeholder="Notes"
+                                                    v-model="data.item.contract_notes">
+                                                </b-form-input>
+                                            </template>
+                                            <template slot="action" slot-scope="data">
+                                                <b-btn :size="'sm'" variant="danger" @click="removeCharge('other', data.index)">
+                                                    <i class="fa fa-times-circle"></i>
+                                                </b-btn>
+                                            </template>
+                                        </b-table>
                                     </b-card>
                                 </b-col>
                                 <b-col sm="3">
@@ -732,12 +786,27 @@
                 Charges
             </div>
             <b-col lg=12>
+                <b-row class='mb-2'>
+                    <b-col  sm="8">
+                        <span></span>
+                    </b-col>
+
+                    <b-col  sm="4">
+                        <b-form-input 
+                            v-model="filters.charges.criteria"
+                            type="text" 
+                            placeholder="Search">
+                        </b-form-input>
+                    </b-col>
+                </b-row>
                 <b-table 
                     responsive
                     small bordered
                     :filter="filters.charges.criteria"
                     :fields="tables.charges.fields"
                     :items.sync="tables.charges.items"
+                    :current-page="paginations.charges.currentPage"
+                    :per-page="paginations.charges.perPage"
                     show-empty>
                     <template slot="is_selected" slot-scope="data">
                         <input type="checkbox" v-model="data.item.is_selected">
@@ -1122,6 +1191,74 @@ export default {
                     items: []
                 },
                 other: {
+                    fields: [
+                        {
+                            key: 'charge_id',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none'
+                        },
+                        {
+                            key: 'sort_key',
+                            label: '',
+                            thClass: 'd-none',
+                            tdClass: 'd-none',
+                            sortable: true
+                        },
+                        {
+                            key: 'charge_desc',
+                            label: 'Description',
+                            tdClass: 'align-middle',
+                            thStyle: {width: '18%'}
+                        },
+                        {
+                            key: 'contract_rate',
+                            label: 'Rate',
+                            thClass: 'text-right',
+                            tdClass: 'align-middle text-right',
+                            thStyle: {width: '15%'}
+                        },
+                        {
+                            key: 'contract_default_reading',
+                            label: 'Reading',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '17%'}
+                        },
+                        {
+                            key: 'contract_line_total',
+                            label: 'Line Total',
+                            thClass: 'text-right',
+                            tdClass: 'text-right align-middle',
+                            thStyle: {width: '17%'},
+                            formatter: (value, key, item) => {
+                                item.contract_line_total = item.contract_rate * item.contract_default_reading
+                                return this.formatNumber(item.contract_line_total)
+                            }
+
+                        },
+                        {
+                            key: 'contract_is_vatted',
+                            label: 'Is Vatted?',
+                            thClass: 'text-center',
+                            tdClass: 'text-center align-middle',
+                            thStyle: {width: '10%'}
+                        },
+                        {
+                            key: 'contract_notes',
+                            label: 'Notes'
+                        },
+                        {
+                            key: 'action',
+                            label: 'Action',
+                            thClass: 'text-center',
+                            thStyle: {width: '50px'},
+                            tdClass: 'text-center'
+                        }
+                    ],
+                    items: []
+                },
+                adjustment : {
                     fields: [
                         {
                             key: 'charge_id',

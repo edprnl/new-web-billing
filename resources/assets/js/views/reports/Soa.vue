@@ -482,6 +482,7 @@ export default {
             })
 
         await this.computeAll()
+        console.log(this.cssText)
         await this.d.print(this.$refs.soa, this.cssText)
     },
     mounted(){
