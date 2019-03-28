@@ -202,7 +202,7 @@ export default {
                 console.log(error)
             })
         
-        await this.d.print(this.$refs.ackReceipt, this.cssText)
+        await this.d.print(this.$refs.ackReceipt, [this.cssText])
     },
     mounted(){
         const { Printd } = window.printd

@@ -230,12 +230,11 @@
                                 <!-- may foreach dito -->
                                 <tr v-if="adjustments.length > 0" v-for="adjustment in adjustments">
                                     <td></td>
-                                    <td>Adj. No.: {{ adjustment.adjustment_no }} - {{adjustment.adjustment_type}}</td>
-                                    <td colspan="2"></td>
-                                    <td v-if="adjustment.adjustment_type == 'IN'" style="text-align:right;">{{ formatNumber(adjustment.amount) }}</td>
-                                    <td v-else style="text-align:right;">({{ formatNumber(adjustment.amount) }})</td>
-                                     <td v-if="adjustment.adjustment_type == 'IN'" style="text-align:right;">{{ formatNumber(adjustment.amount) }}</td>
-                                    <td v-else style="text-align:right;">({{ formatNumber(adjustment.amount) }})</td>
+                                    <td>{{ adjustment.charge_desc }} <i>{{ adjustment.contract_notes }}</i></td>
+                                    <td style="text-align: right">{{ formatNumber(adjustment.contract_rate) }}</td>
+                                    <td style="text-align: right">{{ formatNumber(adjustment.contract_default_reading) }}</td>
+                                    <td style="text-align: right">{{ Math.sign(adjustment.billing_adjustment_line_total) == 1 ? formatNumber(adjustment.billing_adjustment_line_total) : '(' + formatNumber(Math.abs(adjustment.billing_adjustment_line_total)) + ')' }}</td>
+                                    <td style="text-align: right">{{ Math.sign(adjustment.billing_adjustment_line_total) == 1 ? formatNumber(adjustment.billing_adjustment_line_total) : '(' + formatNumber(Math.abs(adjustment.billing_adjustment_line_total)) + ')' }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="font-size: 9pt;"><b>TOTAL CURRENT CHARGES</b></td>
@@ -427,28 +426,6 @@ export default {
                     if (!error.response) 
                     return console.log(error)
             })
-        
-        await this.$http.get('api/adjustments/'+this.billing.month_id+'/'+this.billing.app_year+'/'+this.billing.tenant_id,{
-                headers: {
-                    Authorization: 'Bearer ' + localStorage.getItem('token')
-                }
-            })
-            .then((response) => {
-                const res = response.data
-                this.adjustments = res.data;
-                this.adjustments.forEach(adjustment => {
-                    if(adjustment.adjustment_type == "IN"){
-                        this.total_adjustment_in += Number(adjustment.amount)
-                    }
-                    else{
-                        this.total_adjustment_out += Number(adjustment.amount)
-                    }
-                });
-            })
-            .catch(error => {
-                    if (!error.response) 
-                    return console.log(error)
-            })
 
         await this.$http.get('api/billing/as_of/'+this.billing.month_id+'/'+this.billing.app_year+'/'+this.billing.tenant_id,{
                 headers: {
@@ -475,6 +452,7 @@ export default {
                 this.utilities = res.util_charges
                 this.miscellaneous = res.misc_charges
                 this.other = res.othr_charges
+                this.adjustments = res.adjustments
             })
             .catch(error => {
               if (!error.response) return
@@ -482,16 +460,15 @@ export default {
             })
 
         await this.computeAll()
-        await this.d.print(this.$refs.soa, this.cssText)
+        await this.d.print(this.$refs.soa, [this.cssText])
     },
     mounted(){
         const { Printd } = window.printd
         this.d = new Printd()
-
         const { contentWindow } = this.d.getIFrame()
-        contentWindow.addEventListener(
-            'afterprint', () => window.close()
-        )
+        // console.log(contentWindow.addEventListener)
+        // contentWindow.addEventListener('beforeprint', () => console.log('after print!'))
+        contentWindow.addEventListener('afterprint', () => console.log('after print!'))
     },
     methods: {
         computeAll(){

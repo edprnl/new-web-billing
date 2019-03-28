@@ -15,7 +15,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
-                                        @click="fillTableList('feetypes'), showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, computeDates(true),counter = 0 ">
+                                        @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, computeDates(true),counter = 0 ">
                                             <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
                             </b-col>
@@ -883,7 +883,7 @@
                     </b-col>
 
                     <b-col  sm="4">
-                        <b-form-input 
+                        <b-form-input
                             v-model="filters.charges.criteria"
                             type="text" 
                             placeholder="Search">
@@ -896,6 +896,8 @@
                     :filter="filters.charges.criteria"
                     :fields="tables.charges.fields"
                     :items.sync="tables.charges.items"
+                    :current-page="paginations.charges.currentPage"
+                    :per-page="paginations.charges.perPage"
                     show-empty>
                     <template slot="is_selected" slot-scope="data">
                         <input type="checkbox" v-model="data.item.is_selected">
