@@ -171,7 +171,7 @@ export default {
               console.log(error)
             })
             console.log(this.d)
-            await this.d.print(this.$refs.tenantsPerSqmRate, this.cssText)
+            await this.d.print(this.$refs.tenantsPerSqmRate, [this.cssText])
         }
         else{
             this.fillOptionsList('locations')

@@ -10,6 +10,7 @@ use App\Models\Transactions\BillingSchedule;
 use App\Models\Transactions\BillingMiscCharges;
 use App\Models\Transactions\BillingOthrCharges;
 use App\Models\Transactions\BillingUtilCharges;
+use App\Models\Transactions\BillingAdjustments;
 use App\Http\Resources\Reference;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -56,9 +57,6 @@ class BillingsController extends Controller
         )->validate();
 
         $billing_info = new BillingInfo;
-        $billing_util_charges = new BillingUtilCharges;
-        $billing_misc_charges = new BillingMiscCharges;
-        $billing_othr_charges = new BillingOthrCharges;
 
         $billing_info->billing_no = DB::raw("CreateBillingNo()");
         $billing_info->period_id = $request->input('period_id');
@@ -99,6 +97,7 @@ class BillingsController extends Controller
             $utilities_dataSet = [];
             $miscs_dataSet = [];
             $others_dataSet = [];
+            $adjustments_dataSet = [];
             
             $schedules = $request->input('schedules');
             foreach($schedules as $schedule){
@@ -155,10 +154,25 @@ class BillingsController extends Controller
                 ];
             }
 
+            $adjustments = $request->input('adjustments');
+            foreach($adjustments as $adjustment){
+                $adjustments_dataSet[] = [
+                    'billing_id' => $billing_id,
+                    'charge_id' => $adjustment['charge_id'],
+                    'billing_adjustment_rate' => $adjustment['contract_rate'],
+                    'billing_adjustment_reading' => $adjustment['contract_default_reading'],
+                    'billing_adjustment_line_total' => $adjustment['contract_line_total'],
+                    'billing_adjustment_is_vatted' => $adjustment['contract_is_vatted'],
+                    'billing_adjustment_notes' => $adjustment['contract_notes'],
+                    'sort_key' => $adjustment['sort_key']
+                ];
+            }
+
             DB::table('b_billing_schedule')->insert($schedules_dataSet);
             DB::table('b_billing_util_charges')->insert($utilities_dataSet);
             DB::table('b_billing_misc_charges')->insert($miscs_dataSet);
             DB::table('b_billing_othr_charges')->insert($others_dataSet);
+            DB::table('b_billing_adjustments')->insert($adjustments_dataSet);
         }
         $data = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
                             ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')
@@ -236,10 +250,26 @@ class BillingsController extends Controller
                     ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_billing_othr_charges.charge_id')
                     ->where('billing_id', $id)->orderBy('sort_key', 'asc')->get();
 
+        $adjustments = BillingAdjustments::select(
+                        'billing_adjustment_id',
+                        'billing_id',
+                        'billing_adjustment_rate as contract_rate',
+                        'billing_adjustment_reading as contract_default_reading',
+                        'billing_adjustment_is_vatted as contract_is_vatted',
+                        'billing_adjustment_notes as contract_notes',
+                        'billing_adjustment_line_total',
+                        'sort_key',
+                        'b_refcharges.charge_id',
+                        'b_refcharges.charge_desc'
+                    )
+                    ->join('b_refcharges', 'b_refcharges.charge_id', '=', 'b_billing_adjustments.charge_id')
+                    ->where('billing_id', $id)->orderBy('sort_key', 'asc')->get();
+
         $billing['schedules'] = Reference::collection($schedules);
         $billing['util_charges'] = Reference::collection($util_charges);
         $billing['misc_charges'] = Reference::collection($misc_charges);
         $billing['othr_charges'] = Reference::collection($othr_charges);
+        $billing['adjustments'] = Reference::collection($adjustments);
         return $billing;
     }
 
@@ -298,9 +328,6 @@ class BillingsController extends Controller
         )->validate();
         
         $billing_info = BillingInfo::findOrFail($request->input('billing_id'));
-        $billing_util_charges = new BillingUtilCharges;
-        $billing_misc_charges = new BillingMiscCharges;
-        $billing_othr_charges = new BillingOthrCharges;
 
         $billing_info->period_id = $request->input('period_id');
         $billing_info->tenant_id = $request->input('tenant_id');
@@ -340,6 +367,7 @@ class BillingsController extends Controller
             $utilities_dataSet = [];
             $miscs_dataSet = [];
             $others_dataSet = [];
+            $adjustments_dataSet = [];
             
             $old_schedules = BillingSchedule::where('billing_id', $billing_id);
             $old_schedules->delete();
@@ -352,6 +380,9 @@ class BillingsController extends Controller
 
             $old_other = BillingOthrCharges::where('billing_id', $billing_id);
             $old_other->delete();
+
+            $old_adjustments = BillingAdjustments::where('billing_id', $billing_id);
+            $old_adjustments->delete();
 
             $schedules = $request->input('schedules');
             foreach($schedules as $schedule){
@@ -408,10 +439,25 @@ class BillingsController extends Controller
                 ];
             }
 
+            $adjustments = $request->input('adjustments');
+            foreach($adjustments as $adjustment){
+                $adjustments_dataSet[] = [
+                    'billing_id' => $billing_id,
+                    'charge_id' => $adjustment['charge_id'],
+                    'billing_adjustment_rate' => $adjustment['contract_rate'],
+                    'billing_adjustment_reading' => $adjustment['contract_default_reading'],
+                    'billing_adjustment_line_total' => $adjustment['contract_line_total'],
+                    'billing_adjustment_is_vatted' => $adjustment['contract_is_vatted'],
+                    'billing_adjustment_notes' => $adjustment['contract_notes'],
+                    'sort_key' => $adjustment['sort_key']
+                ];
+            }
+
             DB::table('b_billing_schedule')->insert($schedules_dataSet);
             DB::table('b_billing_util_charges')->insert($utilities_dataSet);
             DB::table('b_billing_misc_charges')->insert($miscs_dataSet);
             DB::table('b_billing_othr_charges')->insert($others_dataSet);
+            DB::table('b_billing_adjustments')->insert($adjustments_dataSet);
         }
         $data = BillingInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_billing_info.tenant_id')
                             ->leftJoin('b_contract_info', 'b_contract_info.contract_id', '=', 'b_billing_info.contract_id')

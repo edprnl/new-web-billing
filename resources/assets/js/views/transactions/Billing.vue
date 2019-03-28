@@ -1308,8 +1308,8 @@ export default {
                         {
                             key: 'contract_is_vatted',
                             label: 'Is Vatted?',
-                            thClass: 'text-center',
-                            tdClass: 'text-center align-middle',
+                            thClass: 'text-center d-none',
+                            tdClass: 'text-center align-middle d-none',
                             thStyle: {width: '10%'}
                         },
                         {
@@ -1417,7 +1417,8 @@ export default {
                         schedules: [],
                         utilities: [],
                         miscellaneous: [],
-                        other: []
+                        other: [],
+                        adjustment: []
                     }
                 },
                 period: {
@@ -1489,6 +1490,7 @@ export default {
             this.forms.billing.fields.utilities = this.tables.utilities.items
             this.forms.billing.fields.miscellaneous = this.tables.miscellaneous.items
             this.forms.billing.fields.other = this.tables.other.items
+            this.forms.billing.fields.adjustments = this.tables.adjustment.items
             this.forms.billing.fields.period_id = this.forms.period.fields.period_id
             this.forms.billing.fields.due_date = this.forms.period.fields.period_due_date
             this.forms.billing.fields.app_year = this.forms.period.fields.app_year
@@ -1553,6 +1555,7 @@ export default {
                 this.tables.utilities.items = res.util_charges
                 this.tables.miscellaneous.items = res.misc_charges
                 this.tables.other.items = res.othr_charges
+                this.tables.adjustment.items = res.adjustments
                 this.fillEntityForm('billing', data.item.billing_id)
                 this.showEntry=true
                 this.entryMode='Edit'
@@ -1562,7 +1565,6 @@ export default {
               if (!error.response) return
               console.log(error)
             })
-            await this.getAdjustment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, data.item.tenant_id)
 
         },
         addSchedule(){
@@ -1723,24 +1725,7 @@ export default {
                 return console.log(error)
             })
         },
-        getAdjustment(month_id, app_year, tenant_id){
-            this.$http.get('api/adjustment/'+tenant_id+'/'+month_id+'/'+app_year,{
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
-            })
-            .then((response) => {
-                const res = response.data
-                res.data.forEach(data => {
-                    this.forms.billing.fields.total_adjusted_in = data.adjustment_in
-                    this.forms.billing.fields.total_adjusted_out = data.adjustment_out
-                })
-            })
-            .catch(error => {
-                if (!error.response) 
-                return console.log(error)
-            })
-        },
+        
         getPeriodInfo: function (value, data){
             if(data.length > 0){
                 var period = this.options.periods.items[data[0].element.index]
@@ -1767,7 +1752,6 @@ export default {
                 this.getPrevPrevBalance(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getLatePayment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
                 this.getPaymentInterest(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
-                this.getAdjustment(this.forms.period.fields.month_id, this.forms.period.fields.app_year, tenant.tenant_id)
             }
         },
         getContractInfo: function (value, data) {
@@ -1890,6 +1874,8 @@ export default {
             var utilTotal = 0
             var miscTotal = 0
             var othrTotal = 0
+            var adjustmentInTotal = 0
+            var adjustmentOutTotal = 0
 
             this.tables.schedules.items.forEach(schedule => {
                 if(schedule != null){
@@ -1916,11 +1902,24 @@ export default {
                 }   
             })
 
+            this.tables.adjustment.items.forEach(adj => {
+                if(adj != null){
+                    if(Math.sign(adj.contract_default_reading) == 1){
+                        adjustmentInTotal += Number(adj.contract_rate * adj.contract_default_reading)
+                    }
+                    else{
+                        adjustmentOutTotal += Math.abs(Number(adj.contract_rate * adj.contract_default_reading))
+                    }
+                }   
+            })
+
             this.forms.billing.fields.total_fixed_rent = schedTotal
             this.forms.billing.fields.total_discounted_rent = discSchedTotal
             this.forms.billing.fields.total_util_charges = utilTotal
             this.forms.billing.fields.total_misc_charges = miscTotal
             this.forms.billing.fields.total_othr_charges = othrTotal
+            this.forms.billing.fields.total_adjusted_in = adjustmentInTotal
+            this.forms.billing.fields.total_adjusted_out = adjustmentOutTotal
 
             this.forms.billing.fields.sub_total = Number(this.forms.billing.fields.total_fixed_rent) + Number(this.forms.billing.fields.total_util_charges) + Number(this.forms.billing.fields.total_misc_charges) + Number(this.forms.billing.fields.total_othr_charges) + Number(this.forms.billing.fields.total_vat) - Number(this.forms.billing.fields.wtax_amount).toFixed(2)
 

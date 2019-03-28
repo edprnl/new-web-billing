@@ -172,7 +172,7 @@ export default {
               if (!error.response) return
               console.log(error)
             })
-            await this.d.print(this.$refs.contractsMasterList, this.cssText)
+            await this.d.print(this.$refs.contractsMasterList, [this.cssText])
         }
         else{
             this.showModalOrder = true
