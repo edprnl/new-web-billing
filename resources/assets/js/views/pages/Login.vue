@@ -1,5 +1,5 @@
 <style>
-  img{
+  /* img{
     height: auto!important;
     filter: blur(1px);
   }
@@ -28,57 +28,93 @@
   .banner-text{width:70%; position:absolute; bottom:40px; padding-left:20px;}
   .banner-text h2{color:#000000; font-weight:600;}
   .banner-text h2:after{content:" "; width:100px; height:5px; background:#000000; display:block; margin-top:20px; border-radius:3px;}
-  .banner-text p{color:#000000;}
+  .banner-text p{color:#000000;} */
+
+  
+  body{
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    overflow-y: hidden;
+  }
+
+  img {
+    max-width: 100%!important;
+    max-height: 100%!important;
+    filter: blur(3px);
+  }
+
+
+    .box{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 400px;
+        padding: 40px;
+        background:  #065C80;
+        box-sizing: border-box;
+        box-shadow: 0 15px 25px #43A6D1;
+        border-radius: 20px;
+
+    }
+
+    .box h2{
+        margin: 0 0 30px;
+        padding: 0;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .box .inputBox{
+        position: relative;
+    }
+
+    .box .inputBox input{
+        width: 100%;
+        padding: 10px 0;
+        font-size: 16px;
+        color: #ffffff;
+        margin-bottom: 30px;
+        border: none;
+        border-bottom: 1px solid #ffffff;
+        outline: none;
+        background: transparent;
+    }
+
+    .box .inputBox label{
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px 0;
+        font-size: 16px;
+        color: #ffffff;
+        pointer-events: none;
+        transition: .5s;
+    }
+    
+
+    .box .inputBox input:focus ~ label,
+    .box .inputBox input:valid ~ label{
+        top: -18px;
+        left:0;
+        color: #30a9f4;
+        font-size: 12px;
+    }
+
+    .box input[type="submit"]{
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #ffff;
+        background: #03a9f4;
+        padding: 10px 20px;
+    }
+
+
 </style>
 <template>
-  <!-- <div class="app flex-row align-items-center">
-    <b-container>
-      <b-row class="justify-content-center">
-        <b-col md=6>
-          <b-card-group>
-            <b-card p=4>
-              <b-card-body>
-                <h1>Login</h1>
-                <p class="text-muted">Sign In to your account</p>
-                <b-form @submit.prevent="authLogin()" @input="login.success = null">
-                  <b-form-group>
-                    <label>Username</label>
-                    <b-form-input
-                          v-model="login.name"
-                          :state="login.success"
-                          type="text"
-                          placeholder="Username">
-                    </b-form-input>
-                    <b-form-invalid-feedback>
-                        <i class="fa fa-exclamation-triangle text-danger"></i>
-                        <span v-if="login.success==false">
-                            Incorrect username or password.
-                        </span>
-                    </b-form-invalid-feedback>
-                  </b-form-group>
-                  <b-form-group>
-                    <label>Password</label>
-                    <b-form-input
-                          v-model="login.password"
-                          :state="login.success"
-                          type="password"
-                          placeholder="Password">
-                    </b-form-input>
-                  </b-form-group>
-                  <b-row>
-                    <b-col>
-                      <b-btn type="submit" variant="primary" px-4>Login</b-btn>
-                    </b-col>
-                  </b-row>
-                </b-form>
-              </b-card-body>
-            </b-card>
-          </b-card-group>
-        </b-col>
-      </b-row>
-    </b-container>
-  </div> -->
-  <div>
+  <!-- <div>
     <notifications group="notification" />
     <section class="login-block">
       <b-container>
@@ -132,7 +168,44 @@
         </b-row>
       </b-container>
     </section>
+  </div> -->
+
+  <div>
+    <img class="d-block img-fluid" src="https://static.pexels.com/photos/33972/pexels-photo.jpg" alt="First slide">
+    <div class="box">
+        
+        <h2>Billing System - Login</h2>
+        <form @submit.prevent="authLogin()" @input="login.success = null">
+
+            <div class="inputBox">
+                <input 
+                  type="text" 
+                  required=""
+                  ref="username" 
+                  v-model="login.username"
+                >
+                <label>Username</label>
+            </div>
+
+            <div class="inputBox">
+                <input
+                  type="password" 
+                  required=""
+                  v-model="login.password"
+                >
+                <label>Password</label>
+            </div>
+
+            <b-btn :disabled="login.is_saving" type="submit" class="float-right" variant="primary" px-4>
+                    <icon v-if="login.is_saving" name="sync" spin></icon>
+                    Login
+                </b-btn>
+        </form>
+    </div>
   </div>
+  
+
+
 </template>
 
 <script>
