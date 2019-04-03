@@ -95,30 +95,30 @@ export default {
           rights: '15-55',
           icon: 'icon-wallet'
         },
-        {
-          name: 'Adjustment',
-          url: '/transactions/adjustment',
-          rights: '16-59',
-          icon: 'icon-cursor-move'
-        }
+        // {
+        //   name: 'Adjustment',
+        //   url: '/transactions/adjustment',
+        //   rights: '16-59',
+        //   icon: 'icon-cursor-move'
+        // }
       ]
     },
     {
       name: 'Accounting',
       url: '/accounting',
       icon: 'icon-calculator',
-      rights: [10,11,12],
+      rights: [18,19],
       children:[
         {
           name: 'AR Billing',
           url: '/accounting/ar_billing',
-          rights: '10-37',
+          rights: '18-64',
           icon: 'icon-briefcase'
         },
         {
           name: 'AR Payment',
           url: '/accounting/ar_payment',
-          rights: '10-37',
+          rights: '19-66',
           icon: 'icon-wallet'
         },
       ]

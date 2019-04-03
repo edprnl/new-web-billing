@@ -14,7 +14,7 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="2">
-                                    <b-button v-if="checkRights('2-6')" variant="primary" @click="showModalPeriod = true">
+                                    <b-button v-if="checkRights('19-67')" variant="primary" @click="showModalPeriod = true">
                                             <i class="fa fa-plus-circle"></i> Send Payment
                                     </b-button>
                             </b-col>
@@ -63,6 +63,7 @@
                                     :items.sync="tables.payments.items"
                                     :current-page="paginations.payments.currentPage"
                                     :per-page="paginations.payments.perPage"
+                                    @filtered="onFiltered($event,'payments')"
                                     striped hover small bordered show-empty
                                 >
                                     
@@ -284,7 +285,7 @@ export default {
                 })
                 .then((response) => {
                     this.tables.payments.items = response.data.data
-                    this.paginations.payments.totalRows = response.data.length
+                    this.paginations.payments.totalRows = response.data.data.length
                 })
                 .catch(error => {
                     if (!error.response) return

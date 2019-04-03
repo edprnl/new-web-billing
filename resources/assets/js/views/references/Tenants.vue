@@ -40,12 +40,13 @@
                                     :items.sync="tables.tenants.items"
                                     :current-page="paginations.tenants.currentPage"
                                     :per-page="paginations.tenants.perPage"
+                                    @filtered="onFiltered($event, 'tenants')"
                                     striped small bordered show-empty
                                 >
                                     <template slot="row_data" slot-scope="row">
-                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails(), tenantFiles(row)">
-                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
-                                        </b-btn>
+                                        <!-- <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails(), tenantFiles(row)"> -->
+                                            <i @click.stop="row.toggleDetails()" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
+                                        <!-- </b-btn> -->
                                     </template>
                                     <template slot="row-details" slot-scope="row">
                                         <b-row>
@@ -454,7 +455,7 @@ export default {
                         {
                             key:'row_data',
                             label: '',
-                            tdClass: '',
+                            tdClass: 'align-middle',
                             thStyle: {width: '2%'}
                         },
                         {

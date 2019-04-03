@@ -41,6 +41,7 @@
                                     :items.sync="tables.charges.items"
                                     :current-page="paginations.charges.currentPage"
                                     :per-page="paginations.charges.perPage"
+                                    @filtered="onFiltered($event,'charges')"
                                     striped hover small bordered show-empty
                                     
                                 > <!-- table -->

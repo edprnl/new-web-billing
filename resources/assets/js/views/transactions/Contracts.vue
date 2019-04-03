@@ -15,6 +15,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
+                                        v-if="checkRights('13-47')"
                                         @click="showEntry = true, entryMode='Add', tables.schedules.items=[], tables.utilities.items=[], tables.miscellaneous.items=[], tables.other.items=[], tabIndex=0, clearFields('contract'), forms.contract.fields.contract_terms = 1, computeDates(true),counter = 0 ">
                                             <i class="fa fa-plus-circle"></i> Create New Contract
                                     </b-button>
@@ -36,6 +37,7 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.contracts.criteria"
                                     :fields="tables.contracts.fields"
@@ -43,11 +45,12 @@
                                     :current-page="paginations.contracts.currentPage"
                                     :per-page="paginations.contracts.perPage"
                                     striped hover small bordered show-empty
+                                    @filtered="onFiltered($event,'contracts')"
                                 >
                                     <template slot="row_data" slot-scope="row">
-                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails()">
-                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
-                                        </b-btn>
+                                        <!-- <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails()"> -->
+                                            <i @click.stop="row.toggleDetails()" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
+                                        <!-- </b-btn> -->
                                     </template>
                                     <template slot="row-details" slot-scope="row">
                                         <b-row class="font-weight-bold ml-2 mr-2">
@@ -87,17 +90,17 @@
                                         </b-row>
                                     </template>
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" title="Fees" variant="secondary" @click="showFees(data), tabIndex=0">
+                                        <b-btn v-if="checkRights('13-69')" :size="'sm'" title="Fees" variant="secondary" @click="showFees(data), tabIndex=0">
                                             <i class="fa fa-ticket"></i>
                                         </b-btn>
-                                        <b-btn :size="'sm'" title="Renew" variant="success" @click="setRenewal(data), tabIndex=0">
+                                        <b-btn v-if="checkRights('13-68')" :size="'sm'" title="Renew" variant="success" @click="setRenewal(data), tabIndex=0">
                                             <i class="fa fa-refresh"></i>
                                         </b-btn>
-                                        <b-btn :size="'sm'" title="Edit" variant="primary" @click="setUpdate(data), tabIndex=0">
+                                        <b-btn v-if="checkRights('13-48')" :size="'sm'" title="Edit" variant="primary" @click="setUpdate(data), tabIndex=0">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" title="Delete" variant="danger" @click="setDelete(data)">
+                                        <b-btn v-if="checkRights('13-49')" :size="'sm'" title="Delete" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -775,9 +778,10 @@
                             :items.sync="tables.feetypes.items"
                             show-empty>
                             <template slot="row_data" slot-scope="row">
-                                <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails(), contractFeesHistory(row)">
-                                    <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
-                                </b-btn>
+                                <!-- <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails(), contractFeesHistory(row)"> -->
+                                    
+                                    <i @click.stop="row.toggleDetails(), contractFeesHistory(row)" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
+                                <!-- </b-btn> -->
                             </template>
                             <template slot="row-details" slot-scope="row">
                                 <b-row>
@@ -796,7 +800,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr v-if="row.item.history.length == 0" >
-                                                    <td colspan="2">No files found.</td>
+                                                    <td colspan="5">No files found.</td>
                                                 </tr>
                                                 <tr v-for="history in row.item.history">
                                                     <td class="align-middle">{{ moment(history.created_datetime, 'MMMM DD, YYYY hh:mm:ss a') }}</td>
@@ -898,12 +902,11 @@
                     :items.sync="tables.charges.items"
                     :current-page="paginations.charges.currentPage"
                     :per-page="paginations.charges.perPage"
-                    show-empty>
+                    show-empty @filtered="onFiltered($event, 'charges')">
                     <template slot="is_selected" slot-scope="data">
-                        <input type="checkbox" v-model="data.item.is_selected">
-                    </template>
-                    <template slot="HEAD_is_selected" slot-scope="data">
-                        <input @click="toggleSelectAll()" type="checkbox" v-model="is_check_all">
+                        <b-btn :size="'sm'" title="Add" variant="primary" @click="addCharges(charge_type, data.item)">
+                            <i class='fa fa-plus-square'></i>
+                        </b-btn>
                     </template>
                 </b-table>
                 <b-pagination
@@ -913,10 +916,10 @@
                     v-model="paginations.charges.currentPage" />
             </b-col>
             <div slot="modal-footer">
-                <b-button variant="primary" @click="addCharges(charge_type)">
+                <!-- <b-button variant="primary" @click="addCharges(charge_type)">
                     <i class="fa fa-check"></i>
                     Add
-                </b-button>
+                </b-button> -->
                 <b-button variant="secondary" @click="showModalCharges=false">Close</b-button>            
             </div>
         </b-modal>
@@ -1327,7 +1330,7 @@ export default {
                         {
                             key:'row_data',
                             label: '',
-                            tdClass: '',
+                            tdClass: 'align-middle',
                             thStyle: {width: '2%'}
                         },
                         {
@@ -1366,6 +1369,7 @@ export default {
                             key:'action',
                             label:'Action',
                             thClass: 'text-center',
+                            tdClass: 'text-center',
                             thStyle: {width: '150px'},
                         }
                     ],
@@ -1379,12 +1383,6 @@ export default {
                             tdClass: 'd-none'
                         },
                         {
-                            key: 'is_selected',
-                            label: '',
-                            tdClass: 'text-center',
-                            thStyle: {width: '5px'}
-                        },
-                        {
                             key:'charge_code',
                             label: 'Charge Code',
                             tdClass: 'align-middle',
@@ -1393,6 +1391,12 @@ export default {
                             key:'charge_desc',
                             label: 'Description',
                             tdClass: 'align-middle',
+                        },
+                        {
+                            key: 'is_selected',
+                            label: '',
+                            tdClass: 'text-center',
+                            thStyle: {width: '5px'}
                         },
                     ],
                     items:[]
@@ -1646,7 +1650,7 @@ export default {
                         {
                             key:'row_data',
                             label: '',
-                            tdClass: '',
+                            tdClass: 'align-middle',
                             thStyle: {width: '2%'}
                         },
                         {
@@ -1857,27 +1861,20 @@ export default {
             var month_id = (month_value + this.counter) % 12
 
             if(month_id == 0){
-                console.log('minus year')
                 this.app_year--
             }
         },
-        addCharges(charge_type){
+        addCharges(charge_type, row){
             try {
-                this.tables.charges.items.forEach(charge => {
-                    if(charge.is_selected){
-                        this.tables[charge_type].items.push({
-                            charge_id: charge.charge_id,
-                            charge_desc: charge.charge_desc,
-                            contract_rate: 0,
-                            contract_default_reading: 0,
-                            contract_is_vatted: 0,
-                            contract_notes:'',
-                            sort_key:charge.sort
-                        })
-                        charge.is_selected = false
-                    }
-                });
-                this.showModalCharges = false
+                this.tables[charge_type].items.push({
+                    charge_id: row.charge_id,
+                    charge_desc: row.charge_desc,
+                    contract_rate: 0,
+                    contract_default_reading: 0,
+                    contract_is_vatted: 0,
+                    contract_notes:'',
+                    sort_key:row.sort
+                })
             }
             catch(e){
                 console.log(e)
@@ -1887,10 +1884,7 @@ export default {
             this.tables[charge_type].items.splice(index, 1)
         },
         clearCharges(charge_type){
-            this.tables.charges.items.forEach(charge => {
-                charge.is_selected = false
-            })
-            this.is_check_all = false
+            this.filters.charges.criteria = null
         },
         getTenantInfo: function (value, data) {
             if(data.length > 0){
@@ -2006,7 +2000,7 @@ export default {
                 )
 
                 var tblContract = this.tables.contracts.items.filter(c => 
-                    c.contract_id == response.data.data.contract_id
+                    c.tenant_id == response.data.data.tenant_id
                 )
 
                 var type = ""
@@ -2029,7 +2023,6 @@ export default {
                 
                 tblContract[0][type] = Number(tblContract[0][type]) + Number(response.data.data.fee_credit)
                 tblft[0].amount = Number(tblft[0].amount) + Number(response.data.data.fee_credit)
-                console.log(response.data.data.contract_id)
                 this.$notify({
                     type: 'success',
                     group: 'notification',
@@ -2077,6 +2070,16 @@ export default {
                 })
             }
         },
+    },
+    computed: {
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('13-48') || this.checkRights('13-49') || this.checkRights('13-68') || this.checkRights('13-69')) == false){
+                    this.tables.contracts.fields.pop()
+                }
+            }
+            return true
+        }
     }
   }
 </script>

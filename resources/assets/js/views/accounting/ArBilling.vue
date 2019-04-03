@@ -14,9 +14,9 @@
                         
                         <b-row class="mb-2"> <!-- row button and search input -->
                             <b-col sm="4">
-                                    <b-button v-if="checkRights('2-6')" variant="primary" @click="showModalPeriod = true">
-                                            <i class="fa fa-plus-circle"></i> Send Billing
-                                    </b-button>
+                                <b-button v-if="checkRights('18-65')" variant="primary" @click="showModalPeriod = true">
+                                        <i class="fa fa-plus-circle"></i> Send Billing
+                                </b-button>
                             </b-col>
                             <b-col sm="1">
                                 <label class="col-form-label float-right">Filter :</label>
@@ -52,6 +52,7 @@
                                     :items.sync="tables.billings.items"
                                     :current-page="paginations.billings.currentPage"
                                     :per-page="paginations.billings.perPage"
+                                    @filtered="onFiltered($event,'billings')"
                                     striped hover small bordered show-empty
                                 >
                                     
@@ -318,7 +319,7 @@ export default {
                 })
                 .then((response) => {
                     this.tables.billings.items = response.data.data
-                    this.paginations.billings.totalRows = response.data.length
+                    this.paginations.billings.totalRows = response.data.data.length
                 })
                 .catch(error => {
                     if (!error.response) return

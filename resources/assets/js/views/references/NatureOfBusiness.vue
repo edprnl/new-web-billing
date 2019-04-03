@@ -41,6 +41,7 @@
                                     :items.sync="tables.natureofbusinesses.items"
                                     :current-page="paginations.natureofbusinesses.currentPage"
                                     :per-page="paginations.natureofbusinesses.perPage"
+                                    @filtered="onFiltered($event,'natureofbusinesses')"
                                     striped hover small bordered show-empty
                                     
                                 > <!-- table -->

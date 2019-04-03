@@ -14,7 +14,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('user')">
+                                    <b-button v-if="checkRights('10-38')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('user')">
                                             <i class="fa fa-plus-circle"></i> Create New User
                                     </b-button>
                             </b-col>
@@ -35,20 +35,22 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.users.criteria"
                                     :fields="tables.users.fields"
                                     :items.sync="tables.users.items"
                                     :current-page="paginations.users.currentPage"
                                     :per-page="paginations.users.perPage"
+                                    @filtered="onFiltered($event,'users')"
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                        <b-btn v-if="checkRights('10-39')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                        <b-btn v-if="checkRights('10-40')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -242,7 +244,8 @@ export default {
                         {
                             key:'action',
                             label:'',
-                            thStyle: {width: '75px'}
+                            thStyle: {width: '75px'},
+                            tdClass: 'align-middle text-center'
                         }
                     ],
                     items: []
@@ -290,6 +293,16 @@ export default {
     created () {
         this.fillTableList('users');
     },
+    computed: {
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('10-39') || this.checkRights('10-40')) == false){
+                    this.tables.users.fields.pop()
+                }
+            }
+            return true
+        }
+    }
   }
 </script>
 

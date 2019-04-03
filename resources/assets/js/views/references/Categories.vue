@@ -42,6 +42,7 @@
                                     :items.sync="tables.categories.items"
                                     :current-page="paginations.categories.currentPage"
                                     :per-page="paginations.categories.perPage"
+                                    @filtered="onFiltered($event,'categories')"
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">

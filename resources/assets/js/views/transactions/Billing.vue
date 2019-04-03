@@ -16,6 +16,7 @@
                         <b-row class="mb-2">
                             <b-col sm="4">
                                     <b-button variant="primary" 
+                                        v-if="checkRights('14-51')"
                                         @click="checkIfSent()">
                                             <i class="fa fa-plus-circle"></i> Create New Billing
                                     </b-button>
@@ -37,24 +38,26 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.billings.criteria"
                                     :fields="tables.billings.fields"
                                     :items.sync="tables.billings.items"
                                     :current-page="paginations.billings.currentPage"
                                     :per-page="paginations.billings.perPage"
+                                    @filtered="onFiltered($event,'billings')"
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="success" @click="printSoa(data)">
+                                        <b-btn v-if="checkRights('14-54')" :size="'sm'" variant="success" @click="printSoa(data)">
                                             <i class="fa fa-print"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                        <b-btn v-if="checkRights('14-52')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                        <b-btn v-if="checkRights('14-53')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -807,12 +810,12 @@
                     :items.sync="tables.charges.items"
                     :current-page="paginations.charges.currentPage"
                     :per-page="paginations.charges.perPage"
+                    @filtered="onFiltered($event, 'charges')"
                     show-empty>
                     <template slot="is_selected" slot-scope="data">
-                        <input type="checkbox" v-model="data.item.is_selected">
-                    </template>
-                    <template slot="HEAD_is_selected" slot-scope="data">
-                        <input @click="toggleSelectAll()" type="checkbox" v-model="is_check_all">
+                        <b-btn :size="'sm'" title="Add" variant="primary" @click="addCharges(charge_type, data.item)">
+                            <i class='fa fa-plus-square'></i>
+                        </b-btn>
                     </template>
                 </b-table>
                 <b-pagination
@@ -822,10 +825,10 @@
                     v-model="paginations.charges.currentPage" />
             </b-col>
             <div slot="modal-footer">
-                <b-button variant="primary" @click="addCharges(charge_type)">
+                <!-- <b-button variant="primary" @click="addCharges(charge_type)">
                     <i class="fa fa-check"></i>
                     Add
-                </b-button>
+                </b-button> -->
                 <b-button variant="secondary" @click="showModalCharges=false">Close</b-button>            
             </div>
         </b-modal>
@@ -975,18 +978,18 @@ export default {
                             tdClass: 'd-none'
                         },
                         {
-                            key: 'is_selected',
-                            label: '',
-                            tdClass: 'text-center',
-                            thStyle: {width: '5px'}
-                        },
-                        {
                             key:'charge_code',
                             label: 'Charge Code'
                         },
                         {
                             key:'charge_desc',
                             label: 'Description'
+                        },
+                        {
+                            key: 'is_selected',
+                            label: '',
+                            tdClass: 'text-center',
+                            thStyle: {width: '5px'}
                         },
                     ],
                     items:[]
@@ -1600,23 +1603,17 @@ export default {
             this.tables.schedules.items.splice(this.tables.schedules.items.length - 1, 1)
             this.counter--
         },
-        addCharges(charge_type){
+        addCharges(charge_type, row){
             try {
-                this.tables.charges.items.forEach(charge => {
-                    if(charge.is_selected){
-                        this.tables[charge_type].items.push({
-                            charge_id: charge.charge_id,
-                            charge_desc: charge.charge_desc,
-                            contract_rate: 0,
-                            contract_default_reading: 0,
-                            contract_is_vatted: 0,
-                            contract_notes:'',
-                            sort_key: charge.sort
-                        })
-                        charge.is_selected = false
-                    }
-                });
-                this.showModalCharges = false
+                this.tables[charge_type].items.push({
+                    charge_id: row.charge_id,
+                    charge_desc: row.charge_desc,
+                    contract_rate: 0,
+                    contract_default_reading: 0,
+                    contract_is_vatted: 0,
+                    contract_notes:'',
+                    sort_key:row.sort
+                })
             }
             catch(e){
                 console.log(e)
@@ -1626,10 +1623,7 @@ export default {
             this.tables[charge_type].items.splice(index, 1)
         },
         clearCharges(charge_type){
-            this.tables.charges.items.forEach(charge => {
-                charge.is_selected = false
-            })
-            this.is_check_all = false
+            this.filters.charges.criteria = null
         },
         getTenantHistory(tenant_id){
             this.$http.get('api/tenanthistory/'+tenant_id,{
@@ -1743,6 +1737,7 @@ export default {
                 this.tables.utilities.items = []
                 this.tables.miscellaneous.items = []
                 this.tables.other.items = []
+                this.tables.adjustment.items = []
                 var tenant = this.options.tenants.items[data[0].element.index]
                 this.forms.billing.fields.tenant_code = tenant.tenant_code
                 this.getTenantHistory(tenant.tenant_id)
@@ -1842,6 +1837,7 @@ export default {
             this.tables.schedules.items=[]
             this.tables.utilities.items=[]
             this.tables.miscellaneous.items=[]
+            this.tables.adjustment.items=[]
             this.tables.other.items=[]
             this.clearFields('billing')
             this.forms.billing.fields.vat_percent = 12
@@ -2011,6 +2007,15 @@ export default {
         getEndingBalance: function(){
             var endingBalance = this.forms.billing.fields.total_amount_due + Number(this.previous_balance)
             return endingBalance
+        },
+
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('14-52') || this.checkRights('14-53') || this.checkRights('14-54')) == false){
+                    this.tables.billings.fields.pop()
+                }
+            }
+            return true
         }
     },
     created(){
@@ -2029,7 +2034,7 @@ export default {
                 })
             }
         },
-    }
+    },
 }
 </script>
 <style lang="css">

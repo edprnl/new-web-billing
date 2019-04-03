@@ -41,6 +41,7 @@
                                     :items.sync="tables.periods.items"
                                     :current-page="paginations.periods.currentPage"
                                     :per-page="paginations.periods.perPage"
+                                    @filtered="onFiltered($event,'periods')"
                                     striped hover small bordered show-empty
                                     
                                 > <!-- table -->

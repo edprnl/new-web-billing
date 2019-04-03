@@ -389,6 +389,12 @@
           //   right = true
           // }
           return state
+        },
+        onFiltered(filteredItems, entity) {
+          console.log(entity)
+        // Trigger pagination to update the number of buttons/pages due to filtering
+          this.paginations[entity].totalRows = filteredItems.length
+          this.paginations[entity].currentPage = 1
         }
       },
     }

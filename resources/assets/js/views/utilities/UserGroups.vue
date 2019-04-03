@@ -14,7 +14,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col sm="4">
-                                    <b-button variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('usergroup')">
+                                    <b-button v-if="checkRights('11-42')" variant="primary" @click="showModalEntry = true, entryMode='Add', clearFields('usergroup')">
                                             <i class="fa fa-plus-circle"></i> Create New User Group
                                     </b-button>
                             </b-col>
@@ -35,25 +35,27 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.usergroups.criteria"
                                     :fields="tables.usergroups.fields"
                                     :items.sync="tables.usergroups.items"
                                     :current-page="paginations.usergroups.currentPage"
                                     :per-page="paginations.usergroups.perPage"
+                                    @filtered="onFiltered($event,'usergroups')"
                                     striped small bordered show-empty
                                 >
                                     <template slot="row_data" slot-scope="row">
-                                        <b-btn :size="'sm'" variant="success" @click="row.toggleDetails(), getRights(row)">
-                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
-                                        </b-btn>
+                                        <!-- <b-btn :size="'sm'" variant="success" @click="row.toggleDetails(), getRights(row)"> -->
+                                            <i @click.stop="row.toggleDetails(), getRights(row)" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
+                                        <!-- </b-btn> -->
                                     </template>
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="primary" @click="setUpdate(data)">
+                                        <b-btn v-if="checkRights('11-43')" :size="'sm'" variant="primary" @click="setUpdate(data)">
                                             <i class="fa fa-edit"></i>
                                         </b-btn>
 
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                        <b-btn v-if="checkRights('11-44')" :size="'sm'" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -225,8 +227,8 @@ export default {
                         {
                             key:'row_data',
                             label: '',
-                            tdClass: '',
-                            thStyle: {width: '40px'}
+                            tdClass: 'align-middle',
+                            thStyle: {width: '2%'}
                         },
                         {
                             key:'user_group',
@@ -242,7 +244,8 @@ export default {
                         {
                             key:'action',
                             label:'',
-                            thStyle: {width: '75px'}
+                            thStyle: {width: '75px'},
+                            tdClass: 'align-middle text-center'
                         }
                     ],
                     items: []
@@ -362,6 +365,16 @@ export default {
               console.log(error)
             })
     },
+    computed: {
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('11-43') || this.checkRights('11-44')) == false){
+                    this.tables.usergroups.fields.pop()
+                }
+            }
+            return true
+        }
+    }
   }
 </script>
 

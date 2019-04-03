@@ -42,6 +42,7 @@
                                     :items.sync="tables.departments.items"
                                     :current-page="paginations.departments.currentPage"
                                     :per-page="paginations.departments.perPage"
+                                    @filtered="onFiltered($event,'departments')"
                                     striped hover small bordered show-empty
                                     
                                 > <!-- table -->

@@ -242,12 +242,12 @@ const router = new Router({
               component: payment,
               meta: {requiresAuth: true, rights: '15-55'}
             },
-            {
-              path: 'adjustment',
-              name: 'Adjustment',
-              component: adjustment,
-              meta: {requiresAuth: true, rights: '16-59'}
-            }
+            // {
+            //   path: 'adjustment',
+            //   name: 'Adjustment',
+            //   component: adjustment,
+            //   meta: {requiresAuth: true, rights: '16-59'}
+            // }
           ]
         },
         {
@@ -261,13 +261,13 @@ const router = new Router({
               path: 'ar_billing',
               name: 'AR Billing',
               component: ar_billing,
-              meta: { requiresAuth: true}
+              meta: { requiresAuth: true, rights: '18-64'}
             },
             {
               path: 'ar_payment',
               name: 'AR Payment',
               component: ar_payment,
-              meta: { requiresAuth: true}
+              meta: { requiresAuth: true, rights: '19-66'}
             }
           ]
         },

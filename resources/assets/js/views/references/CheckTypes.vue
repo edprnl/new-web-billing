@@ -42,6 +42,7 @@
                                     :items.sync="tables.check_types.items"
                                     :current-page="paginations.check_types.currentPage"
                                     :per-page="paginations.check_types.perPage"
+                                    @filtered="onFiltered($event,'check_types')"
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="action" slot-scope="data">

@@ -13,7 +13,7 @@
                         </h5>
                         <b-row class="mb-2">
                             <b-col  sm="2">
-                                    <b-button variant="primary" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true, tables.payment_details.items = []">
+                                    <b-button variant="primary" v-if="checkRights('15-56')" @click="resetFieldStates('payment'),clearFields('payment'),entryMode = 'Add', showEntry = true, tables.payment_details.items = []">
                                             <i class="fa fa-plus-circle"></i> Create New Payment
                                     </b-button>
                             </b-col>
@@ -55,18 +55,20 @@
                         <b-row>
                             <b-col sm="12">
                                 <b-table 
+                                    v-if="checkAction"
                                     responsive
                                     :filter="filters.payments.criteria"
                                     :fields="tables.payments.fields"
                                     :items.sync="tables.payments.items"
                                     :current-page="paginations.payments.currentPage"
                                     :per-page="paginations.payments.perPage"
+                                    @filtered="onFiltered($event,'payments')"
                                     striped hover small bordered show-empty
                                 >
                                     <template slot="row_data" slot-scope="row">
-                                        <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails">
-                                            <i :class="row.detailsShowing ? 'fa fa-minus-circle' : 'fa fa-plus-circle'"></i>
-                                        </b-btn>
+                                        <!-- <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails"> -->
+                                            <i @click.stop="row.toggleDetails()" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
+                                        <!-- </b-btn> -->
                                     </template>
                                     <template slot="row-details" slot-scope="row">
                                         <b-card>
@@ -97,10 +99,10 @@
                                         </b-card>
                                     </template>
                                     <template slot="action" slot-scope="data">
-                                        <b-btn :size="'sm'" variant="success" @click="printAckReceipt(data.item.payment_id)">
+                                        <b-btn :size="'sm'" v-if="checkRights('15-58')" variant="success" @click="printAckReceipt(data.item.payment_id)">
                                             <i class="fa fa-print"></i>
                                         </b-btn>
-                                        <b-btn :size="'sm'" variant="danger" @click="setDelete(data)">
+                                        <b-btn :size="'sm'" v-if="checkRights('15-57')" variant="danger" @click="setDelete(data)">
                                             <i class="fa fa-trash"></i>
                                         </b-btn>
                                     </template>
@@ -587,7 +589,7 @@
                                     <i class="fa fa-check"></i>
                                     Save
                                 </b-button>
-                                <b-button variant="secondary" @click="showEntry=false">Close</b-button>
+                                <b-button variant="secondary" @click="showEntry=false, forms.payment.fields.used_advances = 0">Close</b-button>
                             </b-col>
                         </b-row>
                     </b-card>
@@ -744,8 +746,8 @@ export default {
                         {
                             key:'row_data',
                             label: '',
-                            tdClass: '',
-                            thStyle: {width: '40px'}
+                            tdClass: 'align-middle',
+                            thStyle: {width: '2%'}
                         },
                         {
                             key:'transaction_no',
@@ -1067,7 +1069,7 @@ export default {
                         this.tables.payments.items.unshift(response.data.data)
                         this.print_payment_id = response.data.data.payment_id
                         this.paginations.payments.totalRows++
-
+                        this.forms.payment.fields.used_advances = 0
                         this.showEntry = false
                         this.showModalConfirmation = false
                     }).catch(error => {
@@ -1262,6 +1264,16 @@ export default {
         this.filterTableList('payments', this.date_from, this.date_to)
         this.fillOptionsList('tenants')
         this.fillOptionsList('check_types')
+    },
+    computed: {
+        checkAction(){
+            if(this.$store.state.rights.length > 0){
+                if((this.checkRights('15-57') || this.checkRights('15-58')) == false){
+                    this.tables.payments.fields.pop()
+                }
+            }
+            return true
+        }
     },
     watch: {
         showEntry: function (showEntry) {

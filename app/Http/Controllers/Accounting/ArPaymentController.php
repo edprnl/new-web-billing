@@ -50,6 +50,7 @@ class ArPaymentController extends Controller
             $journal_info->amount = $info['amount'];
             $journal_info->is_sales = $info['is_sales'];
             $journal_info->journal_id = $info['journal_id'];
+            $journal_info->book_type_id = 1;
 
             if($journal_info->save())
             {

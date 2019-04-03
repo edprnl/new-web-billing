@@ -150,6 +150,7 @@
                                     :items.sync="tables.payments.items"
                                     :current-page="paginations.payments.currentPage"
                                     :per-page="paginations.payments.perPage"
+                                    @filtered="onFiltered($event,'payments')"
                                     striped hover small bordered show-empty
                                     responsive
                                 >

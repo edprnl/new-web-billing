@@ -41,6 +41,7 @@
                                     :items.sync="tables.contracttypes.items"
                                     :current-page="paginations.contracttypes.currentPage"
                                     :per-page="paginations.contracttypes.perPage"
+                                    @filtered="onFiltered($event,'contracttypes')"
                                     striped hover small bordered show-empty
                                     
                                 > <!-- table -->

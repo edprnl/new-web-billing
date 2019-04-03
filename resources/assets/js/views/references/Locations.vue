@@ -41,6 +41,7 @@
                                     :items.sync="tables.locations.items"
                                     :current-page="paginations.locations.currentPage"
                                     :per-page="paginations.locations.perPage"
+                                    @filtered="onFiltered($event,'locations')"
                                     striped hover small bordered show-empty
                                     
                                 > <!-- table -->

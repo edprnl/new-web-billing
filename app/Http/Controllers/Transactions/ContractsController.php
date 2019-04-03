@@ -27,7 +27,20 @@ class ContractsController extends Controller
      */
     public function index($tenant_id = null)
     {
-        $contracts = ContractInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+        $contracts = ContractInfo::select(
+                                    'b_contract_info.*',
+                                    'b_refdepartments.*',
+                                    'b_reflocations.*',
+                                    'b_refcontracttype.*',
+                                    'b_refcategory.*',
+                                    'b_refnatureofbusiness.*',
+                                    'b_tenants.*',
+                                    DB::raw("IFNULL(a.c_advance_rent, 0) as c_advance_rent"),
+                                    DB::raw("IFNULL(a.c_security_deposit, 0) as c_security_deposit"),
+                                    DB::raw("IFNULL(a.c_electric_meter_deposit, 0) as c_electric_meter_deposit"),
+                                    DB::raw("IFNULL(a.c_water_meter_deposit, 0) as c_water_meter_deposit"),
+                                    DB::raw("IFNULL(a.c_construction_deposit, 0) as c_construction_deposit")
+                            )
                             ->leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
                             ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
                             ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
@@ -102,6 +115,7 @@ class ContractsController extends Controller
                                             ) AS a
                                             GROUP BY tenant_id
                                 ) a" ), 'b_contract_info.tenant_id', '=', 'a.tenant_id')
+                            ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
                             ->where('b_contract_info.is_deleted', 0);
         if($tenant_id != null){
             $contracts->where('b_contract_info.tenant_id', $tenant_id);
@@ -420,11 +434,95 @@ class ContractsController extends Controller
             DB::table('b_contract_othr_charges')->insert($others_dataSet);
         }
 
-        $data = ContractInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+        $data = ContractInfo::select(
+                                    'b_contract_info.*',
+                                    'b_refdepartments.*',
+                                    'b_reflocations.*',
+                                    'b_refcontracttype.*',
+                                    'b_refcategory.*',
+                                    'b_refnatureofbusiness.*',
+                                    'b_tenants.*',
+                                    DB::raw("IFNULL(a.c_advance_rent, 0) as c_advance_rent"),
+                                    DB::raw("IFNULL(a.c_security_deposit, 0) as c_security_deposit"),
+                                    DB::raw("IFNULL(a.c_electric_meter_deposit, 0) as c_electric_meter_deposit"),
+                                    DB::raw("IFNULL(a.c_water_meter_deposit, 0) as c_water_meter_deposit"),
+                                    DB::raw("IFNULL(a.c_construction_deposit, 0) as c_construction_deposit")
+                            )
+                            ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
                             ->leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
                             ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
+                            ->leftJoin('b_refnatureofbusiness', 'b_refnatureofbusiness.nature_of_business_id', '=', 'b_contract_info.nature_of_business_id')
                             ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
                             ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->leftJoin(
+                                DB::raw("
+                                        (SELECT
+                                            a.tenant_id,
+                                            SUM(a.advance_rent) as c_advance_rent,
+                                            SUM(a.security_deposit) as c_security_deposit,
+                                            SUM(a.electric_meter_deposit) as c_electric_meter_deposit,
+                                            SUM(a.water_meter_deposit) as c_water_meter_deposit,
+                                            SUM(a.construction_deposit) as c_construction_deposit
+                                        FROM
+                                            (
+                                                SELECT
+                                                    tenant_id,
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit,
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 1
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 2
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 3
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 4
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 5
+                                                GROUP BY tenant_id
+                                            ) AS a
+                                            GROUP BY tenant_id
+                                ) a" ), 'b_contract_info.tenant_id', '=', 'a.tenant_id')
                             ->findOrFail($contract_info->contract_id);
 
         return ( new Reference( $data ) )
@@ -452,16 +550,25 @@ class ContractsController extends Controller
      */
     public function show($id)
     {
-        $contract = ContractInfo::join('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+        $contract = ContractInfo::select(
+                                        'b_contract_info.*',
+                                        'b_tenants.*',
+                                        DB::raw("IFNULL(a.c_advance_rent, 0) as c_advance_rent"),
+                                        DB::raw("IFNULL(a.c_security_deposit, 0) as c_security_deposit"),
+                                        DB::raw("IFNULL(a.c_electric_meter_deposit, 0) as c_electric_meter_deposit"),
+                                        DB::raw("IFNULL(a.c_water_meter_deposit, 0) as c_water_meter_deposit"),
+                                        DB::raw("IFNULL(a.c_construction_deposit, 0) as c_construction_deposit")
+                                )
+                                ->join('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
                                 ->leftJoin(
                                     DB::raw("
                                             (SELECT
                                                 a.tenant_id,
-                                                SUM(a.advance_rent) as c_advance_rent,
-                                                SUM(a.security_deposit) as c_security_deposit,
-                                                SUM(a.electric_meter_deposit) as c_electric_meter_deposit,
-                                                SUM(a.water_meter_deposit) as c_water_meter_deposit,
-                                                SUM(a.construction_deposit) as c_construction_deposit
+                                                IFNULL(SUM(a.advance_rent), 0) as c_advance_rent,
+                                                IFNULL(SUM(a.security_deposit), 0) as c_security_deposit,
+                                                IFNULL(SUM(a.electric_meter_deposit), 0) as c_electric_meter_deposit,
+                                                IFNULL(SUM(a.water_meter_deposit), 0) as c_water_meter_deposit,
+                                                IFNULL(SUM(a.construction_deposit), 0) as c_construction_deposit
                                             FROM
                                                 (
                                                     SELECT
@@ -693,11 +800,95 @@ class ContractsController extends Controller
             DB::table('b_contract_othr_charges')->insert($others_dataSet);
         }
 
-        $data = ContractInfo::leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+        $data = ContractInfo::select(
+                                    'b_contract_info.*',
+                                    'b_refdepartments.*',
+                                    'b_reflocations.*',
+                                    'b_refcontracttype.*',
+                                    'b_refcategory.*',
+                                    'b_refnatureofbusiness.*',
+                                    'b_tenants.*',
+                                    DB::raw("IFNULL(a.c_advance_rent, 0) as c_advance_rent"),
+                                    DB::raw("IFNULL(a.c_security_deposit, 0) as c_security_deposit"),
+                                    DB::raw("IFNULL(a.c_electric_meter_deposit, 0) as c_electric_meter_deposit"),
+                                    DB::raw("IFNULL(a.c_water_meter_deposit, 0) as c_water_meter_deposit"),
+                                    DB::raw("IFNULL(a.c_construction_deposit, 0) as c_construction_deposit")
+                            )
+                            ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
                             ->leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
                             ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
+                            ->leftJoin('b_refnatureofbusiness', 'b_refnatureofbusiness.nature_of_business_id', '=', 'b_contract_info.nature_of_business_id')
                             ->leftJoin('b_refcontracttype', 'b_refcontracttype.contract_type_id', '=', 'b_contract_info.contract_type_id')
                             ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->leftJoin(
+                                DB::raw("
+                                        (SELECT
+                                            a.tenant_id,
+                                            SUM(a.advance_rent) as c_advance_rent,
+                                            SUM(a.security_deposit) as c_security_deposit,
+                                            SUM(a.electric_meter_deposit) as c_electric_meter_deposit,
+                                            SUM(a.water_meter_deposit) as c_water_meter_deposit,
+                                            SUM(a.construction_deposit) as c_construction_deposit
+                                        FROM
+                                            (
+                                                SELECT
+                                                    tenant_id,
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit,
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 1
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 2
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 3
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as water_meter_deposit, 
+                                                    0 as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 4
+                                                GROUP BY tenant_id
+                                                UNION ALL SELECT
+                                                    tenant_id,
+                                                    0 as advance_rent, 
+                                                    0 as security_deposit,
+                                                    0 as electric_meter_deposit,
+                                                    0 as water_meter_deposit, 
+                                                    IFNULL(SUM(fee_credit), 0) - IFNULL(SUM(fee_debit), 0) as construction_deposit
+                                                FROM
+                                                    b_contract_other_fees
+                                                WHERE fee_type_id = 5
+                                                GROUP BY tenant_id
+                                            ) AS a
+                                            GROUP BY tenant_id
+                                ) a" ), 'b_contract_info.tenant_id', '=', 'a.tenant_id')
                             ->findOrFail($contract_info->contract_id);
 
         return ( new Reference($data) )
