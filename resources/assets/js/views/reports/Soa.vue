@@ -142,7 +142,7 @@
                                     <td></td>
                                     <td colspan="3">{{schedule.month_name}} <i>{{ schedule.billing_schedule_notes }}</i></td>
                                     <td style="text-align: right">{{formatNumber(schedule.line_total)}}</td>
-                                    <td style="text-align: right">{{formatNumber(billing.contract_discounted_rent)}}</td>
+                                    <td style="text-align: right">{{formatNumber(schedule.discounted_line_total)}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"></td>

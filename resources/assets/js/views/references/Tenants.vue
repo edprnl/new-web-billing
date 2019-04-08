@@ -45,7 +45,7 @@
                                 >
                                     <template slot="row_data" slot-scope="row">
                                         <!-- <b-btn :size="'sm'" variant="success" @click.stop="row.toggleDetails(), tenantFiles(row)"> -->
-                                            <i @click.stop="row.toggleDetails()" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
+                                            <i @click.stop="row.toggleDetails(), tenantFiles(row)" :class="row.detailsShowing ? 'fa fa-minus fa-lg text-danger' : 'fa fa-plus fa-lg text-success'"></i>
                                         <!-- </b-btn> -->
                                     </template>
                                     <template slot="row-details" slot-scope="row">

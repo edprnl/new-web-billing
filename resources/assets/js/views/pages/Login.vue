@@ -1,4 +1,4 @@
-<style>
+<style scoped>
   /* img{
     height: auto!important;
     filter: blur(1px);
@@ -29,21 +29,18 @@
   .banner-text h2{color:#000000; font-weight:600;}
   .banner-text h2:after{content:" "; width:100px; height:5px; background:#000000; display:block; margin-top:20px; border-radius:3px;}
   .banner-text p{color:#000000;} */
-
-  
   body{
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-    overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
   }
 
   img {
-    max-width: 100%!important;
-    max-height: 100%!important;
+    width: 100%!important;
+    height: 100%!important;
+    max-height: 100vh!important;
     filter: blur(3px);
   }
-
 
     .box{
         position: absolute;
@@ -171,6 +168,7 @@
   </div> -->
 
   <div>
+    <notifications group="notification" />
     <img class="d-block img-fluid" src="https://static.pexels.com/photos/33972/pexels-photo.jpg" alt="First slide">
     <div class="box">
         
@@ -196,10 +194,10 @@
                 <label>Password</label>
             </div>
 
-            <b-btn :disabled="login.is_saving" type="submit" class="float-right" variant="primary" px-4>
-                    <icon v-if="login.is_saving" name="sync" spin></icon>
-                    Login
-                </b-btn>
+            <b-btn :disabled="login.is_saving" type="submit" class="float-right" variant="primary" block>
+                <icon v-if="login.is_saving" name="sync" spin></icon>
+                Login
+            </b-btn>
         </form>
     </div>
   </div>
@@ -227,6 +225,7 @@ export default {
                     username: this.login.username,
                     password: this.login.password
                 }).then(response => {
+                    console.log(response)
                     this.$store.commit('loginUser')
                     this.$store.commit('user', response.data.user)
                     localStorage.setItem('token', response.data.access_token)

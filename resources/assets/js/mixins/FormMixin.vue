@@ -353,8 +353,14 @@
               this.tabIndex = Number(this.$refs[e].$attrs['tab'])
             }
             setTimeout(function (){
-              if(typeof this.$refs[e] !== 'undefined')
-              this.$refs[e].$el.focus()
+              if(typeof this.$refs[e] !== 'undefined'){
+                if(typeof this.$refs[e].$el == 'undefined'){
+                  this.$refs[e].focus()
+                }
+                else{
+                  this.$refs[e].$el.focus()
+                }
+              }
             }.bind(this), 1)
         },
         checkRights(right_code){
@@ -391,7 +397,6 @@
           return state
         },
         onFiltered(filteredItems, entity) {
-          console.log(entity)
         // Trigger pagination to update the number of buttons/pages due to filtering
           this.paginations[entity].totalRows = filteredItems.length
           this.paginations[entity].currentPage = 1

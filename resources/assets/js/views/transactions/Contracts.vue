@@ -785,34 +785,67 @@
                             </template>
                             <template slot="row-details" slot-scope="row">
                                 <b-row>
-                                    <b-col lg="2"></b-col>
-                                    <b-col lg="8">
+                                    <b-col lg="12">
                                         <h6>{{row.item.fee_type_desc}} History</h6>
-                                        <table class="w-100 mb-2 responsive">
-                                            <thead>
-                                                <tr>
-                                                    <th>Datetime</th>
-                                                    <th>Notes</th>
-                                                    <th class="text-right">Debit</th>
-                                                    <th class="text-right">Credit</th>
-                                                    <th class="text-right">Balance</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-if="row.item.history.length == 0" >
-                                                    <td colspan="5">No files found.</td>
-                                                </tr>
-                                                <tr v-for="history in row.item.history">
-                                                    <td class="align-middle">{{ moment(history.created_datetime, 'MMMM DD, YYYY hh:mm:ss a') }}</td>
-                                                    <td class="align-middle">{{ history.fee_notes }}</td>
-                                                    <td class="align-middle text-right">{{ formatNumber(history.fee_debit) }}</td>
-                                                    <td class="align-middle text-right">{{ formatNumber(history.fee_credit) }}</td>
-                                                    <td class="align-middle text-right">{{ formatNumber(history.balance) }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <b-tabs>
+                                            <b-tab title="Approved" >
+                                                <table class="w-100 mb-2 responsive">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:25%">Datetime</th>
+                                                            <th>Notes</th>
+                                                            <th class="text-right">Debit</th>
+                                                            <th class="text-right">Credit</th>
+                                                            <th class="text-right">Balance</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-if="row.item.history.length == 0" >
+                                                            <td colspan="6">No Records found.</td>
+                                                        </tr>
+                                                        <tr v-else-if="filterHistory(row.item.history, 1) == 0" >
+                                                            <td colspan="6">No Records found.</td>
+                                                        </tr>
+                                                        <tr v-else v-for="history in filterHistory(row.item.history, 1)">
+                                                            <td class="align-middle">{{ moment(history.created_datetime, 'MMMM DD, YYYY hh:mm:ss a') }}</td>
+                                                            <td class="align-middle">{{ history.fee_notes }}</td>
+                                                            <td class="align-middle text-right">{{ formatNumber(history.fee_debit) }}</td>
+                                                            <td class="align-middle text-right">{{ formatNumber(history.fee_credit) }}</td>
+                                                            <td class="align-middle text-right">{{ formatNumber(history.balance) }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </b-tab>
+                                            <b-tab title="Pending" >
+                                                <table class="w-100 mb-2 responsive">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width:25%">Datetime</th>
+                                                            <th>Notes</th>
+                                                            <th class="text-right">Debit</th>
+                                                            <th class="text-right">Credit</th>
+                                                            <th class="text-right">Balance</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-if="row.item.history.length == 0" >
+                                                            <td colspan="6">No Records found.</td>
+                                                        </tr>
+                                                        <tr v-else-if="filterHistory(row.item.history, 0) == 0" >
+                                                            <td colspan="6">No Records found.</td>
+                                                        </tr>
+                                                        <tr v-else v-for="history in filterHistory(row.item.history, 0)">
+                                                            <td class="align-middle">{{ moment(history.created_datetime, 'MMMM DD, YYYY hh:mm:ss a') }}</td>
+                                                            <td class="align-middle">{{ history.fee_notes }}</td>
+                                                            <td class="align-middle text-right">{{ formatNumber(history.fee_debit) }}</td>
+                                                            <td class="align-middle text-right">{{ formatNumber(history.fee_credit) }}</td>
+                                                            <td class="align-middle text-right">{{ formatNumber(history.pending_balance) }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </b-tab>
+                                        </b-tabs>
                                     </b-col>
-                                    <b-col lg="2"></b-col>
                                 </b-row>
                             </template>
                             <template slot="action" slot-scope="data">
@@ -831,7 +864,7 @@
                     v-model="showModalFees"
                     :noCloseOnEsc="true"
                     :noCloseOnBackdrop="true"
-                    @shown="focusElement('amount')"
+                    @shown="focusElement('fee_no')"
                 >
                 
                 <div slot="modal-title"> <!-- modal title -->
@@ -840,6 +873,15 @@
 
                 <b-col lg=12> <!-- modal body -->
                     <b-form autocomplete="off">
+                        <b-form-group>
+                            <label>* Fee No</label>
+                            <b-form-input
+                                v-model="forms.contract_other_fees.fields.fee_no"
+                                type="text"
+                                ref="fee_no"
+                                placeholder="Fee No">
+                            </b-form-input>
+                        </b-form-group>
                         <b-form-group>
                             <label for="amount">* Amount</label>
                             <vue-autonumeric 
@@ -850,13 +892,13 @@
                             </vue-autonumeric>
                         </b-form-group>
                         <b-form-group>
-                            <label for="amount">Notes</label>
+                            <label>Notes</label>
                             <b-form-textarea
                                 v-model="forms.contract_other_fees.fields.fee_notes"
                                 type="text"
                                 :rows="2"
                                 placeholder="Notes">
-                        </b-form-textarea>
+                            </b-form-textarea>
                         </b-form-group>
                     </b-form>
                 </b-col> <!-- modal body -->
@@ -1311,6 +1353,7 @@ export default {
                 contract_other_fees : {
                     isSaving: false,
                     fields: {
+                        fee_no: null,
                         tenant_id: null,
                         fee_mode: null,
                         fee_type_id: null,
@@ -1964,6 +2007,7 @@ export default {
             this.forms.contract_other_fees.fields.fee_mode = item.fee_type_desc
             this.forms.contract_other_fees.fields.fee_type_id = item.fee_type_id
             this.forms.contract_other_fees.fields.amount = 0
+            this.forms.contract_other_fees.fields.fee_no = null
             this.showModalFees = true
         },
 
@@ -2048,7 +2092,10 @@ export default {
             .then((response) => {
                 row.item.history = response.data.data
             })
-        }
+        },
+        filterHistory(history, is_journal_posted){
+            return history.filter(h => h.is_journal_posted == is_journal_posted)
+        },
     },
     created () {
         this.fillTableList('contracts')

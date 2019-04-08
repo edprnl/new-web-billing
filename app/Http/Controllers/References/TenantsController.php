@@ -102,7 +102,7 @@ class TenantsController extends Controller
             $customer->payment_term_desc = '';
 
             $customer->save();
-
+            $tenant['files'] = '';
             return ( new Reference( $tenant ))
                 ->response()
                 ->setStatusCode(201);
