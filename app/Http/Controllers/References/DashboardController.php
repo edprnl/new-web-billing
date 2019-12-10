@@ -37,11 +37,18 @@ class DashboardController extends Controller
                             ->where('is_deleted', 0)
                             ->whereBetween('termination_date', [$from, $to])
                             ->get();
+
+        $new_contracts = ContractInfo::select(DB::raw('count(*) as no_of_new_contracts'))
+                            ->where('is_deleted', 0)
+                            ->where('is_renewal', 0)
+                            ->where('renewed', 0)
+                            ->get();
         
         $dashboard['payment_line'] = $this->getPaymentLine($payment_type, true);
         $dashboard['tenants'] = Reference::collection($tenants);
         $dashboard['contracts'] = Reference::collection($contracts);
         $dashboard['expiring_contracts'] = Reference::collection($expiring_contracts);
+        $dashboard['new_contracts'] = Reference::collection($new_contracts);
 
         return $dashboard;
     }

@@ -57,6 +57,8 @@ import ack_receipt from '@/views/reports/AckReceipt'
 import tenant_per_sqm_rate from '@/views/reports/TenantsPerSqmRate'
 import contracts_master_list from '@/views/reports/ContractsMasterList'
 import rental_and_charges from '@/views/reports/RentalAndCharges'
+import expiring_contracts from '@/views/reports/ExpiringContracts'
+import new_contracts from '@/views/reports/newContracts'
 
 //Views - Accounting
 import ar_billing from '@/views/accounting/ArBilling'
@@ -208,6 +210,18 @@ const router = new Router({
               name: 'Rental Rates and Charges',
               component: rental_and_charges,
               meta: { requiresAuth: true, rights: '17-63' }
+            },
+            {
+              path: 'expiring_contracts',
+              name: 'Expiring Contracts',
+              component: expiring_contracts,
+              meta: { requiresAuth: true}
+            },
+            {
+              path: 'new_contracts',
+              name: 'New Contracts',
+              component: new_contracts,
+              meta: { requiresAuth: true}
             }
           ]
         },

@@ -1070,6 +1070,7 @@ export default {
                         this.print_payment_id = response.data.data.payment_id
                         this.paginations.payments.totalRows++
                         this.forms.payment.fields.used_advances = 0
+                        this.forms.payment.fields.contract_advance = 0
                         this.showEntry = false
                         this.showModalConfirmation = false
                     }).catch(error => {

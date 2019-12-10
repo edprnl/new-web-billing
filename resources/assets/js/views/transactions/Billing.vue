@@ -1370,7 +1370,7 @@ export default {
                             thClass: 'text-right',
                             tdClass: 'text-right',
                             formatter: (value) => {
-                                return this.formatNumber(value)
+                                return this.formatNumber(Math.abs(value))
                             }
                         }
                     ],
@@ -2037,7 +2037,7 @@ export default {
     },
 }
 </script>
-<style lang="css">
+<style scoped lang="css">
   .prev-bal {
     cursor:pointer;
   }

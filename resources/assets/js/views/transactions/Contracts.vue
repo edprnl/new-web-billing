@@ -93,7 +93,7 @@
                                         <b-btn v-if="checkRights('13-69')" :size="'sm'" title="Fees" variant="secondary" @click="showFees(data), tabIndex=0">
                                             <i class="fa fa-ticket"></i>
                                         </b-btn>
-                                        <b-btn v-if="checkRights('13-68')" :size="'sm'" title="Renew" variant="success" @click="setRenewal(data), tabIndex=0">
+                                        <b-btn v-if="checkRights('13-68')" :size="'sm'" title="Renew" variant="success" @click="tables.schedules.items=[], tabIndex=0, setRenewal(data), tabIndex=0">
                                             <i class="fa fa-refresh"></i>
                                         </b-btn>
                                         <b-btn v-if="checkRights('13-48')" :size="'sm'" title="Edit" variant="primary" @click="setUpdate(data), tabIndex=0">
@@ -1306,7 +1306,8 @@ export default {
                         utilities: [],
                         miscellaneous: [],
                         other: [],
-                        is_renewal: 0
+                        is_renewal: 0,
+                        renewed: 0
                     }
                 },
                 department : {
@@ -1757,8 +1758,50 @@ export default {
             this.forms.contract.fields.miscellaneous = this.tables.miscellaneous.items
             this.forms.contract.fields.other = this.tables.other.items
 
-            if(this.entryMode == 'Add' || this.entryMode == 'Renewal'){
+            if(this.entryMode == 'Add'){
                 this.createEntity('contract', false, 'contracts', true)
+            }
+            else if(this.entryMode == 'Renewal'){
+                this.$http.post('api/contract_renewal/'+ this.row.contract_id, this.forms.contract.fields,{
+                    headers: {
+                            Authorization: 'Bearer ' + localStorage.getItem('token')
+                        }
+                })
+                .then((response) => {  
+                    this.forms.contract.isSaving = false
+                    this.clearFields('contract')
+                    this.$notify({
+                    type: 'success',
+                    group: 'notification',
+                    title: 'Success!',
+                    text: 'The record has been successfully created.'
+                    })
+
+                    this.tables.contracts.items.unshift(response.data.data)
+                    this.paginations.contracts.totalRows++
+
+                    this.showEntry = false
+                }).catch(error => {
+                    this.forms.contract.isSaving = false
+                    if (!error.response) return
+                    const errors = error.response.data.errors
+                    var a = 0
+                    for (var key in errors) {
+                        // this.forms[entity].states[key] = false
+                        // this.forms[entity].errors[key] =  errors[key]
+                        if(a == 0){
+                            this.focusElement(key, true)
+                            this.$notify({
+                                type: 'error',
+                                group: 'notification',
+                                title: 'Error!',
+                                text: errors[key][0]
+                            })
+                        }
+                        
+                        a++
+                    }
+                })
             }
             else{
                 this.updateEntity('contract', 'contract_id', false, this.row, true)
@@ -1797,6 +1840,7 @@ export default {
                 this.entryMode='Renewal'
                 this.counter = this.tables.schedules.items.length
                 this.forms.contract.fields.is_renewal = 1
+                this.forms.contract.fields.renewed = 1
                 this.forms.contract.fields.contract_no = null
                 this.forms.contract.fields.commencement_date = new Date(this.forms.contract.fields.termination_date)
                 this.forms.contract.fields.start_billing_date = new Date(this.forms.contract.fields.termination_date)

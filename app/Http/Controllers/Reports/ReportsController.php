@@ -10,7 +10,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Http\Resources\Reference;
 use App\Models\References\Location;
 use App\Models\References\Months;
+use App\Models\Transactions\ContractInfo;
 use DB;
+use Carbon\Carbon;
 
 class ReportsController extends Controller
 {
@@ -103,5 +105,35 @@ class ReportsController extends Controller
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
         }
+    }
+    
+    public function expiringContractsList()
+    {
+        $from = Carbon::now();
+        $to = Carbon::now()->addMonths(4);
+        $expiring_contracts = ContractInfo::leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
+                            ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+                            ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
+                            ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->leftJoin('b_refnatureofbusiness', 'b_refnatureofbusiness.nature_of_business_id', '=', 'b_contract_info.nature_of_business_id')
+                            ->whereDate('termination_date', '<=', $from)
+                            ->orWhereBetween('termination_date', [$from, $to])
+                            ->where('b_contract_info.is_deleted', 0)
+                            ->get();
+        return Reference::collection($expiring_contracts);
+    }
+
+    public function newContractsList()
+    {
+        $new_contracts = ContractInfo::leftJoin('b_refdepartments', 'b_refdepartments.department_id', '=', 'b_contract_info.department_id')
+                            ->leftJoin('b_tenants', 'b_tenants.tenant_id', '=', 'b_contract_info.tenant_id')
+                            ->leftJoin('b_reflocations', 'b_reflocations.location_id', '=', 'b_contract_info.location_id')
+                            ->leftJoin('b_refcategory', 'b_refcategory.category_id', '=', 'b_contract_info.category_id')
+                            ->leftJoin('b_refnatureofbusiness', 'b_refnatureofbusiness.nature_of_business_id', '=', 'b_contract_info.nature_of_business_id')
+                            ->where('b_contract_info.is_deleted', 0)
+                            ->where('is_renewal', 0)
+                            ->where('renewed', 0)
+                            ->get();
+        return Reference::collection($new_contracts);
     }
 }

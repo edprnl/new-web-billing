@@ -90,7 +90,7 @@
             <b-col lg=12> <!-- modal body -->
                 <b-form @keydown="resetFieldStates('department')" autocomplete="off">
                     <b-form-group>
-                        <label for="department_code">* Department Code</label>
+                        <label for="department_code"><i class="icon-required fa fa-exclamation-circle"></i>Department Code</label>
                         <b-form-input
                             id="department_code"
                             v-model="forms.department.fields.department_code"
@@ -100,7 +100,7 @@
                         </b-form-input>
                     </b-form-group>
                     <b-form-group>
-                        <label>* Department Desc</label>
+                        <label><i class="icon-required fa fa-exclamation-circle"></i>Department Desc</label>
                         <b-form-input
                             ref="department_desc"
                             id="department_desc"

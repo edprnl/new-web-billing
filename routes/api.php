@@ -238,6 +238,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('contract/{id}', 'Transactions\ContractsController@show');
     //Create new contract
     Route::post('contract', 'Transactions\ContractsController@create');
+    Route::post('contract_renewal/{id}', 'Transactions\ContractsController@renew');
     //Update contract
     Route::put('contract/{id}', 'Transactions\ContractsController@update');
     //Delete contract
@@ -321,6 +322,8 @@ Route::middleware('auth:api')->group(function () {
         'as' => 'reports.rentalAndCharges', 
         'uses' => 'Reports\ReportsController@rentalAndCharges'
      ]);
+    Route::get('reports/expiringcontracts', 'Reports\ReportsController@expiringContractsList');
+    Route::get('reports/newcontracts', 'Reports\ReportsController@newContractsList');
 
     //---------------------------------- REPORTS --------------------------------------------------
 

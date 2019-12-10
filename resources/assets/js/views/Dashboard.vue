@@ -1,4 +1,7 @@
 <style scoped>
+    .info-report{
+        cursor:pointer;
+    }
     .info-box {
         display: block;
         min-height: 90px;
@@ -75,9 +78,9 @@
                             </div>  
                         </b-col>
                         <b-col sm="3">
-                            <div class="info-box bg-warning">
+                            <div @click="printNew" class="info-box info-report bg-warning">
                                 <span class="info-box-icon">
-                                    <i>
+                                    <i class="fa fa-plus">
 
                                     </i>
                                 </span>
@@ -86,17 +89,15 @@
                                         <h6>NEW CONTRACTS</h6>
                                     </span>
                                     <div class="info-box-number">
-                                        <h3>0</h3>
+                                        <h3>{{no_of_new_contracts}}</h3>
                                     </div>
                                 </div>
                             </div>  
                         </b-col>
                         <b-col sm="3">
-                            <div class="info-box bg-danger">
+                            <div @click="printExp" class="info-box info-report bg-danger">
                                 <span class="info-box-icon">
-                                    <i>
-
-                                    </i>
+                                    <i class="fa fa-file-o"></i>
                                 </span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">
@@ -247,6 +248,7 @@ export default {
             line_data: [],
             no_of_tenants: 0,
             no_of_contracts: 0,
+            no_of_new_contracts: 0,
             no_of_expiring_contracts: 0,
         }
     },
@@ -272,7 +274,15 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
-        }
+        },
+        printExp(){
+            let routeData = this.$router.resolve({name: 'Expiring Contracts'});
+            window.open(routeData.href, '_blank');
+        },
+        printNew(){
+            let routeData = this.$router.resolve({name: 'New Contracts'});
+            window.open(routeData.href, '_blank');
+        },
     },
     created () {
         this.filterTableList('payments', this.date_from, this.date_to)
@@ -285,6 +295,7 @@ export default {
             var data = response.data
                 this.no_of_tenants = data.tenants[0].no_of_tenants
                 this.no_of_contracts = data.contracts[0].no_of_contracts
+                this.no_of_new_contracts = data.new_contracts[0].no_of_new_contracts
                 this.no_of_expiring_contracts = data.expiring_contracts[0].no_of_expiring_contracts
                 var dArray = []
                 data.payment_line.forEach(element => {

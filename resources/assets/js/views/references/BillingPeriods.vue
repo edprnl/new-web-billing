@@ -94,7 +94,7 @@
                                 id="period_start_date"
                                 v-model="forms.period.fields.period_start_date"
                                 lang="en" 
-                                input-class="form-control mx-input"
+                                input-class="form-control  "
                                 format="MMMM DD, YYYY"
                                 :clearable="false">
                             </date-picker>
@@ -107,7 +107,7 @@
                                 id="period_end_date"
                                 v-model="forms.period.fields.period_end_date"
                                 lang="en" 
-                                input-class="form-control mx-input"
+                                input-class="form-control  "
                                 format="MMMM DD, YYYY"
                                 :clearable="false">
                             </date-picker>
@@ -132,7 +132,7 @@
                                 id="app_year"
                                 v-model="year"
                                 lang="en" 
-                                input-class="form-control mx-input"
+                                input-class="form-control  "
                                 format="YYYY"
                                 type="year"
                                 :clearable="false">
@@ -145,7 +145,7 @@
                                 id="period_due_date"
                                 v-model="forms.period.fields.period_due_date"
                                 lang="en" 
-                                input-class="form-control mx-input"
+                                input-class="form-control  "
                                 format="MMMM DD, YYYY"
                                 :clearable="false">
                             </date-picker>

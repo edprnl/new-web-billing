@@ -7,8 +7,9 @@
 
 require('./bootstrap');
 require('select2');
-window.moment = require('moment')
+
 window.Vue = require('vue')
+window.moment = require('moment')
 window.printd = require('printd')
 
 /**
@@ -50,7 +51,7 @@ Vue.component('cSwitch', cSwitch)
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 const axiosConfig = {
-  baseURL: 'http://www.smctbilling.com',
+  baseURL: 'http://192.168.100.4',
   timeout: 30000
 }
 
